@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROCKETS</title>
+<link rel="icon" href="assets/brand/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/brand/favicon.png">
+<meta name="theme-color" content="#080809">
+<meta name="description" content="ROCKETS オフィシャルサイト｜ライブ情報・写真・映像">
+<meta property="og:title" content="ROCKETS">
+<meta property="og:description" content="ROCKETS オフィシャルサイト｜ライブ情報・写真・映像">
+<!-- ↓ SNSに貼ったときのサムネイル。Vercel公開後、下の2行を
+     https://自分のURL/assets/photos/p084.webp のようにフルURLに書き換えると確実に出ます -->
+<meta property="og:image" content="assets/photos/p084.webp">
+<meta property="og:image:alt" content="ROCKETS">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080809;
+  --fg:#f2f0ec;
+  --dim:#8e8a84;
+  --line:rgba(242,240,236,.14);
+  --tint-r:120; --tint-g:110; --tint-b:130;
+  --tint:rgb(var(--tint-r),var(--tint-g),var(--tint-b));
+  --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",-apple-system,sans-serif;
+  --dp:"Anton","Zen Kaku Gothic New",Impact,sans-serif;
+  --pad:clamp(20px,5vw,64px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--fg);font-family:var(--jp);
+  transition:background-color 3s ease;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-feature-settings:"palt";letter-spacing:.02em;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--tint);color:#000}
+
+/* ページ全体にうっすら乗る色被り（写真に連動してゆっくり変わる） */
+#globaltint{
+  position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:soft-light;
+  background:radial-gradient(120% 90% at 50% 0%,var(--tint) 0%,transparent 65%);
+  opacity:.5;transition:background 3s ease;
+}
+#grain{
+  position:fixed;inset:-50%;pointer-events:none;z-index:3;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:gr 1.2s steps(3) infinite;
+}
+@keyframes gr{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}100%{transform:translate(0,0)}}
+/* スマホでは粒子を止める（常時再描画はバッテリーを食うため。質感は残る） */
+@media(max-width:760px){#grain{animation:none;opacity:.045}}
+
+/* ---------- ローディング ---------- */
+#loader{position:fixed;inset:0;z-index:200;background:#000;display:grid;place-items:center;
+  transition:opacity .9s ease,visibility .9s}
+#loader.done{opacity:0;visibility:hidden}
+#loader .lg{width:min(46vw,340px);animation:lgin 2s ease forwards;opacity:0}
+@keyframes lgin{0%{opacity:0;filter:blur(18px);transform:scale(1.14)}100%{opacity:.92;filter:blur(0);transform:none}}
+
+/* ---------- ナビ ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:60;padding:16px var(--pad);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  transition:background .4s,backdrop-filter .4s,padding .4s}
+header.solid{background:rgba(8,8,9,.82);backdrop-filter:blur(14px);padding:11px var(--pad);
+  border-bottom:1px solid var(--line)}
+.brand{display:block;line-height:0}
+.brand img{width:clamp(104px,13vw,158px);transition:width .4s ease}
+header.solid .brand img{width:clamp(92px,10vw,124px)}
+nav ul{display:flex;gap:clamp(14px,2.2vw,30px);list-style:none;align-items:center}
+nav a{font-size:12.5px;font-weight:500;letter-spacing:.14em;color:var(--dim);
+  transition:color .3s;position:relative;padding:4px 0}
+nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--tint);transition:right .35s ease}
+nav a:hover{color:var(--fg)}
+nav a:hover::after{right:0}
+.burger{display:none;background:none;border:0;color:var(--fg);cursor:pointer;padding:6px}
+.burger span{display:block;width:24px;height:1.5px;background:currentColor;margin:5px 0;transition:.3s}
+
+/* ---------- HERO ---------- */
+#hero{position:relative;height:100svh;min-height:560px;overflow:hidden;isolation:isolate}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity var(--cf,2.4s) cubic-bezier(.4,0,.2,1);
+  background-size:cover;background-position:center;will-change:opacity,transform}
+.slide.on{opacity:1}
+.slide.kb{animation:kb 22s linear forwards}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.13)}}
+#hero .veil{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,rgba(8,8,9,.62) 0%,rgba(8,8,9,.28) 30%,rgba(8,8,9,.55) 62%,rgba(8,8,9,.96) 100%)}
+#hero .colorveil{position:absolute;inset:0;z-index:1;mix-blend-mode:color;opacity:.28;
+  background:var(--tint);transition:background 3s ease}
+
+.heroInner{position:relative;z-index:4;height:100%;padding:0 var(--pad) clamp(28px,5vh,56px);
+  display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(22px,4vh,44px)}
+.wordmark{line-height:0}
+.wordmark img{width:min(78vw,860px);
+  filter:drop-shadow(0 10px 46px rgba(0,0,0,.7));
+  opacity:0;transform:translateY(18px) scale(1.03);
+  animation:up 1.3s .25s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.catch{color:var(--dim);font-size:13px;letter-spacing:.3em;margin-top:14px}
+
+/* 直近ライブカード */
+.nextlive{display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,3vw,48px);
+  border-top:1px solid var(--line);padding-top:20px;max-width:1100px;
+  opacity:0;animation:up 1s .7s cubic-bezier(.2,.8,.2,1) forwards}
+.nextlive .lab{font-size:10.5px;letter-spacing:.34em;color:var(--tint);
+  filter:brightness(1.7) saturate(1.4);white-space:nowrap}
+.nextlive .d{font-family:var(--dp);font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:.03em}
+.nextlive .d small{font-size:.42em;letter-spacing:.18em;margin-left:.5em;opacity:.65}
+.nextlive .v{font-size:15px;font-weight:700}
+.nextlive .m{font-size:12.5px;color:var(--dim);margin-top:5px;line-height:1.7}
+.btn{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--fg);
+  padding:11px 22px;font-size:12px;letter-spacing:.2em;font-weight:700;
+  transition:.35s;white-space:nowrap;background:transparent;color:var(--fg);cursor:pointer}
+.btn:hover{background:var(--fg);color:#000}
+.btn.accent{border-color:var(--tint);color:#fff;
+  background:linear-gradient(90deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.28),transparent)}
+.btn.accent:hover{background:var(--tint);color:#000}
+
+.scroller{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:5;
+  font-size:9.5px;letter-spacing:.3em;color:var(--dim);display:flex;flex-direction:column;
+  align-items:center;gap:8px}
+.scroller i{display:block;width:1px;height:34px;background:linear-gradient(var(--dim),transparent);
+  animation:sc 2.2s ease-in-out infinite}
+@keyframes sc{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* ---------- セクション共通 ---------- */
+section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:4}
+.head{display:flex;align-items:baseline;gap:18px;margin-bottom:clamp(28px,5vh,54px);
+  border-bottom:1px solid var(--line);padding-bottom:16px;flex-wrap:wrap}
+.head h2{font-family:var(--dp);font-size:clamp(30px,5.2vw,64px);letter-spacing:.05em;line-height:1}
+.head .ja{font-size:12px;letter-spacing:.28em;color:var(--dim)}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- LIVE ---------- */
+.liverow{display:grid;grid-template-columns:minmax(140px,190px) 1fr auto;gap:clamp(14px,3vw,40px);
+  align-items:center;padding:24px 0;border-bottom:1px solid var(--line);transition:.4s}
+.liverow:hover{background:linear-gradient(90deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.10),transparent);
+  padding-left:14px}
+.liverow .dt{font-family:var(--dp);font-size:clamp(22px,3vw,34px);line-height:1;letter-spacing:.03em}
+.liverow .dt small{display:block;font-family:var(--jp);font-size:10.5px;letter-spacing:.28em;
+  color:var(--dim);margin-top:7px}
+.liverow .ttl{font-size:16px;font-weight:700;margin-bottom:7px}
+.liverow .info{font-size:12.5px;color:var(--dim);line-height:1.85}
+.liverow .info b{color:var(--fg);font-weight:500}
+.liverow.past{opacity:.42}
+.liverow.past:hover{opacity:.7}
+#pastwrap{max-height:0;overflow:hidden;transition:max-height .7s ease}
+#pastwrap.open{max-height:2600px}
+.toggle{margin-top:26px;font-size:11.5px;letter-spacing:.22em;color:var(--dim);
+  background:none;border:0;cursor:pointer;font-family:var(--jp);padding:8px 0;transition:color .3s}
+.toggle:hover{color:var(--fg)}
+
+/* ---------- PHOTO ---------- */
+.photobar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.chip{font-size:11px;letter-spacing:.18em;padding:8px 16px;border:1px solid var(--line);
+  cursor:pointer;background:none;color:var(--dim);font-family:var(--jp);transition:.3s}
+.chip:hover{color:var(--fg);border-color:var(--fg)}
+.chip.on{background:var(--fg);color:#000;border-color:var(--fg)}
+.pcount{font-size:11px;color:var(--dim);letter-spacing:.12em;margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:5px}
+.grid figure{position:relative;aspect-ratio:1;overflow:hidden;cursor:pointer;background:#111}
+.grid img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.05);
+  transition:filter .6s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.grid figure:hover img{filter:none;transform:scale(1.07)}
+
+/* 全画面スライドショー */
+#viewer{position:fixed;inset:0;z-index:150;background:#000;display:none}
+#viewer.on{display:block}
+#viewer .vs{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;
+  background-size:contain;background-repeat:no-repeat;background-position:center}
+#viewer .vs.on{opacity:1}
+#viewer .vbg{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;
+  background-size:cover;background-position:center;filter:blur(46px) brightness(.34);transform:scale(1.15)}
+#viewer .vbg.on{opacity:1}
+.vclose{position:absolute;top:18px;right:20px;z-index:5;background:none;border:0;color:#fff;
+  font-size:26px;cursor:pointer;line-height:1;opacity:.7;transition:.3s;padding:8px}
+.vclose:hover{opacity:1;transform:rotate(90deg)}
+.vhint{position:absolute;bottom:20px;left:0;right:0;text-align:center;z-index:5;
+  font-size:10.5px;letter-spacing:.26em;color:rgba(255,255,255,.42)}
+.vnav{position:absolute;top:0;bottom:0;cursor:pointer;background:none;border:0;-webkit-tap-highlight-color:transparent}
+.vnav.next{left:0;right:0;z-index:4}
+.vnav.prev{left:0;width:30%;z-index:5}
+@media(max-width:760px){
+  .vclose{top:12px;right:12px;font-size:32px;padding:12px}
+  .vhint{bottom:14px;font-size:9.5px;letter-spacing:.18em}
+}
+
+/* ---------- VIDEO ---------- */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(14px,2.4vw,28px)}
+.vcard .fr{position:relative;aspect-ratio:16/9;background:#111;overflow:hidden;border:1px solid var(--line)}
+.vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vcard h3{font-size:13.5px;font-weight:500;margin-top:12px;color:var(--dim);letter-spacing:.06em}
+
+/* ---------- MUSIC ---------- */
+.trk{display:flex;align-items:center;gap:clamp(14px,2.5vw,26px);padding:20px 0;
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.trk .no{font-family:var(--dp);font-size:22px;color:var(--dim);min-width:34px}
+.trk .meta{flex:1;min-width:180px}
+.trk .meta b{font-size:15px;font-weight:700;display:block}
+.trk .meta span{font-size:11.5px;color:var(--dim);letter-spacing:.1em}
+.trk audio{height:36px;flex:1;min-width:230px;filter:invert(1) hue-rotate(180deg) contrast(.85)}
+
+/* ---------- MEMBER ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:clamp(16px,2.6vw,34px)}
+.mcard .ph{aspect-ratio:3/4;background:#101012;overflow:hidden;position:relative;border:1px solid var(--line)}
+.mcard .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08);transition:.7s}
+.mcard:hover .ph img{filter:grayscale(0) contrast(1);transform:scale(1.05)}
+.mcard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
+  font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
+.mcard .part{font-size:10.5px;letter-spacing:.26em;color:var(--tint);
+  filter:brightness(1.7) saturate(1.4);margin-top:16px}
+.mcard .nm{font-size:18px;font-weight:700;margin-top:7px}
+.mcard .ms{display:flex;gap:12px;margin-top:11px}
+.mcard .ms a{font-size:10.5px;letter-spacing:.16em;color:var(--dim);border-bottom:1px solid transparent;
+  transition:.3s;padding-bottom:2px}
+.mcard .ms a:hover{color:var(--fg);border-color:var(--tint)}
+.bio{max-width:720px;font-size:14.5px;line-height:2.15;color:#cfcbc5;white-space:pre-line;margin-top:clamp(34px,6vh,60px)}
+
+/* ---------- CONTACT ---------- */
+#contact{text-align:center}
+.cnote{font-size:14px;color:var(--dim);line-height:2;max-width:560px;margin:0 auto clamp(28px,5vh,46px)}
+.snsrow{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.snsrow a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
+  width:118px;height:118px;border:1px solid var(--line);transition:.4s;font-size:10.5px;letter-spacing:.2em}
+.snsrow a:hover{border-color:var(--fg);background:rgba(255,255,255,.05);transform:translateY(-4px)}
+.snsrow a.main{border-color:var(--tint);
+  background:linear-gradient(160deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.22),transparent)}
+.snsrow svg{width:24px;height:24px;fill:currentColor}
+
+footer{padding:44px var(--pad);border-top:1px solid var(--line);position:relative;z-index:4;
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+footer .fb img{width:110px;opacity:.75}
+footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
+
+/* ---------- スマホ ---------- */
+@media(max-width:760px){
+  .burger{display:block;z-index:70;position:relative}
+  /* メニューは三本線のすぐ下にドロップダウンで開く */
+  nav{position:absolute;top:100%;right:var(--pad);left:auto;
+    min-width:186px;padding:4px 0;
+    background:rgba(8,8,9,.96);backdrop-filter:blur(18px);
+    border:1px solid var(--line);
+    box-shadow:0 18px 44px rgba(0,0,0,.6);
+    opacity:0;visibility:hidden;transform:translateY(-10px);
+    transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.2,1),visibility .28s}
+  nav.open{opacity:1;visibility:visible;transform:none}
+  nav ul{flex-direction:column;gap:0;align-items:stretch}
+  nav li{border-bottom:1px solid rgba(242,240,236,.08)}
+  nav li:last-child{border-bottom:0}
+  nav a{display:block;padding:14px 20px;font-size:14px;color:var(--fg);letter-spacing:.2em}
+  nav a::after{display:none}
+  nav a:active{background:rgba(255,255,255,.07)}
+  /* 開いている間は三本線を × に */
+  .burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+  .burger.open span:nth-child(2){opacity:0}
+  .burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+  /* トップ：ロゴを大きく、直近ライブとの間を詰める */
+  .heroInner{gap:15px;padding-bottom:24px}
+  .wordmark img{width:min(90vw,460px)}
+  .catch:empty{display:none}
+  .nextlive{gap:14px;padding-top:16px}
+  .scroller{display:none}
+
+  /* 横位置の写真：寄りを抑えつつ、上下をぼかしに溶かして「写真の枠」を見せない */
+  .slide.land{background-size:0 0}
+  .slide.land::before,.slide.land::after{content:"";position:absolute;
+    background-image:inherit;background-repeat:no-repeat}
+  .slide.land::before{inset:0;background-size:cover;background-position:center;
+    filter:blur(30px) brightness(.62) saturate(1.1);transform:scale(1.35)}
+  .slide.land::after{
+    inset:16% 0 24%;                       /* 上下に逃がす＝その分クロップが減る */
+    background-size:cover;background-position:center 45%;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 26%,#000 74%,transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 26%,#000 74%,transparent 100%)}
+
+  .liverow{grid-template-columns:1fr;gap:12px}
+  .liverow .dt{font-size:26px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:3px}
+  .snsrow a{width:96px;height:96px}
+}
+/* 指で操作する端末：なぞった写真だけカラーになる（指を離すとゆっくり戻る） */
+@media(hover:none){
+  .grid figure:hover img{transform:none}
+  .grid img{transition:filter .45s ease,transform .6s ease}
+  .grid figure.lit img{filter:none;transform:scale(1.04)}
+  .mcard .ph img{filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.15s!important}
+  .slide.kb{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><img class="lg" src="assets/brand/logo.webp" alt="ROCKETS"></div>
+<div id="globaltint"></div>
+<div id="grain"></div>
+
+<header id="hdr">
+  <a href="#hero" class="brand" id="brand"><img src="assets/brand/logo.webp" alt="ROCKETS"></a>
+  <nav id="nav">
+    <ul>
+      <li><a href="#live">ライブ</a></li>
+      <li><a href="#photo">写真</a></li>
+      <li><a href="#video" id="nv-video">映像</a></li>
+      <li><a href="#music" id="nv-music">音源</a></li>
+      <li><a href="#member">メンバー</a></li>
+      <li><a href="#contact">連絡</a></li>
+    </ul>
+  </nav>
+  <button class="burger" id="burger" aria-label="メニュー"><span></span><span></span><span></span></button>
+</header>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div id="slides"></div>
+  <div class="colorveil" id="colorveil"></div>
+  <div class="veil"></div>
+  <div class="heroInner">
+    <div>
+      <h1 class="wordmark" id="wordmark"><img src="assets/brand/logo.webp" alt="ROCKETS"></h1>
+      <p class="catch" id="catch"></p>
+    </div>
+    <div class="nextlive" id="nextlive"></div>
+  </div>
+  <div class="scroller">SCROLL<i></i></div>
+</section>
+
+<!-- ===== LIVE ===== -->
+<section class="blk" id="live">
+  <div class="head reveal"><h2>LIVE</h2><span class="ja">ライブ情報</span></div>
+  <div id="upcoming"></div>
+  <button class="toggle" id="pastbtn">＋ 過去の公演を見る</button>
+  <div id="pastwrap"><div id="pastlist"></div></div>
+</section>
+
+<!-- ===== PHOTO ===== -->
+<section class="blk" id="photo">
+  <div class="head reveal"><h2>PHOTO</h2><span class="ja">写真</span></div>
+  <div class="photobar reveal">
+    <button class="chip on" data-f="all">すべて</button>
+    <button class="chip" data-f="land">横位置</button>
+    <button class="chip" data-f="port">縦位置</button>
+    <button class="chip" id="playall">▶ 全画面スライドショー</button>
+    <span class="pcount" id="pcount"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<!-- ===== VIDEO ===== -->
+<section class="blk" id="video">
+  <div class="head reveal"><h2>VIDEO</h2><span class="ja">映像</span></div>
+  <div class="vgrid" id="vgrid"></div>
+</section>
+
+<!-- ===== MUSIC ===== -->
+<section class="blk" id="music">
+  <div class="head reveal"><h2>MUSIC</h2><span class="ja">音源</span></div>
+  <div id="tracks"></div>
+</section>
+
+<!-- ===== MEMBER ===== -->
+<section class="blk" id="member">
+  <div class="head reveal"><h2>MEMBER</h2><span class="ja">メンバー</span></div>
+  <div class="mgrid" id="mgrid"></div>
+  <p class="bio reveal" id="bio"></p>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="blk" id="contact">
+  <div class="head reveal" style="justify-content:center"><h2>CONTACT</h2><span class="ja">連絡</span></div>
+  <p class="cnote reveal" id="cnote"></p>
+  <div class="snsrow reveal" id="snsrow"></div>
+</section>
+
+<footer>
+  <span class="fb"><img src="assets/brand/logo.webp" alt="ROCKETS"></span>
+  <small>© <span id="yr"></span> ROCKETS</small>
+</footer>
+
+<!-- 全画面ビューア -->
+<div id="viewer">
+  <div class="vbg" id="vbgA"></div><div class="vbg" id="vbgB"></div>
+  <div class="vs" id="vsA"></div><div class="vs" id="vsB"></div>
+  <button class="vnav prev" id="vprev" aria-label="前へ"></button>
+  <button class="vnav next" id="vnext" aria-label="次へ"></button>
+  <button class="vclose" id="vclose" aria-label="閉じる">×</button>
+  <div class="vhint">タップ／スワイプで次へ　・　ESC で閉じる</div>
+</div>
+
+<script src="assets/photos.js"></script>
+<script src="content.js"></script>
+<script>
+(function(){
+"use strict";
+const C = window.CONTENT, P = window.PHOTO_DATA;
+const S = Object.assign({fadeSeconds:6,crossfade:2.4,kenBurns:true,tintStrength:.55}, C.settings||{});
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const PH = "assets/photos/", TH = "assets/thumbs/";
+const byName = {}; P.photos.forEach(p=>byName[p.f]=p);
+
+/* ---------- 基本テキスト ---------- */
+document.title = C.band.title || C.band.name;
+$("#yr").textContent = new Date().getFullYear();
+$("#catch").textContent = C.band.catch || "";
+$$('img[alt="ROCKETS"]').forEach(i=>i.alt = C.band.name);
+
+/* ---------- 色をページ全体に反映 ---------- */
+function applyTint(rgb){
+  const [r,g,b] = rgb;
+  // 暗すぎる色は持ち上げて“くすみ色”に整える
+  const mx = Math.max(r,g,b,1), k = Math.min(1, 165/mx);
+  const R = Math.round(Math.min(255, r*k + 42)),
+        G = Math.round(Math.min(255, g*k + 40)),
+        B = Math.round(Math.min(255, b*k + 46));
+  const rs = document.documentElement.style;
+  rs.setProperty("--tint-r", String(R));
+  rs.setProperty("--tint-g", String(G));
+  rs.setProperty("--tint-b", String(B));
+  // ページの地の色もごくわずかに引きずる（写真に合わせて全体がふわっと変わる）
+  rs.setProperty("--bg", `rgb(${Math.round(R*.055)+7},${Math.round(G*.055)+7},${Math.round(B*.06)+8})`);
+  $("#globaltint").style.opacity = String(S.tintStrength);
+}
+
+/* ---------- HERO 背景クロスフェード ---------- */
+const heroList = (P.hero && P.hero.length ? P.hero : P.photos.filter(p=>p.land).map(p=>p.f)).slice();
+for(let i=heroList.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[heroList[i],heroList[j]]=[heroList[j],heroList[i]];}
+
+const slidesEl = $("#slides");
+let layers = [document.createElement("div"), document.createElement("div")];
+layers.forEach(l=>{l.className="slide"; l.style.setProperty("--cf", S.crossfade+"s"); slidesEl.appendChild(l);});
+let cur=0, idx=0, heroTimer=null;
+
+function preload(src){ const i=new Image(); i.src=src; }
+
+function showHero(n){
+  const file = heroList[n % heroList.length];
+  const next = layers[1-cur];
+  next.style.backgroundImage = `url("${PH}${file}")`;
+  // 横位置の写真だけ、スマホで「全体が入る」表示に切り替えるための目印
+  next.classList.toggle("land", !!(byName[file] && byName[file].land));
+  next.classList.remove("kb"); void next.offsetWidth;
+  if(S.kenBurns) next.classList.add("kb");
+  next.classList.add("on");
+  layers[cur].classList.remove("on");
+  cur = 1-cur;
+  const p = byName[file];
+  if(p){ applyTint(p.c); $("#colorveil").style.background = `rgb(${p.c.join(",")})`; }
+  preload(PH + heroList[(n+1) % heroList.length]);
+}
+function startHero(){
+  showHero(idx);
+  clearInterval(heroTimer);
+  heroTimer = setInterval(()=>{ idx++; showHero(idx); }, S.fadeSeconds*1000);
+}
+// 最初の1枚を読み終わってから開始（チラつき防止）
+(function boot(){
+  const first = new Image();
+  first.onload = first.onerror = ()=>{
+    startHero();
+    setTimeout(()=>$("#loader").classList.add("done"), 900);
+  };
+  first.src = PH + heroList[0];
+  setTimeout(()=>$("#loader").classList.add("done"), 3500); // 保険
+})();
+// タブが裏に回ったら止める（電池とCPUの節約）
+document.addEventListener("visibilitychange", ()=>{
+  clearInterval(heroTimer);
+  if(!document.hidden){
+    heroTimer = setInterval(()=>{ idx++; showHero(idx); }, S.fadeSeconds*1000);
+  }
+});
+
+/* ---------- ライブ ---------- */
+function liveRow(l, past){
+  const t = [];
+  if(l.open)  t.push(`OPEN <b>${l.open}</b>`);
+  if(l.start) t.push(`START <b>${l.start}</b>`);
+  const pr = [];
+  if(l.adv)  pr.push(`ADV <b>${l.adv}</b>`);
+  if(l.door) pr.push(`DOOR <b>${l.door}</b>`);
+  const line2 = [t.join("　/　"), pr.join("　/　"), l.note||""].filter(Boolean).join("　　");
+  return `<div class="liverow reveal${past?" past":""}">
+    <div class="dt">${l.date||""}<small>${l.day||""}</small></div>
+    <div>
+      <div class="ttl">${l.title||""}</div>
+      <div class="info"><b>${l.venue||""}</b><br>${line2}</div>
+    </div>
+    <div>${(!past && l.ticket) ? `<a class="btn accent" href="${l.ticket}" target="_blank" rel="noopener">チケット</a>` : ""}</div>
+  </div>`;
+}
+const lives = C.lives||[];
+const up = lives.filter(l=>!l.past), pastL = lives.filter(l=>l.past);
+$("#upcoming").innerHTML = up.length ? up.map(l=>liveRow(l,false)).join("")
+  : `<p style="color:var(--dim);font-size:14px;padding:20px 0">現在、予定されている公演はありません。</p>`;
+if(pastL.length){ $("#pastlist").innerHTML = pastL.map(l=>liveRow(l,true)).join(""); }
+else { $("#pastbtn").style.display="none"; }
+$("#pastbtn").addEventListener("click", ()=>{
+  const w=$("#pastwrap"), o=w.classList.toggle("open");
+  $("#pastbtn").textContent = o ? "− 閉じる" : "＋ 過去の公演を見る";
+  if(o) setTimeout(()=>$$("#pastlist .reveal").forEach(e=>e.classList.add("in")),50);
+});
+
+/* HERO の直近ライブカード */
+(function(){
+  const n = up[0];
+  if(!n){ $("#nextlive").innerHTML = `<span class="lab">NEXT LIVE</span>
+    <div class="v" style="color:var(--dim);font-weight:400">次回公演は決まり次第お知らせします</div>`; return; }
+  const meta = [n.open?`OPEN ${n.open}`:"", n.start?`START ${n.start}`:"",
+                n.adv?`ADV ${n.adv}`:"", n.door?`DOOR ${n.door}`:"", n.note||""].filter(Boolean).join("　/　");
+  $("#nextlive").innerHTML =
+    `<span class="lab">NEXT LIVE</span>
+     <div class="d">${n.date}<small>${n.day||""}</small></div>
+     <div><div class="v">${n.venue||""}</div><div class="m">${n.title||""}<br>${meta}</div></div>
+     ${n.ticket ? `<a class="btn accent" href="${n.ticket}" target="_blank" rel="noopener">チケット</a>`
+                : `<a class="btn" href="#live">詳細を見る</a>`}`;
+})();
+
+/* ---------- 写真グリッド ---------- */
+let filter="all", shown=[];
+function currentList(){
+  return P.photos.filter(p => filter==="all" ? true : filter==="land" ? p.land : !p.land);
+}
+function renderGrid(){
+  shown = currentList();
+  $("#pcount").textContent = shown.length + " 枚";
+  $("#grid").innerHTML = shown.map((p,i)=>
+    `<figure data-i="${i}"><img src="${TH}${p.f}" alt="" loading="lazy" decoding="async"></figure>`).join("");
+}
+$$(".chip[data-f]").forEach(b=>b.addEventListener("click",()=>{
+  $$(".chip[data-f]").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); filter=b.dataset.f; renderGrid();
+}));
+renderGrid();
+
+/* ---------- 全画面スライドショー ---------- */
+const V=$("#viewer"), vs=[$("#vsA"),$("#vsB")], vbg=[$("#vbgA"),$("#vbgB")];
+let vcur=0, vi=0, vTimer=null, vList=[];
+function vShow(n){
+  const p = vList[((n % vList.length)+vList.length) % vList.length];
+  const a = vs[1-vcur], b = vbg[1-vcur];
+  a.style.backgroundImage = b.style.backgroundImage = `url("${PH}${p.f}")`;
+  a.classList.add("on"); b.classList.add("on");
+  vs[vcur].classList.remove("on"); vbg[vcur].classList.remove("on");
+  vcur = 1-vcur;
+  applyTint(p.c);
+  const nx = vList[(n+1)%vList.length]; if(nx) preload(PH+nx.f);
+}
+function vOpen(list, start){
+  vList = list.slice();
+  if(start==null){ // ランダム順に並べ替え
+    for(let i=vList.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[vList[i],vList[j]]=[vList[j],vList[i]];}
+    vi=0;
+  } else vi=start;
+  V.classList.add("on"); document.body.style.overflow="hidden";
+  vShow(vi); clearInterval(vTimer);
+  vTimer = setInterval(()=>{vi++; vShow(vi);}, S.fadeSeconds*1000);
+}
+function vClose(){ V.classList.remove("on"); document.body.style.overflow=""; clearInterval(vTimer); }
+function vStep(d){ vi+=d; vShow(vi); clearInterval(vTimer);
+  vTimer=setInterval(()=>{vi++; vShow(vi);}, S.fadeSeconds*1000); }
+
+$("#grid").addEventListener("click", e=>{
+  const f = e.target.closest("figure"); if(!f) return;
+  vOpen(shown, +f.dataset.i);
+});
+
+/* --- スマホ：指でなぞると色がつく／タップした時だけ拡大 --- */
+if (matchMedia("(hover:none)").matches) {
+  const gridEl = $("#grid");
+  let sx=0, sy=0, dragged=false;
+  const lit = new Set();
+  function light(x,y){
+    const el = document.elementFromPoint(x,y);
+    const f  = el && el.closest ? el.closest("#grid figure") : null;
+    if(!f) return;
+    f.classList.add("lit"); lit.add(f);
+    clearTimeout(f._fade);
+    f._fade = setTimeout(()=>{ f.classList.remove("lit"); lit.delete(f); }, 1500);
+  }
+  gridEl.addEventListener("touchstart", e=>{
+    const t=e.touches[0]; sx=t.clientX; sy=t.clientY; dragged=false; light(sx,sy);
+  }, {passive:true});
+  gridEl.addEventListener("touchmove", e=>{
+    const t=e.touches[0];
+    if(Math.abs(t.clientX-sx)>10 || Math.abs(t.clientY-sy)>10) dragged=true;
+    light(t.clientX, t.clientY);
+  }, {passive:true});
+  // 指を滑らせていた場合は、写真を開かない
+  gridEl.addEventListener("click", e=>{
+    if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; }
+  }, true);
+}
+$("#playall").addEventListener("click", ()=>vOpen(currentList(), null));
+$("#vclose").addEventListener("click", vClose);
+$("#vnext").addEventListener("click", ()=>vStep(1));
+$("#vprev").addEventListener("click", ()=>vStep(-1));
+document.addEventListener("keydown", e=>{
+  if(!V.classList.contains("on")) return;
+  if(e.key==="Escape") vClose();
+  if(e.key==="ArrowRight") vStep(1);
+  if(e.key==="ArrowLeft") vStep(-1);
+});
+// スマホ：左右スワイプで送る／下スワイプで閉じる
+let tx=0, ty=0;
+V.addEventListener("touchstart", e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; }, {passive:true});
+V.addEventListener("touchend", e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) vStep(dx<0?1:-1);
+  else if(dy>90 && Math.abs(dy)>Math.abs(dx)) vClose();
+}, {passive:true});
+
+/* ---------- 映像 ---------- */
+const vids = (C.videos||[]).filter(v=>v.id);
+if(vids.length){
+  $("#vgrid").innerHTML = vids.map(v=>
+    `<div class="vcard reveal"><div class="fr">
+      <iframe src="https://www.youtube-nocookie.com/embed/${v.id}" title="${v.title||""}"
+        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+        allowfullscreen loading="lazy"></iframe>
+    </div><h3>${v.title||""}</h3></div>`).join("");
+}else{
+  $("#video").style.display="none"; $("#nv-video").parentElement.style.display="none";
+}
+
+/* ---------- 音源 ---------- */
+const trks = (C.tracks||[]).filter(t=>t.file);
+if(trks.length){
+  $("#tracks").innerHTML = trks.map((t,i)=>
+    `<div class="trk reveal">
+      <span class="no">${String(i+1).padStart(2,"0")}</span>
+      <div class="meta"><b>${t.title||""}</b><span>${t.note||""}</span></div>
+      <audio controls preload="none" src="assets/audio/${t.file}"></audio>
+    </div>`).join("");
+}else{
+  $("#music").style.display="none"; $("#nv-music").parentElement.style.display="none";
+}
+
+/* ---------- メンバー ---------- */
+function msLinks(m){
+  const a=[];
+  if(m.x)         a.push(`<a href="${m.x}" target="_blank" rel="noopener">X</a>`);
+  if(m.instagram) a.push(`<a href="${m.instagram}" target="_blank" rel="noopener">INSTAGRAM</a>`);
+  if(m.tiktok)    a.push(`<a href="${m.tiktok}" target="_blank" rel="noopener">TIKTOK</a>`);
+  return a.join("");
+}
+$("#mgrid").innerHTML = (C.members||[]).map(m=>
+  `<div class="mcard reveal">
+    <div class="ph${m.photo?"":" empty"}">${m.photo?`<img src="${PH}${m.photo}" alt="${m.name||""}" loading="lazy">`:""}</div>
+    <div class="part">${m.part||""}</div>
+    <div class="nm">${m.name||""}</div>
+    <div class="ms">${msLinks(m)}</div>
+  </div>`).join("");
+$("#bio").textContent = C.bio || "";
+
+/* ---------- 連絡 ---------- */
+$("#cnote").textContent = C.contactNote || "";
+const ICON = {
+  x:'<svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.1 8.1L23.2 22h-6.6l-5.2-6.8L5.5 22H2.4l7.6-8.7L1.2 2H8l4.7 6.2L18.9 2Zm-1.1 18h1.7L7.3 3.8H5.4L17.8 20Z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.6-1.6 1.5 1.5 0 0 1 1.6 1.6Z"/></svg>',
+  tiktok:'<svg viewBox="0 0 24 24"><path d="M20.5 8.6a6.9 6.9 0 0 1-4.6-1.8v7.4a5.9 5.9 0 1 1-5.9-5.9c.3 0 .6 0 .9.1v3a2.9 2.9 0 1 0 2 2.8V2h2.9a4 4 0 0 0 4.7 3.9Z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24"><path d="M23 12s0-3.5-.4-5.1a2.7 2.7 0 0 0-1.9-1.9C19 4.6 12 4.6 12 4.6s-7 0-8.7.4A2.7 2.7 0 0 0 1.4 6.9C1 8.5 1 12 1 12s0 3.5.4 5.1a2.7 2.7 0 0 0 1.9 1.9c1.7.4 8.7.4 8.7.4s7 0 8.7-.4a2.7 2.7 0 0 0 1.9-1.9C23 15.5 23 12 23 12ZM9.8 15.3V8.7l5.7 3.3Z"/></svg>'
+};
+const LBL = {x:"X (TWITTER)", instagram:"INSTAGRAM", tiktok:"TIKTOK", youtube:"YOUTUBE"};
+$("#snsrow").innerHTML = ["x","instagram","tiktok","youtube"]
+  .filter(k => C.sns && C.sns[k])
+  .map(k => `<a href="${C.sns[k]}" target="_blank" rel="noopener" class="${k==="x"?"main":""}">
+      ${ICON[k]}<span>${LBL[k]}</span></a>`).join("");
+
+/* ---------- スクロールで出現 ---------- */
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+}), {threshold:.12, rootMargin:"0px 0px -8% 0px"});
+$$(".reveal").forEach(e=>io.observe(e));
+
+/* ---------- ヘッダー ---------- */
+const hdr=$("#hdr");
+addEventListener("scroll", ()=>hdr.classList.toggle("solid", scrollY>60), {passive:true});
+const navEl=$("#nav"), burger=$("#burger");
+function setNav(open){
+  navEl.classList.toggle("open", open);
+  burger.classList.toggle("open", open);
+  burger.setAttribute("aria-expanded", open ? "true" : "false");
+}
+burger.addEventListener("click", e=>{ e.stopPropagation(); setNav(!navEl.classList.contains("open")); });
+$$("#nav a").forEach(a=>a.addEventListener("click", ()=>setNav(false)));
+// メニュー以外を触ったら閉じる
+document.addEventListener("click", e=>{
+  if(navEl.classList.contains("open") && !navEl.contains(e.target) && e.target!==burger) setNav(false);
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); });
+
+})();
+</script>
+</body>
+</html>
