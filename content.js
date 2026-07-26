@@ -71,12 +71,27 @@ window.CONTENT = {
     // { id: "動画IDをここに", title: "スタジオ" }
   ],
 
-  /* ---------- 音源 ----------
+  /* ---------- 音源（DEMO） ----------
      website/assets/audio/ フォルダに mp3 を入れて、
      file にそのファイル名を書く（例 "take1.mp3"）           */
   tracks: [
     // { title: "曲名", file: "take1.mp3", note: "スタジオ録音 2026.05" }
   ],
+
+  /* ---------- 物販（SHOP） ----------
+     ・items が空のあいだは「COMING SOON」の画面が出る
+     ・商品を1つでも書いた瞬間、自動で商品一覧に切り替わる
+     ・写真は website/assets/shop/ に入れて photo: "sticker.webp" と書く
+     ・BASE / SUZURI などの外部ストアを使うなら url にそのURLを入れる  */
+  shop: {
+    note: "ステッカー・Tシャツなどを準備中です。\n出来上がりしだい、ここに並べます。",
+    url:      "",                    // オンラインストアのURL（無ければ空でOK）
+    urlLabel: "オンラインストアへ",
+    items: [
+      // { name: "ステッカー", price: "¥500", photo: "sticker.webp",
+      //   url: "https://ここに購入ページのURL", note: "5枚セット" }
+    ]
+  },
 
   /* ---------- メンバー ----------
      photo は members/○○.webp（メンバー写真）または p○○○.webp（ライブ写真）
@@ -91,7 +106,7 @@ window.CONTENT = {
     { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
       x: "https://x.com/k_rockets_",    instagram: "https://www.instagram.com/_k666yy._",  tiktok: "" },
 
-    { name: "アダチ テツンド", part: "Dr",      photo: "members/m4.webp",
+    { name: "アダチテツンド", part: "Dr",      photo: "members/m4.webp",
       x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
 

@@ -211,7 +211,7 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vcard h3{font-size:13.5px;font-weight:500;margin-top:12px;color:var(--dim);letter-spacing:.06em}
 
-/* ---------- MUSIC ---------- */
+/* ---------- DEMO（音源） ---------- */
 .trk{display:flex;align-items:center;gap:clamp(14px,2.5vw,26px);padding:20px 0;
   border-bottom:1px solid var(--line);flex-wrap:wrap}
 .trk .no{font-family:var(--dp);font-size:22px;color:var(--dim);min-width:34px}
@@ -219,6 +219,28 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .trk .meta b{font-size:15px;font-weight:700;display:block}
 .trk .meta span{font-size:11.5px;color:var(--dim);letter-spacing:.1em}
 .trk audio{height:36px;flex:1;min-width:230px;filter:invert(1) hue-rotate(180deg) contrast(.85)}
+
+/* ---------- SHOP（物販） ---------- */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(16px,2.6vw,34px)}
+.scard .ph{aspect-ratio:1/1;background:#101012;overflow:hidden;position:relative;border:1px solid var(--line)}
+.scard .ph img{width:100%;height:100%;object-fit:cover;transition:.7s}
+.scard:hover .ph img{transform:scale(1.06)}
+.scard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
+  font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
+.scard .nm{font-size:15.5px;font-weight:700;margin-top:15px}
+.scard .sub{font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:5px}
+.scard .pr{font-family:var(--dp);font-size:17px;letter-spacing:.05em;margin-top:9px;
+  color:var(--tint);filter:brightness(1.7) saturate(1.4)}
+.scard .btn{margin-top:14px;font-size:11px;padding:11px 20px}
+/* 商品がまだ無いときの画面 */
+.soon{border:1px solid var(--line);text-align:center;padding:clamp(44px,8vw,78px) 24px;
+  background:linear-gradient(160deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.11),transparent 70%)}
+.soon .lb{font-family:var(--dp);font-size:clamp(30px,7vw,58px);line-height:1;letter-spacing:.12em;
+  color:var(--tint);filter:brightness(1.85) saturate(1.35)}
+.soon p{margin-top:20px;font-size:13.5px;line-height:2.1;color:var(--dim);white-space:pre-line}
+.soon .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
+.soon .row .btn svg{width:14px;height:14px;fill:currentColor}
+.storerow{display:flex;justify-content:center;margin-top:clamp(28px,5vh,44px)}
 
 /* ---------- MEMBER ---------- */
 .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:clamp(16px,2.6vw,34px)}
@@ -325,6 +347,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
       <li><a href="#photo">写真</a></li>
       <li><a href="#video" id="nv-video">映像</a></li>
       <li><a href="#music" id="nv-music">音源</a></li>
+      <li><a href="#shop">物販</a></li>
       <li><a href="#member">メンバー</a></li>
       <li><a href="#contact">連絡</a></li>
     </ul>
@@ -375,10 +398,16 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   <div class="vgrid" id="vgrid"></div>
 </section>
 
-<!-- ===== MUSIC ===== -->
+<!-- ===== DEMO（音源） ===== -->
 <section class="blk" id="music">
-  <div class="head reveal"><h2>MUSIC</h2><span class="ja">音源</span></div>
+  <div class="head reveal"><h2>DEMO</h2><span class="ja">音源</span></div>
   <div id="tracks"></div>
+</section>
+
+<!-- ===== SHOP（物販） ===== -->
+<section class="blk" id="shop">
+  <div class="head reveal"><h2>SHOP</h2><span class="ja">物販</span></div>
+  <div id="shopwrap"></div>
 </section>
 
 <!-- ===== MEMBER ===== -->
@@ -696,6 +725,37 @@ $("#mgrid").innerHTML = (C.members||[]).map(m=>
     <div class="ms">${msLinks(m)}</div>
   </div>`).join("");
 $("#bio").textContent = C.bio || "";
+
+/* ---------- 物販 ---------- */
+const SH = C.shop || {};
+const sItems = (SH.items || []).filter(s => s.name);
+const storeBtn = SH.url
+  ? `<a class="btn accent" href="${SH.url}" target="_blank" rel="noopener">${SH.urlLabel || "オンラインストアへ"}</a>` : "";
+
+if(sItems.length){
+  $("#shopwrap").innerHTML =
+    `<div class="sgrid">` + sItems.map(s =>
+      `<div class="scard reveal">
+        <div class="ph${s.photo ? "" : " empty"}">${s.photo
+          ? `<img src="assets/shop/${s.photo}" alt="${s.name}" loading="lazy" decoding="async">` : ""}</div>
+        <div class="nm">${s.name}</div>
+        ${s.note  ? `<div class="sub">${s.note}</div>`   : ""}
+        ${s.price ? `<div class="pr">${s.price}</div>`   : ""}
+        ${s.url   ? `<a class="btn accent" href="${s.url}" target="_blank" rel="noopener">購入する</a>` : ""}
+      </div>`).join("") + `</div>` +
+    (storeBtn ? `<div class="storerow reveal">${storeBtn}</div>` : "");
+}else{
+  const xurl = (C.sns && C.sns.x) || "";
+  $("#shopwrap").innerHTML =
+    `<div class="soon reveal">
+      <div class="lb">COMING SOON</div>
+      <p>${SH.note || "準備中です。"}</p>
+      <div class="row">
+        ${storeBtn}
+        ${xurl ? `<a class="btn" href="${xurl}" target="_blank" rel="noopener">${ICON.x}最新情報を見る</a>` : ""}
+      </div>
+    </div>`;
+}
 
 /* ---------- 連絡 ---------- */
 $("#cnote").textContent = C.contactNote || "";
