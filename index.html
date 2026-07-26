@@ -105,6 +105,12 @@ nav a:hover::after{right:0}
   animation:up 1.3s .25s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes up{to{opacity:1;transform:none}}
 .catch{color:var(--dim);font-size:13px;letter-spacing:.3em;margin-top:14px}
+/* PCではトップの大きいロゴを中央に */
+@media(min-width:761px){
+  .wordmark{text-align:center}
+  .wordmark img{margin-left:auto;margin-right:auto}
+  .catch{text-align:center}
+}
 
 /* 直近ライブカード */
 .nextlive{display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,3vw,48px);
@@ -488,16 +494,19 @@ function liveRow(l, past){
   if(l.open)  t.push(`OPEN <b>${l.open}</b>`);
   if(l.start) t.push(`START <b>${l.start}</b>`);
   const pr = [];
-  if(l.adv)  pr.push(`ADV <b>${l.adv}</b>`);
-  if(l.door) pr.push(`DOOR <b>${l.door}</b>`);
+  if(l.price)     pr.push(`<b>${l.price}</b>`);          // 自由記述の料金（一般/学生など）
+  else {
+    if(l.adv)  pr.push(`ADV <b>${l.adv}</b>`);
+    if(l.door) pr.push(`DOOR <b>${l.door}</b>`);
+  }
   const line2 = [t.join("　/　"), pr.join("　/　"), l.note||""].filter(Boolean).join("　　");
   return `<div class="liverow reveal${past?" past":""}">
     <div class="dt">${l.date||""}<small>${l.day||""}</small></div>
     <div>
-      <div class="ttl">${l.title||""}</div>
+      ${l.title ? `<div class="ttl">${l.title}</div>` : ""}
       <div class="info"><b>${l.venue||""}</b><br>${line2}</div>
     </div>
-    <div>${(!past && l.ticket) ? `<a class="btn accent" href="${l.ticket}" target="_blank" rel="noopener">チケット</a>` : ""}</div>
+    <div>${(!past && l.ticket) ? `<a class="btn accent" href="${l.ticket}" target="_blank" rel="noopener">${l.ticketLabel||"チケット"}</a>` : ""}</div>
   </div>`;
 }
 const lives = C.lives||[];
@@ -518,12 +527,13 @@ $("#pastbtn").addEventListener("click", ()=>{
   if(!n){ $("#nextlive").innerHTML = `<span class="lab">NEXT LIVE</span>
     <div class="v" style="color:var(--dim);font-weight:400">次回公演は決まり次第お知らせします</div>`; return; }
   const meta = [n.open?`OPEN ${n.open}`:"", n.start?`START ${n.start}`:"",
-                n.adv?`ADV ${n.adv}`:"", n.door?`DOOR ${n.door}`:"", n.note||""].filter(Boolean).join("　/　");
+                n.price ? n.price : [n.adv?`ADV ${n.adv}`:"", n.door?`DOOR ${n.door}`:""].filter(Boolean).join("　/　"),
+                n.note||""].filter(Boolean).join("　/　");
   $("#nextlive").innerHTML =
     `<span class="lab">NEXT LIVE</span>
      <div class="d">${n.date}<small>${n.day||""}</small></div>
-     <div><div class="v">${n.venue||""}</div><div class="m">${n.title||""}<br>${meta}</div></div>
-     ${n.ticket ? `<a class="btn accent" href="${n.ticket}" target="_blank" rel="noopener">チケット</a>`
+     <div><div class="v">${n.venue||""}</div><div class="m">${n.title? n.title+"<br>" : ""}${meta}</div></div>
+     ${n.ticket ? `<a class="btn accent" href="${n.ticket}" target="_blank" rel="noopener">${n.ticketLabel||"チケット"}</a>`
                 : `<a class="btn" href="#live">詳細を見る</a>`}`;
 })();
 

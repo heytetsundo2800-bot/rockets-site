@@ -30,46 +30,35 @@ window.CONTENT = {
   contactNote: "出演のご依頼・お問い合わせは X（旧Twitter）の DM にお願いします。",
 
   /* ---------- ライブ情報 ----------
-     ・上から順に表示される（新しい順に並べておく）
+     ・上から順に表示される（近い日付を上に）
      ・past: true を付けると「過去の公演」側に入る
-     ・ticket の URL を空 "" にするとボタンが消える          */
+     ・料金は price に自由に書ける（書かない場合は adv / door が使われる）
+     ・ticket にURLを入れるとボタンが出る。ボタンの文字は ticketLabel で変えられる
+     ・ticket を "" にするとボタンが消える                                */
   lives: [
     {
-      date:   "2026.08.15",
-      day:    "SAT",
-      title:  "ここにイベント名を入れる",
-      venue:  "下北沢◯◯◯◯",
+      date:   "2026.08.04",
+      day:    "TUE",
+      title:  "",                       // イベント名が決まったらここに
+      venue:  "吉祥寺 NEPO",
       open:   "18:00",
       start:  "18:30",
-      adv:    "¥2,500",
-      door:   "¥3,000",
-      note:   "＋1D",           // 補足（空欄 "" でも可）
-      ticket: ""                // 予約フォームやチケットのURL
-    },
-    {
-      date:   "2026.09.06",
-      day:    "SUN",
-      title:  "ここにイベント名を入れる",
-      venue:  "新宿◯◯◯◯",
-      open:   "17:30",
-      start:  "18:00",
-      adv:    "¥2,500",
-      door:   "¥3,000",
-      note:   "＋1D",
-      ticket: ""
-    },
-    {
-      date:   "2026.06.21",
-      day:    "SAT",
-      title:  "（過去公演のサンプル）",
-      venue:  "渋谷◯◯◯◯",
-      open:   "18:00",
-      start:  "18:30",
-      adv:    "¥2,500",
-      door:   "¥3,000",
+      price:  "ADV ¥2,200（＋1D）",
       note:   "",
-      ticket: "",
-      past:   true
+      ticket: "https://nepo.co.jp/",
+      ticketLabel: "会場サイト"
+    },
+    {
+      date:   "2026.08.18",
+      day:    "TUE",
+      title:  "青春火花",
+      venue:  "立川 BABEL",
+      open:   "18:15",
+      start:  "18:30",
+      price:  "一般 ¥2,500 / 学生 ¥1,500（＋1D）",
+      note:   "",
+      ticket: "https://www.babel-rocktower.net/schedule/202608.html",
+      ticketLabel: "会場サイト"
     }
   ],
 
