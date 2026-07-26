@@ -22,7 +22,7 @@ window.CONTENT = {
   sns: {
     x:         "https://x.com/rocket_band04",              // ★連絡はここ、が基本導線
     instagram: "https://www.instagram.com/rockets_official",
-    tiktok:    "",                         // TikTokのURLが決まったらここに入れる
+    tiktok:    "https://www.tiktok.com/@rockets_band",
     youtube:   ""                          // 使うなら URL を入れる
   },
 
@@ -39,13 +39,13 @@ window.CONTENT = {
     {
       date:   "2026.08.04",
       day:    "TUE",
-      title:  "",                       // イベント名が決まったらここに
+      title:  "elephance",
       venue:  "吉祥寺 NEPO",
       open:   "18:00",
       start:  "18:30",
       price:  "ADV ¥2,200（＋1D）",
       note:   "",
-      ticket: "https://nepo.co.jp/",
+      ticket: "https://nepo.co.jp/schedules/view/3249",
       ticketLabel: "会場サイト"
     },
     {
@@ -82,10 +82,17 @@ window.CONTENT = {
      photo は members/○○.webp（メンバー写真）または p○○○.webp（ライブ写真）
      x / instagram / tiktok に個人アカウントのURLを入れると、名前の下にリンクが出ます */
   members: [
-    { name: "いまちま",       part: "BA",      photo: "members/m1.webp", x: "", instagram: "", tiktok: "" },
-    { name: "ゴーザキ",       part: "VO / GT", photo: "members/m2.webp", x: "", instagram: "", tiktok: "" },
-    { name: "Koudai",         part: "LEAD GT", photo: "members/m3.webp", x: "", instagram: "", tiktok: "" },
-    { name: "アタチ テツンド", part: "DR",      photo: "members/m4.webp", x: "", instagram: "", tiktok: "" }
+    { name: "いまちま",       part: "Ba",      photo: "members/m1.webp",
+      x: "https://x.com/imymellsc",     instagram: "https://www.instagram.com/car666lose", tiktok: "" },
+
+    { name: "ゴーザキ",       part: "Vo / Gt", photo: "members/m2.webp",
+      x: "https://x.com/gorockets11",   instagram: "https://www.instagram.com/go._rockets", tiktok: "" },
+
+    { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
+      x: "https://x.com/k_rockets_",    instagram: "https://www.instagram.com/_k666yy._",  tiktok: "" },
+
+    { name: "アタチ テツンド", part: "Dr",      photo: "members/m4.webp",
+      x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
 
   /* ---------- バンド紹介文 ---------- */
