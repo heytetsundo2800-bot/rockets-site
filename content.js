@@ -20,9 +20,9 @@ window.CONTENT = {
   /* ---------- SNS（バンド公式） ----------
      使わないものは url を "" にすれば非表示になる       */
   sns: {
-    x:         "https://x.com/",          // ★連絡はここ、が基本導線
-    instagram: "https://www.instagram.com/",
-    tiktok:    "https://www.tiktok.com/",
+    x:         "https://x.com/rocket_band04",              // ★連絡はここ、が基本導線
+    instagram: "https://www.instagram.com/rockets_official",
+    tiktok:    "",                         // TikTokのURLが決まったらここに入れる
     youtube:   ""                          // 使うなら URL を入れる
   },
 
@@ -90,13 +90,13 @@ window.CONTENT = {
   ],
 
   /* ---------- メンバー ----------
-     photo は website/assets/photos/ の中のファイル名（例 p106.webp）
-     写真を選ぶときは、後述の「写真の番号の調べ方」を参照        */
+     photo は members/○○.webp（メンバー写真）または p○○○.webp（ライブ写真）
+     x / instagram / tiktok に個人アカウントのURLを入れると、名前の下にリンクが出ます */
   members: [
-    { name: "メンバー名", part: "Vo. / Gt.", photo: "p106.webp", x: "", instagram: "", tiktok: "" },
-    { name: "メンバー名", part: "Gt.",       photo: "p132.webp", x: "", instagram: "", tiktok: "" },
-    { name: "メンバー名", part: "Ba.",       photo: "p123.webp", x: "", instagram: "", tiktok: "" },
-    { name: "メンバー名", part: "Dr.",       photo: "p116.webp", x: "", instagram: "", tiktok: "" }
+    { name: "いまちま",       part: "BA",      photo: "members/m1.webp", x: "", instagram: "", tiktok: "" },
+    { name: "ゴーザキ",       part: "VO / GT", photo: "members/m2.webp", x: "", instagram: "", tiktok: "" },
+    { name: "Koudai",         part: "LEAD GT", photo: "members/m3.webp", x: "", instagram: "", tiktok: "" },
+    { name: "アタチ テツンド", part: "DR",      photo: "members/m4.webp", x: "", instagram: "", tiktok: "" }
   ],
 
   /* ---------- バンド紹介文 ---------- */
