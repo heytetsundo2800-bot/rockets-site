@@ -655,9 +655,11 @@ function msLinks(m){
   if(m.tiktok)    a.push(`<a href="${m.tiktok}" target="_blank" rel="noopener">TIKTOK</a>`);
   return a.join("");
 }
+// photo に "/" が入っていれば assets/ からのパス、無ければ assets/photos/ の中
+const photoSrc = f => f.includes("/") ? "assets/" + f : PH + f;
 $("#mgrid").innerHTML = (C.members||[]).map(m=>
   `<div class="mcard reveal">
-    <div class="ph${m.photo?"":" empty"}">${m.photo?`<img src="${PH}${m.photo}" alt="${m.name||""}" loading="lazy">`:""}</div>
+    <div class="ph${m.photo?"":" empty"}">${m.photo?`<img src="${photoSrc(m.photo)}" alt="${m.name||""}" loading="lazy">`:""}</div>
     <div class="part">${m.part||""}</div>
     <div class="nm">${m.name||""}</div>
     <div class="ms">${msLinks(m)}</div>
