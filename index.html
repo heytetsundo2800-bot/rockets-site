@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ROCKETS</title>
+<title>ROCKETs</title>
 <link rel="icon" href="assets/brand/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/brand/favicon.png">
 <meta name="theme-color" content="#080809">
-<meta name="description" content="ROCKETS オフィシャルサイト｜ライブ情報・写真・映像">
-<meta property="og:title" content="ROCKETS">
-<meta property="og:description" content="ROCKETS オフィシャルサイト｜ライブ情報・写真・映像">
+<meta name="description" content="ROCKETs オフィシャルサイト｜ライブ情報・写真・映像">
+<meta property="og:title" content="ROCKETs">
+<meta property="og:description" content="ROCKETs オフィシャルサイト｜ライブ情報・写真・映像">
 <!-- ↓ SNSに貼ったときのサムネイル。Vercel公開後、下の2行を
      https://自分のURL/assets/photos/p084.webp のようにフルURLに書き換えると確実に出ます -->
 <meta property="og:image" content="assets/photos/p084.webp">
-<meta property="og:image:alt" content="ROCKETS">
+<meta property="og:image:alt" content="ROCKETs">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -174,6 +174,11 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .pcount{font-size:11px;color:var(--dim);letter-spacing:.12em;margin-left:auto}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:5px}
 .grid figure{position:relative;aspect-ratio:1;overflow:hidden;cursor:pointer;background:#111}
+.grid figure.hide{display:none}
+.morewrap{display:flex;justify-content:center;margin-top:26px}
+.morebtn{border:1px solid var(--line);background:none;color:var(--dim);cursor:pointer;
+  font-family:var(--jp);font-size:12px;letter-spacing:.2em;padding:14px 34px;transition:.35s}
+.morebtn:hover{color:var(--fg);border-color:var(--fg);background:rgba(255,255,255,.04)}
 .grid img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.05);
   transition:filter .6s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
 .grid figure:hover img{filter:none;transform:scale(1.07)}
@@ -251,21 +256,19 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 /* ---------- スマホ ---------- */
 @media(max-width:760px){
   .burger{display:block;z-index:70;position:relative}
-  /* メニューは三本線のすぐ下にドロップダウンで開く */
+  /* メニューは三本線の真下に、文字だけを縦に並べる（枠なし） */
   nav{position:absolute;top:100%;right:var(--pad);left:auto;
-    min-width:186px;padding:4px 0;
-    background:rgba(8,8,9,.96);backdrop-filter:blur(18px);
-    border:1px solid var(--line);
-    box-shadow:0 18px 44px rgba(0,0,0,.6);
-    opacity:0;visibility:hidden;transform:translateY(-10px);
-    transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.2,1),visibility .28s}
+    background:none;border:0;box-shadow:none;padding:10px 0 0;
+    opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .26s ease,transform .26s cubic-bezier(.2,.8,.2,1),visibility .26s}
   nav.open{opacity:1;visibility:visible;transform:none}
-  nav ul{flex-direction:column;gap:0;align-items:stretch}
-  nav li{border-bottom:1px solid rgba(242,240,236,.08)}
-  nav li:last-child{border-bottom:0}
-  nav a{display:block;padding:14px 20px;font-size:14px;color:var(--fg);letter-spacing:.2em}
+  nav ul{flex-direction:column;gap:0;align-items:flex-end}
+  nav li{border:0}
+  nav a{display:block;padding:11px 2px;font-size:15px;font-weight:700;
+    color:var(--fg);letter-spacing:.22em;text-align:right;
+    text-shadow:0 1px 3px #000, 0 2px 14px rgba(0,0,0,.95)}
   nav a::after{display:none}
-  nav a:active{background:rgba(255,255,255,.07)}
+  nav a:active{opacity:.55}
   /* 開いている間は三本線を × に */
   .burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
   .burger.open span:nth-child(2){opacity:0}
@@ -310,12 +313,12 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 </head>
 <body>
 
-<div id="loader"><img class="lg" src="assets/brand/logo.webp" alt="ROCKETS"></div>
+<div id="loader"><img class="lg" src="assets/brand/logo.webp" alt="ROCKETs" data-logo></div>
 <div id="globaltint"></div>
 <div id="grain"></div>
 
 <header id="hdr">
-  <a href="#hero" class="brand" id="brand"><img src="assets/brand/logo.webp" alt="ROCKETS"></a>
+  <a href="#hero" class="brand" id="brand"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></a>
   <nav id="nav">
     <ul>
       <li><a href="#live">ライブ</a></li>
@@ -336,7 +339,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   <div class="veil"></div>
   <div class="heroInner">
     <div>
-      <h1 class="wordmark" id="wordmark"><img src="assets/brand/logo.webp" alt="ROCKETS"></h1>
+      <h1 class="wordmark" id="wordmark"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></h1>
       <p class="catch" id="catch"></p>
     </div>
     <div class="nextlive" id="nextlive"></div>
@@ -363,6 +366,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
     <span class="pcount" id="pcount"></span>
   </div>
   <div class="grid" id="grid"></div>
+  <div class="morewrap"><button class="morebtn" id="morebtn"></button></div>
 </section>
 
 <!-- ===== VIDEO ===== -->
@@ -392,8 +396,8 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 </section>
 
 <footer>
-  <span class="fb"><img src="assets/brand/logo.webp" alt="ROCKETS"></span>
-  <small>© <span id="yr"></span> ROCKETS</small>
+  <span class="fb"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></span>
+  <small>© <span id="yr"></span> ROCKETs</small>
 </footer>
 
 <!-- 全画面ビューア -->
@@ -421,7 +425,7 @@ const byName = {}; P.photos.forEach(p=>byName[p.f]=p);
 document.title = C.band.title || C.band.name;
 $("#yr").textContent = new Date().getFullYear();
 $("#catch").textContent = C.band.catch || "";
-$$('img[alt="ROCKETS"]').forEach(i=>i.alt = C.band.name);
+$$('img[data-logo]').forEach(i=>i.alt = C.band.name);
 
 /* ---------- 色をページ全体に反映 ---------- */
 function applyTint(rgb){
@@ -539,7 +543,8 @@ $("#pastbtn").addEventListener("click", ()=>{
 })();
 
 /* ---------- 写真グリッド ---------- */
-let filter="all", shown=[];
+let filter="all", shown=[], expanded=false;
+const FIRST = 18;                      // 最初に見せる枚数（全体の約1/3）
 function currentList(){
   return P.photos.filter(p => filter==="all" ? true : filter==="land" ? p.land : !p.land);
 }
@@ -547,11 +552,19 @@ function renderGrid(){
   shown = currentList();
   $("#pcount").textContent = shown.length + " 枚";
   $("#grid").innerHTML = shown.map((p,i)=>
-    `<figure data-i="${i}"><img src="${TH}${p.f}" alt="" loading="lazy" decoding="async"></figure>`).join("");
+    `<figure data-i="${i}"${(!expanded && i>=FIRST) ? ' class="hide"' : ''}><img src="${TH}${p.f}" alt="" loading="lazy" decoding="async"></figure>`).join("");
+  const btn = $("#morebtn"), wrap = $(".morewrap");
+  if(!expanded && shown.length > FIRST){
+    wrap.style.display = "flex";
+    btn.textContent = `もっと表示する（残り ${shown.length - FIRST} 枚）`;
+  } else {
+    wrap.style.display = "none";
+  }
 }
+$("#morebtn").addEventListener("click", ()=>{ expanded = true; renderGrid(); });
 $$(".chip[data-f]").forEach(b=>b.addEventListener("click",()=>{
   $$(".chip[data-f]").forEach(x=>x.classList.remove("on"));
-  b.classList.add("on"); filter=b.dataset.f; renderGrid();
+  b.classList.add("on"); filter=b.dataset.f; expanded=false; renderGrid();
 }));
 renderGrid();
 

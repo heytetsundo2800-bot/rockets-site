@@ -1,5 +1,5 @@
 /* ============================================================
-   ROCKETS ─ サイトの中身はこのファイルだけ編集すればOK
+   ROCKETs ─ サイトの中身はこのファイルだけ編集すればOK
    ------------------------------------------------------------
    ・文字を変えたいときは「"」で囲まれた部分を書き換える
    ・行を増やしたいときは { ... }, をコピペして増やす
@@ -10,11 +10,11 @@ window.CONTENT = {
 
   /* ---------- バンド基本情報 ---------- */
   band: {
-    name: "ROCKETS",
+    name: "ROCKETs",
     // トップの大きい文字の下に出る一言（短く。空欄 "" でも可）
     catch: "",
     // ページのタブに出る名前
-    title: "ROCKETS ｜ Official Site"
+    title: "ROCKETs ｜ Official Site"
   },
 
   /* ---------- SNS（バンド公式） ----------
@@ -91,7 +91,7 @@ window.CONTENT = {
     { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
       x: "https://x.com/k_rockets_",    instagram: "https://www.instagram.com/_k666yy._",  tiktok: "" },
 
-    { name: "アタチ テツンド", part: "Dr",      photo: "members/m4.webp",
+    { name: "アダチ テツンド", part: "Dr",      photo: "members/m4.webp",
       x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
 
