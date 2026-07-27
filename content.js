@@ -106,7 +106,7 @@ window.CONTENT = {
     { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
       x: "https://x.com/k_rockets_",    instagram: "https://www.instagram.com/_k666yy._",  tiktok: "" },
 
-    { name: "アダチテツンド", part: "Dr",      photo: "members/m4.webp",
+    { name: "アダチ テツンド", part: "Dr",      photo: "members/m4.webp",
       x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
 
