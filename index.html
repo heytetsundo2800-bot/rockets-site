@@ -252,8 +252,10 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .mcard .part{font-size:10.5px;letter-spacing:.26em;color:var(--tint);
   filter:brightness(1.7) saturate(1.4);margin-top:16px}
 .mcard .nm{font-size:18px;font-weight:700;margin-top:7px}
-.mcard .wd{font-family:var(--dp);font-size:13.5px;line-height:1.45;letter-spacing:.05em;
-  margin-top:10px;min-height:1.45em;color:#a39f9a;transition:color .5s}
+/* 欧文は Anton、和文は Zen Kaku の900。font-synthesis:none で Anton に偽ボールドを掛けない */
+.mcard .wd{font-family:var(--dp);font-weight:900;font-synthesis:none;
+  font-size:13.5px;line-height:1.5;letter-spacing:.05em;
+  margin-top:10px;min-height:1.5em;color:#a39f9a;transition:color .5s}
 .mcard:hover .wd{color:var(--fg)}
 .mcard .ms{display:flex;gap:9px;margin-top:13px}
 .mcard .ms a{width:36px;height:36px;display:grid;place-items:center;
