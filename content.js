@@ -95,18 +95,23 @@ window.CONTENT = {
 
   /* ---------- メンバー ----------
      photo は members/○○.webp（メンバー写真）または p○○○.webp（ライブ写真）
-     x / instagram / tiktok に個人アカウントのURLを入れると、名前の下にリンクが出ます */
+     word  は名前の下に出る一言（空 "" にすればその人だけ非表示）
+     x / instagram / tiktok に個人アカウントのURLを入れると、一言の下にリンクが出ます */
   members: [
     { name: "いまちま",       part: "Ba",      photo: "members/m1.webp",
+      word: "",
       x: "https://x.com/imymellsc",     instagram: "https://www.instagram.com/car666lose", tiktok: "" },
 
     { name: "ゴーザキ",       part: "Vo / Gt", photo: "members/m2.webp",
+      word: "LET'S GO!! PUNK ROCK!!",
       x: "https://x.com/gorockets11",   instagram: "https://www.instagram.com/go._rockets", tiktok: "" },
 
     { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
+      word: "Punks not dead",
       x: "https://x.com/k_rockets_",    instagram: "https://www.instagram.com/_k666yy._",  tiktok: "" },
 
     { name: "アダチ テツンド", part: "Dr",      photo: "members/m4.webp",
+      word: "ろっくんろーる",
       x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
 
