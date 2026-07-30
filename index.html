@@ -418,6 +418,12 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   font-size:11.5px;letter-spacing:.1em;cursor:pointer;text-decoration:underline;
   text-underline-offset:3px;padding:8px}
 .a2close:hover{color:var(--fg)}
+
+/* フッターの常設リンク（バーを閉じた人でも、あとから追加できる入口） */
+.a2foot{display:block;margin:0 auto 16px;border:1px solid var(--line);background:none;
+  color:var(--dim);font-size:11px;letter-spacing:.18em;padding:10px 20px;
+  cursor:pointer;transition:.3s;font-family:inherit}
+.a2foot:hover{color:var(--fg);border-color:var(--fg)}
 </style>
 </head>
 <body>
@@ -513,6 +519,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 
 <footer>
   <span class="fb"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></span>
+  <button class="a2foot" id="a2foot" type="button" hidden>ホーム画面に置く</button>
   <small>© <span id="yr"></span> ROCKETs</small>
 </footer>
 
@@ -907,31 +914,37 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
 /* ============================================================
    ホーム画面に追加の導線
    ------------------------------------------------------------
-   ライブ会場でQR（BEAM）から来た人が、次のライブや新しい音源を
-   あとからすぐ確認しに来られるようにするための導線。
-   ・BEAMから来た人（?from=beam）には、すぐバーを出す
-   ・検索などから来た人には、少し見てもらってからバーを出す
-   ・一度閉じた人には二度と出さない
+   ROCKETsの新しい情報（ライブ日程・音源・物販）がいちばん早く出るのは
+   このサイト。SNSの投稿は流れていくが、ここは流れない。
+   だから「どの入口から来た人にも」ホーム画面に置いてもらう。
+
+   入口は主に4つ：
+     ① ライブ会場でBEAMのQR（?from=beam）
+     ② Instagramのプロフィールリンク／ストーリーズ  ← アプリ内ブラウザ注意
+     ③ X・TikTokなどのプロフィールリンク
+     ④ 検索
    ============================================================ */
 (function(){
-  const KEY = "rockets.a2hs.dismissed.v1";
-  const UA  = navigator.userAgent || "";
+  const KEY  = "rockets.a2hs.dismissed.v2";   // 値＝閉じた日時（ミリ秒）
+  const SNOOZE = 30 * 24 * 60 * 60 * 1000;    // 閉じても30日たったらもう一度だけ出す
+  const UA = navigator.userAgent || "";
 
   const env = {
-    line:       /\bLine\//i.test(UA),
-    otherInApp: /FBAN|FBAV|FB_IAB|Instagram|MicroMessenger/i.test(UA),
-    ios:        /iPad|iPhone|iPod/.test(UA) ||
-                (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
-    android:    /Android/.test(UA),
+    line:      /\bLine\//i.test(UA),
+    instagram: /Instagram/i.test(UA),
+    facebook:  /FBAN|FBAV|FB_IAB/i.test(UA),
+    ios:       /iPad|iPhone|iPod/.test(UA) ||
+               (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
+    android:   /Android/.test(UA),
     standalone: matchMedia("(display-mode: standalone)").matches || navigator.standalone === true
   };
-  env.inApp     = env.line || env.otherInApp;
+  env.inApp     = env.line || env.instagram || env.facebook;
   env.mobile    = env.ios || env.android;
   env.iosSafari = env.ios && !env.inApp && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(UA);
+  // アプリ内ブラウザの呼び名（案内文で使う）
+  env.appName   = env.line ? "LINE" : env.instagram ? "Instagram" : env.facebook ? "Facebook" : "アプリ";
 
-  // BEAMから渡されたときは ?from=beam が付く
-  const params  = new URLSearchParams(location.search);
-  const fromBeam = params.get("from") === "beam";
+  const fromBeam = new URLSearchParams(location.search).get("from") === "beam";
 
   let deferredInstall = null;
   addEventListener("beforeinstallprompt", e => {
@@ -939,7 +952,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
     if(!$("#a2sheet").hidden) buildSheet();
   });
 
-  // Androidの標準ブラウザ以外を1タップ導線から外さないための素通し用SW
+  // Androidの「1タップで追加」を出すための素通し用SW（キャッシュはしない）
   if("serviceWorker" in navigator){
     addEventListener("load", ()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
@@ -948,51 +961,12 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   // 検索エンジンに別URLとして拾われないよう、この下のどの早期returnより先に実行する。
   if(fromBeam){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }
 
-  /* ---------- 出すかどうか ---------- */
-  if(env.standalone) return;                                  // すでにアプリとして開いている
-  let dismissed = false;
-  try{ dismissed = localStorage.getItem(KEY) === "1"; }catch(e){}
-  if(dismissed) return;
-  if(!env.mobile) return;                                     // PCでは出さない
+  const n = up[0];   // 直近のライブ（無ければ undefined）
 
-  /* ---------- バーの文言 ---------- */
-  const bar = $("#a2hs");
-  const n = up[0];                                            // 直近のライブ（無ければ undefined）
+  /* ============================================================
+     手順シート
+     ============================================================ */
 
-  if(env.inApp){
-    $("#a2t").innerHTML = "<em>ブラウザで開く</em>と、ホーム画面に追加できます";
-    $("#a2s").textContent = (env.line ? "LINE" : "アプリ") + "の中では追加できません";
-  } else if(n){
-    const md = (n.date||"").split(".");
-    const short = md.length === 3 ? `${+md[1]}/${+md[2]}` : n.date;
-    $("#a2t").innerHTML = `<em>NEXT LIVE</em>${short}　${n.venue||""}`;
-    $("#a2s").textContent = "ホーム画面に追加できます";
-  } else {
-    $("#a2t").innerHTML = `<em>ROCKETs</em>ライブ情報・音源・物販`;
-    $("#a2s").textContent = "ホーム画面に追加できます";
-  }
-
-  function show(){ bar.hidden = false; requestAnimationFrame(()=>bar.classList.add("in")); }
-  function hide(remember){
-    bar.classList.remove("in");
-    setTimeout(()=>{ bar.hidden = true; }, 500);
-    if(remember){ try{ localStorage.setItem(KEY,"1"); }catch(e){} }
-  }
-
-  if(fromBeam){
-    setTimeout(show, 900);                                    // 会場で渡された人 → すぐ出す
-  } else {
-    let done = false;
-    const onScroll = ()=>{                                    // 検索から来た人 → 少し見てから
-      if(done || scrollY < innerHeight * 0.6) return;
-      done = true; removeEventListener("scroll", onScroll); show();
-    };
-    addEventListener("scroll", onScroll, {passive:true});
-    setTimeout(()=>{ if(!done){ done = true; removeEventListener("scroll", onScroll); show(); } }, 15000);
-  }
-
-
-  /* ---------- 手順シート ---------- */
   const ICO = {
     share:'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 3v12M12 3l-3.5 3.5M12 3l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 13v5.5A1.5 1.5 0 0 0 7.5 20h9a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     v:'<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>',
@@ -1002,28 +976,58 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   const chip = k => `<span class="ui">${ICO[k]}</span>`;
   const setSteps = arr => { $("#a2list").innerHTML = arr.map(s=>`<li>${s}</li>`).join(""); };
 
+  // 「なぜ入れてほしいのか」— ここが一番伝えたいところ
+  function whyText(){
+    const live = n ? `次のライブ（${n.date}　${n.venue||""}）の詳細も、` : "次のライブが決まったら、その日程も、";
+    return live + "録りたての音源も、物販が並ぶのも、いちばん最初に出るのはこのサイトです。"
+         + "SNSの投稿は流れていくけど、ここは流れません。"
+         + "ホーム画面に置いておけば、思い出したときに1タップで来られます。";
+  }
+
+  function copyUrl(btn){
+    const u = location.origin + "/";
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(u)
+        .then(()=>{ btn.textContent = "コピーしました"; })
+        .catch(()=>{ btn.textContent = "コピーできませんでした"; });
+    }
+  }
+
   function buildSheet(){
     const p = $("#a2primary");
     p.hidden = true;
-    $("#a2why").textContent = n
-      ? `次のライブ（${n.date} ${n.venue||""}）や、新しく出た音源・物販は、このサイトに出ます。`
-      : "ライブ情報・音源・物販は、このサイトに出ます。";
+    $("#a2why").textContent = whyText();
 
+    /* --- アプリ内ブラウザ（Instagram / LINE / Facebook）--- */
     if(env.inApp){
-      $("#a2h").textContent = (env.line ? "LINE" : "アプリ") + "の中では追加できません";
-      setSteps([
-        env.ios ? `画面の<b>右下</b>にある${chip("h")}を押す`
-                : `画面の<b>右上</b>にある${chip("v")}を押す`,
-        `<b>「他のアプリで開く」</b>または<b>「${env.ios ? "Safari" : "ブラウザ"}で開く」</b>を押す`,
-        "開いたブラウザで、もう一度この案内を開く"
-      ]);
-      p.hidden = false; p.textContent = "ブラウザで開く";
-      p.onclick = ()=>{ location.href = location.origin + "/?openExternalBrowser=1"; };
+      $("#a2h").textContent = env.appName + "の中では追加できません";
+
+      if(env.line){
+        // LINEだけは、このパラメータ付きURLを標準ブラウザで開いてくれる
+        setSteps([
+          "下の<b>「ブラウザで開く」</b>を押す",
+          `開いた${env.ios ? "Safari" : "Chrome"}で、もう一度この案内を開く`,
+          "出てくる手順どおりに追加する"
+        ]);
+        p.hidden = false; p.textContent = "ブラウザで開く";
+        p.onclick = ()=>{ location.href = location.origin + "/?openExternalBrowser=1"; };
+      } else {
+        // Instagram / Facebook には自動で外に出す手段が無いので、確実な手順を出す
+        setSteps([
+          env.ios ? `画面の<b>右下</b>にある${chip("h")}を押す`
+                  : `画面の<b>右上</b>にある${chip("v")}を押す`,
+          `<b>「${env.ios ? "Safariで開く" : "ブラウザで開く"}」</b>（または「外部ブラウザで開く」）を押す`,
+          "開いたブラウザで、もう一度この案内を開く"
+        ]);
+        p.hidden = false; p.textContent = "URLをコピーする";
+        p.onclick = ()=>copyUrl(p);
+      }
       return;
     }
 
+    /* --- Android：1タップで追加できる --- */
     if(env.android && deferredInstall){
-      $("#a2h").textContent = "ホーム画面に追加する";
+      $("#a2h").textContent = "ホーム画面に置いてください";
       setSteps([
         "下の<b>「ホーム画面に追加」</b>を押す",
         "確認が出たら<b>「インストール」</b>を押す",
@@ -1040,8 +1044,9 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
       return;
     }
 
+    /* --- Android：手動 --- */
     if(env.android){
-      $("#a2h").textContent = "ホーム画面に追加する";
+      $("#a2h").textContent = "ホーム画面に置いてください";
       setSteps([
         `画面の<b>右上</b>にある${chip("v")}を押す`,
         "<b>「ホーム画面に追加」</b>（または「アプリをインストール」）を押す",
@@ -1050,22 +1055,21 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
       return;
     }
 
+    /* --- iPhone だが Safari ではない --- */
     if(env.ios && !env.iosSafari){
       $("#a2h").textContent = "Safariで開くと追加できます";
       setSteps([
-        "このページのURLをコピーする",
-        "<b>Safari</b>で開き直す",
-        "出てくる案内どおりにホーム画面に追加する"
+        "下の<b>「URLをコピーする」</b>を押す",
+        "<b>Safari</b>を開いて、アドレス欄に貼り付ける",
+        "出てくる手順どおりに追加する"
       ]);
       p.hidden = false; p.textContent = "URLをコピーする";
-      p.onclick = ()=>{
-        const u = location.origin + "/";
-        if(navigator.clipboard){ navigator.clipboard.writeText(u).then(()=>{ p.textContent = "コピーしました"; }).catch(()=>{}); }
-      };
+      p.onclick = ()=>copyUrl(p);
       return;
     }
 
-    $("#a2h").textContent = "ホーム画面に追加する";
+    /* --- iPhone Safari --- */
+    $("#a2h").textContent = "ホーム画面に置いてください";
     setSteps([
       `画面の<b>いちばん下</b>にある${chip("share")}（共有）を押す`,
       `メニューを<b>下にスクロール</b>して${chip("plus")}<b>「ホーム画面に追加」</b>を押す`,
@@ -1076,11 +1080,66 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   function openSheet(){ buildSheet(); $("#a2sheet").hidden = false; }
   function closeSheet(){ $("#a2sheet").hidden = true; }
 
-  $("#a2go").addEventListener("click", openSheet);
-  $("#a2x").addEventListener("click", ()=>hide(true));
   $("#a2bg").addEventListener("click", closeSheet);
   $("#a2cl").addEventListener("click", closeSheet);
   document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSheet(); });
+
+  /* ============================================================
+     下から出るバー
+     ============================================================ */
+
+  const bar = $("#a2hs");
+
+  function show(){ bar.hidden = false; requestAnimationFrame(()=>bar.classList.add("in")); }
+  function hide(remember){
+    bar.classList.remove("in");
+    setTimeout(()=>{ bar.hidden = true; }, 500);
+    if(remember){ try{ localStorage.setItem(KEY, String(Date.now())); }catch(e){} }
+  }
+
+  $("#a2go").addEventListener("click", openSheet);
+  $("#a2x").addEventListener("click", ()=>hide(true));
+
+  // フッターの常設リンク。バーを閉じた人でも、あとから開ける入口を必ず残しておく
+  const footLink = $("#a2foot");
+  if(footLink){
+    if(env.mobile && !env.standalone){ footLink.hidden = false; footLink.addEventListener("click", openSheet); }
+  }
+
+  /* ---------- 出すかどうか ---------- */
+  if(env.standalone) return;    // すでにホーム画面から開いている＝目的達成ずみ
+  if(!env.mobile) return;       // PCでは出さない（追加してもうれしくないため）
+
+  let last = 0;
+  try{ last = Number(localStorage.getItem(KEY) || 0); }catch(e){}
+  if(last && Date.now() - last < SNOOZE) return;   // 閉じた人には30日出さない
+
+  /* ---------- バーの文言 ----------
+     1行目（フック）はどの入口でも同じ。次のライブが一番強い誘い文句だから。
+     2行目だけ、アプリ内ブラウザのときに「追加できない理由」に差し替える。   */
+  if(n){
+    const md = (n.date||"").split(".");
+    const short = md.length === 3 ? `${+md[1]}/${+md[2]}` : n.date;
+    $("#a2t").innerHTML = `<em>NEXT LIVE</em>${short}　${n.venue||""}`;
+  } else {
+    $("#a2t").innerHTML = `<em>ROCKETs</em>最新はいつもここに出ます`;
+  }
+  $("#a2s").textContent = env.inApp
+    ? env.appName + "の中では追加できません"
+    : "ライブも音源も、ここが一番早い";
+
+  /* ---------- 出すタイミング ---------- */
+  if(fromBeam){
+    setTimeout(show, 900);              // 会場で会った直後。いちばん熱いので即
+  } else {
+    // Instagram・X・検索など、どの入口から来た人にも出す。
+    // ただし着地直後は避け、少し中を見てもらってから。
+    let done = false;
+    const fire = ()=>{ if(done) return; done = true; removeEventListener("scroll", onScroll); show(); };
+    const onScroll = ()=>{ if(scrollY > innerHeight * 0.45) fire(); };
+    addEventListener("scroll", onScroll, {passive:true});
+    setTimeout(fire, 8000);
+  }
 })();
 
 })();
