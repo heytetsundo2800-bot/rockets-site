@@ -944,6 +944,10 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
     addEventListener("load", ()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
   }
 
+  // ?from=beam はアドレス欄から消す。
+  // 検索エンジンに別URLとして拾われないよう、この下のどの早期returnより先に実行する。
+  if(fromBeam){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }
+
   /* ---------- 出すかどうか ---------- */
   if(env.standalone) return;                                  // すでにアプリとして開いている
   let dismissed = false;
@@ -987,8 +991,6 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
     setTimeout(()=>{ if(!done){ done = true; removeEventListener("scroll", onScroll); show(); } }, 15000);
   }
 
-  // 共有用のパラメータはアドレス欄から消しておく
-  if(fromBeam){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }
 
   /* ---------- 手順シート ---------- */
   const ICO = {
