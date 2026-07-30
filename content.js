@@ -99,7 +99,7 @@ window.CONTENT = {
      x / instagram / tiktok に個人アカウントのURLを入れると、一言の下にリンクが出ます */
   members: [
     { name: "いまちま",       part: "Ba",      photo: "members/m1.webp",
-      word: "",
+      word: "やるしかねぇ!",
       x: "https://x.com/imymellsc",     instagram: "https://www.instagram.com/car666lose", tiktok: "" },
 
     { name: "ゴーザキ",       part: "Vo / Gt", photo: "members/m2.webp",
@@ -116,7 +116,7 @@ window.CONTENT = {
   ],
 
   /* ---------- バンド紹介文 ---------- */
-  bio: "ここにバンドの紹介文を書く。\n改行したいところで \\n と書けば行が変わる。",
+  bio: "東京のパンクバンドROCKETs。",
 
   /* ---------- 演出の設定 ---------- */
   settings: {
