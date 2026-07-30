@@ -5,8 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ROCKETs</title>
 <link rel="icon" href="assets/brand/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="assets/brand/favicon.png">
+<link rel="apple-touch-icon" href="assets/brand/icon-512.png">
 <meta name="theme-color" content="#080809">
+<!-- ホーム画面に追加したときの設定 -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="ROCKETs">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="ROCKETs オフィシャルサイト｜ライブ情報・写真・映像">
 <meta property="og:title" content="ROCKETs">
 <meta property="og:description" content="ROCKETs オフィシャルサイト｜ライブ情報・写真・映像">
@@ -336,6 +342,82 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   *{animation-duration:.01ms!important;transition-duration:.15s!important}
   .slide.kb{animation:none}
 }
+
+/* ============================================================
+   ホーム画面に追加の導線（下から出るバー ＋ 手順シート）
+   ライブ会場でQRから来た人が、あとから戻ってこれるようにするための導線。
+   サイトの見え方そのものは変えない。
+   ============================================================ */
+
+[hidden]{display:none!important}
+
+#a2hs{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(8,8,9,.94);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  padding:14px var(--pad) calc(14px + env(safe-area-inset-bottom,0px));
+  transform:translateY(110%);transition:transform .5s cubic-bezier(.2,.7,.3,1)
+}
+#a2hs.in{transform:none}
+.a2-row{display:flex;align-items:center;gap:14px;max-width:1000px;margin:0 auto}
+.a2-ico{flex:0 0 auto;width:42px;height:42px;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+.a2-ico img{width:100%;height:100%;object-fit:cover}
+.a2-txt{flex:1 1 auto;min-width:0;display:block}
+/* 1行ずつに固定する。折り返すとバーが高くなって邪魔になるため */
+.a2-t,.a2-s{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a2-t{font-size:13.5px;font-weight:700;line-height:1.55}
+.a2-t em{font-style:normal;color:var(--tint);font-size:.85em;letter-spacing:.14em;margin-right:.5em}
+.a2-s{font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.5}
+.a2-btn{flex:0 0 auto;font-size:11px;letter-spacing:.14em;font-weight:700;
+  padding:10px 15px;border:1px solid var(--fg);background:transparent;color:var(--fg);
+  cursor:pointer;transition:.3s;white-space:nowrap}
+.a2-btn:hover{background:var(--fg);color:#000}
+.a2-x{flex:0 0 auto;width:28px;height:28px;border:0;background:none;color:var(--dim);
+  font-size:15px;cursor:pointer;line-height:1}
+.a2-x:hover{color:var(--fg)}
+@media(max-width:600px){
+  #a2hs{padding-left:16px;padding-right:12px}
+  .a2-row{gap:10px}
+  .a2-ico{width:34px;height:34px}
+  .a2-t{font-size:12.5px}
+  .a2-s{font-size:10.5px}
+  .a2-btn{padding:9px 11px;font-size:10px;letter-spacing:.04em}
+  .a2-x{width:24px}
+}
+
+/* ---------- 手順シート ---------- */
+#a2sheet{position:fixed;inset:0;z-index:61;display:flex;align-items:flex-end;justify-content:center}
+#a2sheet .bg{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+#a2sheet .panel{position:relative;width:100%;max-width:520px;background:#0d0d0f;
+  border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+  padding:10px 24px calc(30px + env(safe-area-inset-bottom,0px));
+  max-height:92vh;overflow-y:auto;animation:a2rise .28s cubic-bezier(.2,.7,.3,1)}
+@keyframes a2rise{from{transform:translateY(30px);opacity:.3}to{transform:none;opacity:1}}
+@media(min-width:560px){#a2sheet{align-items:center}
+  #a2sheet .panel{border-radius:20px;border:1px solid var(--line)}}
+#a2sheet .grip{width:38px;height:3px;border-radius:3px;background:var(--line);margin:2px auto 20px}
+#a2sheet h3{font-size:15px;font-weight:700;letter-spacing:.03em;margin-bottom:8px;line-height:1.6}
+#a2sheet .why{font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:24px}
+
+.a2steps{list-style:none;counter-reset:a2;margin:0 0 24px;padding:0}
+.a2steps li{counter-increment:a2;position:relative;padding:0 0 20px 42px;font-size:13.5px;line-height:1.75}
+.a2steps li::before{content:counter(a2);position:absolute;left:0;top:0;width:26px;height:26px;
+  border-radius:50%;background:var(--fg);color:#000;font-size:11.5px;font-weight:900;
+  display:flex;align-items:center;justify-content:center}
+.a2steps li::after{content:"";position:absolute;left:12.5px;top:30px;bottom:5px;width:1px;background:var(--line)}
+.a2steps li:last-child{padding-bottom:2px}
+.a2steps li:last-child::after{display:none}
+.a2steps b{font-weight:700}
+.a2steps .ui{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:30px;
+  border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin:0 3px;
+  background:rgba(242,240,236,.06);font-size:12.5px;font-weight:700;vertical-align:-1px;white-space:nowrap}
+.a2acts{display:flex;flex-direction:column;gap:9px}
+.a2acts .btn{justify-content:center;width:100%}
+.a2close{display:block;margin:20px auto 0;border:0;background:none;color:var(--dim);
+  font-size:11.5px;letter-spacing:.1em;cursor:pointer;text-decoration:underline;
+  text-underline-offset:3px;padding:8px}
+.a2close:hover{color:var(--fg)}
 </style>
 </head>
 <body>
@@ -442,6 +524,34 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   <button class="vnav next" id="vnext" aria-label="次へ"></button>
   <button class="vclose" id="vclose" aria-label="閉じる">×</button>
   <div class="vhint">タップ／スワイプで次へ　・　ESC で閉じる</div>
+</div>
+
+<!-- ホーム画面に追加：下から出るバー -->
+<div id="a2hs" hidden>
+  <div class="a2-row">
+    <span class="a2-ico"><img src="assets/brand/icon-192.png" alt=""></span>
+    <span class="a2-txt">
+      <span class="a2-t" id="a2t"></span>
+      <span class="a2-s" id="a2s">ホーム画面に入れておくと、いつでもすぐ見られます</span>
+    </span>
+    <button class="a2-btn" id="a2go" type="button">追加のしかた</button>
+    <button class="a2-x" id="a2x" type="button" aria-label="閉じる">×</button>
+  </div>
+</div>
+
+<!-- ホーム画面に追加：手順シート -->
+<div id="a2sheet" hidden>
+  <div class="bg" id="a2bg"></div>
+  <div class="panel">
+    <div class="grip"></div>
+    <h3 id="a2h"></h3>
+    <p class="why" id="a2why"></p>
+    <ol class="a2steps" id="a2list"></ol>
+    <div class="a2acts">
+      <button class="btn accent" id="a2primary" type="button" hidden></button>
+    </div>
+    <button class="a2close" id="a2cl" type="button">閉じる</button>
+  </div>
 </div>
 
 <script src="assets/photos.js"></script>
@@ -792,6 +902,184 @@ document.addEventListener("click", e=>{
   if(navEl.classList.contains("open") && !navEl.contains(e.target) && e.target!==burger) setNav(false);
 });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); });
+
+
+/* ============================================================
+   ホーム画面に追加の導線
+   ------------------------------------------------------------
+   ライブ会場でQR（BEAM）から来た人が、次のライブや新しい音源を
+   あとからすぐ確認しに来られるようにするための導線。
+   ・BEAMから来た人（?from=beam）には、すぐバーを出す
+   ・検索などから来た人には、少し見てもらってからバーを出す
+   ・一度閉じた人には二度と出さない
+   ============================================================ */
+(function(){
+  const KEY = "rockets.a2hs.dismissed.v1";
+  const UA  = navigator.userAgent || "";
+
+  const env = {
+    line:       /\bLine\//i.test(UA),
+    otherInApp: /FBAN|FBAV|FB_IAB|Instagram|MicroMessenger/i.test(UA),
+    ios:        /iPad|iPhone|iPod/.test(UA) ||
+                (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
+    android:    /Android/.test(UA),
+    standalone: matchMedia("(display-mode: standalone)").matches || navigator.standalone === true
+  };
+  env.inApp     = env.line || env.otherInApp;
+  env.mobile    = env.ios || env.android;
+  env.iosSafari = env.ios && !env.inApp && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(UA);
+
+  // BEAMから渡されたときは ?from=beam が付く
+  const params  = new URLSearchParams(location.search);
+  const fromBeam = params.get("from") === "beam";
+
+  let deferredInstall = null;
+  addEventListener("beforeinstallprompt", e => {
+    e.preventDefault(); deferredInstall = e;
+    if(!$("#a2sheet").hidden) buildSheet();
+  });
+
+  // Androidの標準ブラウザ以外を1タップ導線から外さないための素通し用SW
+  if("serviceWorker" in navigator){
+    addEventListener("load", ()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+  }
+
+  /* ---------- 出すかどうか ---------- */
+  if(env.standalone) return;                                  // すでにアプリとして開いている
+  let dismissed = false;
+  try{ dismissed = localStorage.getItem(KEY) === "1"; }catch(e){}
+  if(dismissed) return;
+  if(!env.mobile) return;                                     // PCでは出さない
+
+  /* ---------- バーの文言 ---------- */
+  const bar = $("#a2hs");
+  const n = up[0];                                            // 直近のライブ（無ければ undefined）
+
+  if(env.inApp){
+    $("#a2t").innerHTML = "<em>ブラウザで開く</em>と、ホーム画面に追加できます";
+    $("#a2s").textContent = (env.line ? "LINE" : "アプリ") + "の中では追加できません";
+  } else if(n){
+    const md = (n.date||"").split(".");
+    const short = md.length === 3 ? `${+md[1]}/${+md[2]}` : n.date;
+    $("#a2t").innerHTML = `<em>NEXT LIVE</em>${short}　${n.venue||""}`;
+    $("#a2s").textContent = "ホーム画面に追加できます";
+  } else {
+    $("#a2t").innerHTML = `<em>ROCKETs</em>ライブ情報・音源・物販`;
+    $("#a2s").textContent = "ホーム画面に追加できます";
+  }
+
+  function show(){ bar.hidden = false; requestAnimationFrame(()=>bar.classList.add("in")); }
+  function hide(remember){
+    bar.classList.remove("in");
+    setTimeout(()=>{ bar.hidden = true; }, 500);
+    if(remember){ try{ localStorage.setItem(KEY,"1"); }catch(e){} }
+  }
+
+  if(fromBeam){
+    setTimeout(show, 900);                                    // 会場で渡された人 → すぐ出す
+  } else {
+    let done = false;
+    const onScroll = ()=>{                                    // 検索から来た人 → 少し見てから
+      if(done || scrollY < innerHeight * 0.6) return;
+      done = true; removeEventListener("scroll", onScroll); show();
+    };
+    addEventListener("scroll", onScroll, {passive:true});
+    setTimeout(()=>{ if(!done){ done = true; removeEventListener("scroll", onScroll); show(); } }, 15000);
+  }
+
+  // 共有用のパラメータはアドレス欄から消しておく
+  if(fromBeam){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }
+
+  /* ---------- 手順シート ---------- */
+  const ICO = {
+    share:'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 3v12M12 3l-3.5 3.5M12 3l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 13v5.5A1.5 1.5 0 0 0 7.5 20h9a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    v:'<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>',
+    h:'<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" width="14" height="14"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 8.5v7M8.5 12h7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'
+  };
+  const chip = k => `<span class="ui">${ICO[k]}</span>`;
+  const setSteps = arr => { $("#a2list").innerHTML = arr.map(s=>`<li>${s}</li>`).join(""); };
+
+  function buildSheet(){
+    const p = $("#a2primary");
+    p.hidden = true;
+    $("#a2why").textContent = n
+      ? `次のライブ（${n.date} ${n.venue||""}）や、新しく出た音源・物販は、このサイトに出ます。`
+      : "ライブ情報・音源・物販は、このサイトに出ます。";
+
+    if(env.inApp){
+      $("#a2h").textContent = (env.line ? "LINE" : "アプリ") + "の中では追加できません";
+      setSteps([
+        env.ios ? `画面の<b>右下</b>にある${chip("h")}を押す`
+                : `画面の<b>右上</b>にある${chip("v")}を押す`,
+        `<b>「他のアプリで開く」</b>または<b>「${env.ios ? "Safari" : "ブラウザ"}で開く」</b>を押す`,
+        "開いたブラウザで、もう一度この案内を開く"
+      ]);
+      p.hidden = false; p.textContent = "ブラウザで開く";
+      p.onclick = ()=>{ location.href = location.origin + "/?openExternalBrowser=1"; };
+      return;
+    }
+
+    if(env.android && deferredInstall){
+      $("#a2h").textContent = "ホーム画面に追加する";
+      setSteps([
+        "下の<b>「ホーム画面に追加」</b>を押す",
+        "確認が出たら<b>「インストール」</b>を押す",
+        "ホーム画面にROCKETsのアイコンができれば完了"
+      ]);
+      p.hidden = false; p.textContent = "ホーム画面に追加";
+      p.onclick = ()=>{
+        deferredInstall.prompt();
+        deferredInstall.userChoice.then(r=>{
+          deferredInstall = null;
+          if(r && r.outcome === "accepted"){ closeSheet(); hide(true); } else buildSheet();
+        });
+      };
+      return;
+    }
+
+    if(env.android){
+      $("#a2h").textContent = "ホーム画面に追加する";
+      setSteps([
+        `画面の<b>右上</b>にある${chip("v")}を押す`,
+        "<b>「ホーム画面に追加」</b>（または「アプリをインストール」）を押す",
+        "<b>「追加」</b>を押す → ホーム画面にROCKETsのアイコンができます"
+      ]);
+      return;
+    }
+
+    if(env.ios && !env.iosSafari){
+      $("#a2h").textContent = "Safariで開くと追加できます";
+      setSteps([
+        "このページのURLをコピーする",
+        "<b>Safari</b>で開き直す",
+        "出てくる案内どおりにホーム画面に追加する"
+      ]);
+      p.hidden = false; p.textContent = "URLをコピーする";
+      p.onclick = ()=>{
+        const u = location.origin + "/";
+        if(navigator.clipboard){ navigator.clipboard.writeText(u).then(()=>{ p.textContent = "コピーしました"; }).catch(()=>{}); }
+      };
+      return;
+    }
+
+    $("#a2h").textContent = "ホーム画面に追加する";
+    setSteps([
+      `画面の<b>いちばん下</b>にある${chip("share")}（共有）を押す`,
+      `メニューを<b>下にスクロール</b>して${chip("plus")}<b>「ホーム画面に追加」</b>を押す`,
+      "<b>右上の「追加」</b>を押す → ホーム画面にROCKETsのアイコンができます"
+    ]);
+  }
+
+  function openSheet(){ buildSheet(); $("#a2sheet").hidden = false; }
+  function closeSheet(){ $("#a2sheet").hidden = true; }
+
+  $("#a2go").addEventListener("click", openSheet);
+  $("#a2x").addEventListener("click", ()=>hide(true));
+  $("#a2bg").addEventListener("click", closeSheet);
+  $("#a2cl").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSheet(); });
+})();
 
 })();
 </script>

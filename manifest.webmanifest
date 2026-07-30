@@ -1,0 +1,23 @@
+{
+  "name": "ROCKETs",
+  "short_name": "ROCKETs",
+  "description": "ROCKETs オフィシャルサイト｜ライブ情報・写真・映像・音源・物販",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080809",
+  "theme_color": "#080809",
+  "icons": [
+    { "src": "/assets/brand/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/brand/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/brand/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "ライブ情報", "url": "/#live" },
+    { "name": "写真", "url": "/#photo" },
+    { "name": "物販", "url": "/#shop" }
+  ]
+}
