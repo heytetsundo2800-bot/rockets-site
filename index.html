@@ -992,8 +992,10 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   // ちゃんとした誘い文句は、ブラウザに移ったあとの画面で読んでもらう。
   function whyText(){
     if(env.inApp){
+      // 開く先の名前は環境で変わる（iPhone＝Safari、Android＝Chrome とは限らない。
+      // 既定のブラウザは人によって違う）ので、名指しせず「ブラウザ」で通す。
       return env.appName + "の中で開いているので、このままでは作れません。"
-           + `下の手順で${env.ios ? "Safari" : "Chrome"}に移れば作れます。`;
+           + "下の手順でブラウザに移れば作れます。";
     }
     const live = n ? `次のライブ（${n.date}　${n.venue||""}）の詳細も、` : "次のライブが決まったら、その日程も、";
     return "このホームページは、ホーム画面に置くとアプリのように使えます。" + live
@@ -1023,7 +1025,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
         // LINEだけは、このパラメータ付きURLを標準ブラウザで開いてくれる
         setSteps([
           "下の<b>「ブラウザで開く」</b>を押す",
-          `開いた${env.ios ? "Safari" : "Chrome"}で、もう一度この案内を開く`,
+          "開いたブラウザで、もう一度この案内を開く",
           "出てくる手順どおりに追加する"
         ]);
         p.hidden = false; p.textContent = "ブラウザで開く";
@@ -1034,7 +1036,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
         // ⋯ メニューから外部ブラウザに移ってもらう一本道にする。
         setSteps([
           `画面の<b>右上</b>にある${chip("h")}を押す`,
-          `<b>「外部ブラウザで開く」</b>を押す（${env.ios ? "Safari" : "Chrome"}が開きます）`,
+          "<b>「外部ブラウザで開く」</b>を押す",
           "同じページが開いたら、<b>下に出るこの案内から続けてください</b>"
         ]);
       }
