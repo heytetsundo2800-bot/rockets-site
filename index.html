@@ -366,11 +366,13 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 .a2-txt{flex:1 1 auto;min-width:0;display:block}
 /* 1行ずつに固定する。折り返すとバーが高くなって邪魔になるため */
 .a2-t,.a2-s{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.a2-t{font-size:13.5px;font-weight:700;line-height:1.55}
+.a2-t{font-size:12.5px;font-weight:700;line-height:1.55;letter-spacing:-.01em}
 .a2-t em{font-style:normal;color:var(--tint);font-size:.85em;letter-spacing:.14em;margin-right:.5em}
+/* 文中で「アプリ」だけ光らせる（ラベル用のemとは別扱い） */
+.a2-t em.hi{color:var(--tint);font-size:1em;letter-spacing:.02em;margin:0}
 .a2-s{font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.5}
-.a2-btn{flex:0 0 auto;font-size:11px;letter-spacing:.14em;font-weight:700;
-  padding:10px 15px;border:1px solid var(--fg);background:transparent;color:var(--fg);
+.a2-btn{flex:0 0 auto;font-size:11px;letter-spacing:.04em;font-weight:700;
+  padding:10px 12px;border:1px solid var(--fg);background:transparent;color:var(--fg);
   cursor:pointer;transition:.3s;white-space:nowrap}
 .a2-btn:hover{background:var(--fg);color:#000}
 .a2-x{flex:0 0 auto;width:28px;height:28px;border:0;background:none;color:var(--dim);
@@ -380,9 +382,9 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   #a2hs{padding-left:16px;padding-right:12px}
   .a2-row{gap:10px}
   .a2-ico{width:34px;height:34px}
-  .a2-t{font-size:12.5px}
+  .a2-t{font-size:11.5px}
   .a2-s{font-size:10.5px}
-  .a2-btn{padding:9px 11px;font-size:10px;letter-spacing:.04em}
+  .a2-btn{padding:9px 9px;font-size:10px;letter-spacing:0}
   .a2-x{width:24px}
 }
 
@@ -420,7 +422,10 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 .a2close:hover{color:var(--fg)}
 
 /* フッターの常設リンク（バーを閉じた人でも、あとから追加できる入口） */
-.a2foot{display:block;margin:0 auto 16px;border:1px solid var(--line);background:none;
+.a2foot-box{margin:0 auto 22px;text-align:center}
+.a2foot-box p{margin:0 0 10px;font-size:12.5px;color:var(--dim);line-height:1.7}
+.a2foot-box b{color:var(--fg);font-weight:700}
+.a2foot{display:block;margin:0 auto;border:1px solid var(--line);background:none;
   color:var(--dim);font-size:11px;letter-spacing:.18em;padding:10px 20px;
   cursor:pointer;transition:.3s;font-family:inherit}
 .a2foot:hover{color:var(--fg);border-color:var(--fg)}
@@ -519,7 +524,10 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 
 <footer>
   <span class="fb"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></span>
-  <button class="a2foot" id="a2foot" type="button" hidden>ホーム画面に置く</button>
+  <div class="a2foot-box" id="a2footbox" hidden>
+    <p>ROCKETsのホームページは、<b>アプリにできます</b></p>
+    <button class="a2foot" id="a2foot" type="button">やり方はこちら</button>
+  </div>
   <small>© <span id="yr"></span> ROCKETs</small>
 </footer>
 
@@ -541,7 +549,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
       <span class="a2-t" id="a2t"></span>
       <span class="a2-s" id="a2s">ホーム画面に入れておくと、いつでもすぐ見られます</span>
     </span>
-    <button class="a2-btn" id="a2go" type="button">追加のしかた</button>
+    <button class="a2-btn" id="a2go" type="button">やり方はこちら</button>
     <button class="a2-x" id="a2x" type="button" aria-label="閉じる">×</button>
   </div>
 </div>
@@ -977,11 +985,16 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   const setSteps = arr => { $("#a2list").innerHTML = arr.map(s=>`<li>${s}</li>`).join(""); };
 
   // 「なぜ入れてほしいのか」— ここが一番伝えたいところ
+  // 「なにをするのか」を先に、「なぜやるのか」を後に
   function whyText(){
+    const head = "このホームページは、ホーム画面に置くとアプリのように使えます。";
+    const blocked = env.inApp
+      ? env.appName + "の中で開いているので、このままでは作れません。下の手順でブラウザに移れば作れます。"
+      : "";
     const live = n ? `次のライブ（${n.date}　${n.venue||""}）の詳細も、` : "次のライブが決まったら、その日程も、";
-    return live + "録りたての音源も、物販が並ぶのも、いちばん最初に出るのはこのサイトです。"
-         + "SNSの投稿は流れていくけど、ここは流れません。"
-         + "ホーム画面に置いておけば、思い出したときに1タップで来られます。";
+    return blocked + head + live
+         + "録りたての音源も、物販が並ぶのも、いちばん最初に出るのはこのアプリです。"
+         + "SNSの投稿は流れていくけど、ここは流れません。思い出したときに1タップで来られます。";
   }
 
   function copyUrl(btn){
@@ -1000,7 +1013,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
 
     /* --- アプリ内ブラウザ（Instagram / LINE / Facebook）--- */
     if(env.inApp){
-      $("#a2h").textContent = env.appName + "の中では追加できません";
+      $("#a2h").textContent = "ホームページをアプリにしよう";
 
       if(env.line){
         // LINEだけは、このパラメータ付きURLを標準ブラウザで開いてくれる
@@ -1027,7 +1040,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
 
     /* --- Android：1タップで追加できる --- */
     if(env.android && deferredInstall){
-      $("#a2h").textContent = "ホーム画面に置いてください";
+      $("#a2h").textContent = "ホームページをアプリにしよう";
       setSteps([
         "下の<b>「ホーム画面に追加」</b>を押す",
         "確認が出たら<b>「インストール」</b>を押す",
@@ -1046,7 +1059,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
 
     /* --- Android：手動 --- */
     if(env.android){
-      $("#a2h").textContent = "ホーム画面に置いてください";
+      $("#a2h").textContent = "ホームページをアプリにしよう";
       setSteps([
         `画面の<b>右上</b>にある${chip("v")}を押す`,
         "<b>「ホーム画面に追加」</b>（または「アプリをインストール」）を押す",
@@ -1057,7 +1070,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
 
     /* --- iPhone だが Safari ではない --- */
     if(env.ios && !env.iosSafari){
-      $("#a2h").textContent = "Safariで開くと追加できます";
+      $("#a2h").textContent = "ホームページをアプリにしよう";
       setSteps([
         "下の<b>「URLをコピーする」</b>を押す",
         "<b>Safari</b>を開いて、アドレス欄に貼り付ける",
@@ -1069,7 +1082,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
     }
 
     /* --- iPhone Safari --- */
-    $("#a2h").textContent = "ホーム画面に置いてください";
+    $("#a2h").textContent = "ホームページをアプリにしよう";
     setSteps([
       `画面の<b>いちばん下</b>にある${chip("share")}（共有）を押す`,
       `メニューを<b>下にスクロール</b>して${chip("plus")}<b>「ホーム画面に追加」</b>を押す`,
@@ -1101,9 +1114,10 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   $("#a2x").addEventListener("click", ()=>hide(true));
 
   // フッターの常設リンク。バーを閉じた人でも、あとから開ける入口を必ず残しておく
-  const footLink = $("#a2foot");
-  if(footLink){
-    if(env.mobile && !env.standalone){ footLink.hidden = false; footLink.addEventListener("click", openSheet); }
+  const footBox = $("#a2footbox");
+  if(footBox && env.mobile && !env.standalone){
+    footBox.hidden = false;
+    $("#a2foot").addEventListener("click", openSheet);
   }
 
   /* ---------- 出すかどうか ---------- */
@@ -1115,18 +1129,19 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   if(last && Date.now() - last < SNOOZE) return;   // 閉じた人には30日出さない
 
   /* ---------- バーの文言 ----------
-     1行目（フック）はどの入口でも同じ。次のライブが一番強い誘い文句だから。
-     2行目だけ、アプリ内ブラウザのときに「追加できない理由」に差し替える。   */
-  if(n){
+     1行目は「何ができるのか」。「追加」だと何が起きるのか伝わらないので、
+     ホーム画面のアイコン＝アプリ、という言い方で統一している。          */
+  $("#a2t").innerHTML = `ホームページを<em class="hi">アプリ</em>にしよう`;
+
+  if(env.inApp){
+    $("#a2s").textContent = env.appName + "の中では作れません";
+  } else if(n){
     const md = (n.date||"").split(".");
     const short = md.length === 3 ? `${+md[1]}/${+md[2]}` : n.date;
-    $("#a2t").innerHTML = `<em>NEXT LIVE</em>${short}　${n.venue||""}`;
+    $("#a2s").textContent = `次のライブ ${short} ${n.venue||""}`;
   } else {
-    $("#a2t").innerHTML = `<em>ROCKETs</em>最新はいつもここに出ます`;
+    $("#a2s").textContent = "ライブも音源も、ここが一番早い";
   }
-  $("#a2s").textContent = env.inApp
-    ? env.appName + "の中では追加できません"
-    : "ライブも音源も、ここが一番早い";
 
   /* ---------- 出すタイミング ---------- */
   if(fromBeam){
