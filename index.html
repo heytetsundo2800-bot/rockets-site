@@ -33,6 +33,9 @@
   --line:rgba(242,240,236,.14);
   --tint-r:120; --tint-g:110; --tint-b:130;
   --tint:rgb(var(--tint-r),var(--tint-g),var(--tint-b));
+  /* --tint は写真から自動抽出するので暗くなることがある。
+     読ませたい文字にはこの固定色を使う（背景は常にほぼ黒なので必ず読める） */
+  --pop:#ffd84a;
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",-apple-system,sans-serif;
   --dp:"Anton","Zen Kaku Gothic New",Impact,sans-serif;
   --pad:clamp(20px,5vw,64px);
@@ -369,7 +372,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 .a2-t{font-size:12.5px;font-weight:700;line-height:1.55;letter-spacing:-.01em}
 .a2-t em{font-style:normal;color:var(--tint);font-size:.85em;letter-spacing:.14em;margin-right:.5em}
 /* 文中で「アプリ」だけ光らせる（ラベル用のemとは別扱い） */
-.a2-t em.hi{color:var(--tint);font-size:1em;letter-spacing:.02em;margin:0}
+.a2-t em.hi{color:var(--pop);font-size:1em;letter-spacing:.02em;margin:0;font-weight:800}
 .a2-s{font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.5}
 .a2-btn{flex:0 0 auto;font-size:11px;letter-spacing:.04em;font-weight:700;
   padding:10px 12px;border:1px solid var(--fg);background:transparent;color:var(--fg);
@@ -424,7 +427,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 /* フッターの常設リンク（バーを閉じた人でも、あとから追加できる入口） */
 .a2foot-box{margin:0 auto 22px;text-align:center}
 .a2foot-box p{margin:0 0 10px;font-size:12.5px;color:var(--dim);line-height:1.7}
-.a2foot-box b{color:var(--fg);font-weight:700}
+.a2foot-box b{color:var(--pop);font-weight:800}
 .a2foot{display:block;margin:0 auto;border:1px solid var(--line);background:none;
   color:var(--dim);font-size:11px;letter-spacing:.18em;padding:10px 20px;
   cursor:pointer;transition:.3s;font-family:inherit}
@@ -985,14 +988,15 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
   const setSteps = arr => { $("#a2list").innerHTML = arr.map(s=>`<li>${s}</li>`).join(""); };
 
   // 「なぜ入れてほしいのか」— ここが一番伝えたいところ
-  // 「なにをするのか」を先に、「なぜやるのか」を後に
+  // アプリ内ブラウザのときは「読ませる」より「動かす」を優先し、短く言い切る。
+  // ちゃんとした誘い文句は、ブラウザに移ったあとの画面で読んでもらう。
   function whyText(){
-    const head = "このホームページは、ホーム画面に置くとアプリのように使えます。";
-    const blocked = env.inApp
-      ? env.appName + "の中で開いているので、このままでは作れません。下の手順でブラウザに移れば作れます。"
-      : "";
+    if(env.inApp){
+      return env.appName + "の中で開いているので、このままでは作れません。"
+           + `下の手順で${env.ios ? "Safari" : "Chrome"}に移れば作れます。`;
+    }
     const live = n ? `次のライブ（${n.date}　${n.venue||""}）の詳細も、` : "次のライブが決まったら、その日程も、";
-    return blocked + head + live
+    return "このホームページは、ホーム画面に置くとアプリのように使えます。" + live
          + "録りたての音源も、物販が並ぶのも、いちばん最初に出るのはこのアプリです。"
          + "SNSの投稿は流れていくけど、ここは流れません。思い出したときに1タップで来られます。";
   }
@@ -1025,15 +1029,14 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
         p.hidden = false; p.textContent = "ブラウザで開く";
         p.onclick = ()=>{ location.href = location.origin + "/?openExternalBrowser=1"; };
       } else {
-        // Instagram / Facebook には自動で外に出す手段が無いので、確実な手順を出す
+        // Instagram / Facebook には自動で外に出す手段が無い。
+        // URLコピーは「コピーしたあと何をすればいいか」が分からず手が止まるので出さない。
+        // ⋯ メニューから外部ブラウザに移ってもらう一本道にする。
         setSteps([
-          env.ios ? `画面の<b>右下</b>にある${chip("h")}を押す`
-                  : `画面の<b>右上</b>にある${chip("v")}を押す`,
-          `<b>「${env.ios ? "Safariで開く" : "ブラウザで開く"}」</b>（または「外部ブラウザで開く」）を押す`,
-          "開いたブラウザで、もう一度この案内を開く"
+          `画面の<b>右上</b>にある${chip("h")}を押す`,
+          `<b>「外部ブラウザで開く」</b>を押す（${env.ios ? "Safari" : "Chrome"}が開きます）`,
+          "同じページが開いたら、<b>下に出るこの案内から続けてください</b>"
         ]);
-        p.hidden = false; p.textContent = "URLをコピーする";
-        p.onclick = ()=>copyUrl(p);
       }
       return;
     }
@@ -1084,9 +1087,10 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); })
     /* --- iPhone Safari --- */
     $("#a2h").textContent = "ホームページをアプリにしよう";
     setSteps([
-      `画面の<b>いちばん下</b>にある${chip("share")}（共有）を押す`,
-      `メニューを<b>下にスクロール</b>して${chip("plus")}<b>「ホーム画面に追加」</b>を押す`,
-      "<b>右上の「追加」</b>を押す → ホーム画面にROCKETsのアイコンができます"
+      `画面の<b>右下</b>にある${chip("h")}を押す（${chip("share")}が直接ある場合はそれを押して③へ）`,
+      `<b>「共有」</b>を押す`,
+      "<b>「表示を増やす」</b>を押す（この項目が無ければとばしてOK）",
+      `${chip("plus")}<b>「ホーム画面に追加」</b>→ <b>右上の「追加」</b>を押す`
     ]);
   }
 
