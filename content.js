@@ -37,18 +37,6 @@ window.CONTENT = {
      ・ticket を "" にするとボタンが消える                                */
   lives: [
     {
-      date:   "2026.08.04",
-      day:    "TUE",
-      title:  "elephance",
-      venue:  "吉祥寺 NEPO",
-      open:   "18:00",
-      start:  "18:30",
-      price:  "ADV ¥2,200（＋1D）",
-      note:   "",
-      ticket: "https://nepo.co.jp/schedules/view/3249",
-      ticketLabel: "会場サイト"
-    },
-    {
       date:   "2026.08.18",
       day:    "TUE",
       title:  "青春火花",
@@ -58,6 +46,30 @@ window.CONTENT = {
       price:  "一般 ¥2,500 / 学生 ¥1,500（＋1D）",
       note:   "",
       ticket: "https://www.babel-rocktower.net/schedule/202608.html",
+      ticketLabel: "会場サイト"
+    },
+    {
+      date:   "2026.09.18",
+      day:    "FRI",
+      title:  "共鳴",
+      venue:  "立川 COSMIC HALL",
+      open:   "18:00",
+      start:  "",
+      price:  "¥2,500（＋1D）",
+      note:   "",
+      ticket: "https://studiopenta.jp/cosmichall/",
+      ticketLabel: "会場サイト"
+    },
+    {
+      date:   "2026.09.24",
+      day:    "THU",
+      title:  "ガレージ",
+      venue:  "大久保 HOT SHOT",
+      open:   "18:10",
+      start:  "",
+      price:  "取り置き ¥2,000 / 当日 ¥2,500（＋1D）",
+      note:   "",
+      ticket: "https://hotshot.tokyo/",
       ticketLabel: "会場サイト"
     }
   ],
