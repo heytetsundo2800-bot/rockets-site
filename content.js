@@ -54,21 +54,21 @@ window.CONTENT = {
       title:  "共鳴",
       venue:  "立川 COSMIC HALL",
       open:   "18:00",
-      start:  "",
-      price:  "¥2,500（＋1D）",
-      note:   "",
+      start:  "18:30",
+      price:  "ADV / DOOR ¥2,500（＋1D）",
+      note:   "共演：niwaka. / Hold my beer / nakanaori",
       ticket: "https://studiopenta.jp/cosmichall/",
       ticketLabel: "会場サイト"
     },
     {
       date:   "2026.09.24",
       day:    "THU",
-      title:  "ガレージ",
+      title:  "画零時",
       venue:  "大久保 HOT SHOT",
       open:   "18:10",
-      start:  "",
-      price:  "取り置き ¥2,000 / 当日 ¥2,500（＋1D）",
-      note:   "",
+      start:  "18:30",
+      price:  "ADV ¥2,000 / DOOR ¥2,500（＋1D）",
+      note:   "共演：ぶらいかん / The April Fools / minami",
       ticket: "https://hotshot.tokyo/",
       ticketLabel: "会場サイト"
     }
