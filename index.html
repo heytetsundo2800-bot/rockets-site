@@ -699,7 +699,7 @@ $("#pastbtn").addEventListener("click", ()=>{
   $("#nextlive").innerHTML =
     `<span class="lab">NEXT LIVE</span>
      <div class="d">${n.date}<small>${n.day||""}</small></div>
-     <div><div class="v">${n.venue||""}</div><div class="m">${n.title? n.title+"<br>" : ""}${meta}</div></div>
+     <div><div class="v">${n.title || n.venue || ""}</div><div class="m">${(n.title && n.venue) ? n.venue+"<br>" : ""}${meta}</div></div>
      ${n.ticket ? `<a class="btn accent" href="${n.ticket}" target="_blank" rel="noopener">${n.ticketLabel||"チケット"}</a>`
                 : `<a class="btn" href="#live">詳細を見る</a>`}`;
 })();
