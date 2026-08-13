@@ -44,8 +44,8 @@ window.CONTENT = {
       open:   "18:15",
       start:  "18:30",
       price:  "一般 ¥2,500 / 学生 ¥1,500（＋1D）",
-      note:   "",
-      ticket: "https://www.babel-rocktower.net/schedule/202608.html",
+      note:   "共演：THE METRON / LAULA LÖWE / meteorite / Daddy's Punk",
+      ticket: "https://www.babel-rocktower.net/schedule/",
       ticketLabel: "会場サイト"
     },
     {
