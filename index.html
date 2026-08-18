@@ -248,7 +248,8 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 /* 写真が無いときは、実物どおり「ロゴの輪郭で切り抜いた形」で描く（横向き固定）
    drop-shadow を重ねてフチを作っている。太さは実物の約1mm相当 */
 .stk{display:grid;place-items:center;padding:0 8%}
-.stk .lg{width:100%;height:auto;display:block;transition:.7s}
+/* .scard .ph img（height:100% / object-fit:cover）より詳細度を上げる必要がある */
+.scard .stk .lg{width:100%;height:auto;object-fit:contain;display:block;transition:.7s}
 .scard:hover .stk .lg{transform:scale(1.05)}
 /* 白フチ × 黒ロゴ（白い塩ビを切り抜いたもの）
    ぼかし0のdrop-shadowを8方向に重ねて、カット線のようなくっきりしたフチを出す */
