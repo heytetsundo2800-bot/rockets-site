@@ -247,7 +247,9 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
   font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
 /* 切り抜き画像（背景が透明なステッカー）の見せ方。
    .scard .ph img の height:100% / object-fit:cover より詳細度を上げる必要がある */
-.scard .ph.cut{display:grid;place-items:center;padding:0 9%}
+/* 黒ステッカーが黒背景に沈むので、ステッカーを置く面だけ明るいグレーにする */
+.scard .ph.cut{display:grid;place-items:center;padding:0 9%;
+  background:radial-gradient(120% 110% at 50% 32%, #4c4c53 0%, #303036 55%, #232328 100%)}
 .scard .ph.cut img{width:100%;height:auto;object-fit:contain;transition:.7s;
   filter:drop-shadow(0 0 1px rgba(255,255,255,.40)) drop-shadow(0 6px 13px rgba(0,0,0,.65))}
 .scard:hover .ph.cut img{transform:scale(1.05)}
