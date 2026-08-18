@@ -245,28 +245,15 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .scard:hover .ph img{transform:scale(1.06)}
 .scard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
   font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
-/* 写真が無いときは、実物どおり「ロゴの輪郭で切り抜いた形」で描く（横向き固定）
-   drop-shadow を重ねてフチを作っている。太さは実物の約1mm相当 */
-.stk{display:grid;place-items:center;padding:0 8%}
-/* .scard .ph img（height:100% / object-fit:cover）より詳細度を上げる必要がある */
-.scard .stk .lg{width:100%;height:auto;object-fit:contain;display:block;transition:.7s}
-.scard:hover .stk .lg{transform:scale(1.05)}
-/* 白フチ × 黒ロゴ（白い塩ビを切り抜いたもの）
-   ぼかし0のdrop-shadowを8方向に重ねて、カット線のようなくっきりしたフチを出す */
-.stk-white .lg{filter:invert(1)
-  drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
-  drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
-  drop-shadow(1.4px 1.4px 0 #fff) drop-shadow(-1.4px 1.4px 0 #fff)
-  drop-shadow(1.4px -1.4px 0 #fff) drop-shadow(-1.4px -1.4px 0 #fff)
-  drop-shadow(0 6px 12px rgba(0,0,0,.65))}
-/* 黒フチ × 白ロゴ。暗い背景に沈むので、いちばん外に薄い縁を足している */
-.stk-black .lg{filter:
-  drop-shadow(2px 0 0 #0b0b0b) drop-shadow(-2px 0 0 #0b0b0b)
-  drop-shadow(0 2px 0 #0b0b0b) drop-shadow(0 -2px 0 #0b0b0b)
-  drop-shadow(1.4px 1.4px 0 #0b0b0b) drop-shadow(-1.4px 1.4px 0 #0b0b0b)
-  drop-shadow(1.4px -1.4px 0 #0b0b0b) drop-shadow(-1.4px -1.4px 0 #0b0b0b)
-  drop-shadow(0 0 1px rgba(255,255,255,.45))
-  drop-shadow(0 6px 12px rgba(0,0,0,.65))}
+/* 切り抜き画像（背景が透明なステッカー）の見せ方。
+   .scard .ph img の height:100% / object-fit:cover より詳細度を上げる必要がある */
+.scard .ph.cut{display:grid;place-items:center;padding:0 9%}
+.scard .ph.cut img{width:100%;height:auto;object-fit:contain;transition:.7s;
+  filter:drop-shadow(0 0 1px rgba(255,255,255,.40)) drop-shadow(0 6px 13px rgba(0,0,0,.65))}
+.scard:hover .ph.cut img{transform:scale(1.05)}
+/* 黒ステッカーは白の画像を色反転して作る（白地→黒地／黒ロゴ→白ロゴ） */
+.scard .ph.cut.inv img{filter:invert(1)
+  drop-shadow(0 0 1px rgba(255,255,255,.40)) drop-shadow(0 6px 13px rgba(0,0,0,.65))}
 .scard .nm{font-size:15.5px;font-weight:700;margin-top:15px}
 .scard .sub{font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:5px}
 .scard .size{font-size:10.5px;color:#6f6b66;letter-spacing:.14em;margin-top:8px}
@@ -932,12 +919,9 @@ if(sItems.length){
     `<div class="sgrid">` + sItems.map(s =>
       `<div class="scard reveal">
         ${s.photo
-          ? `<div class="ph"><img src="${imgSrc("assets/shop/", s.photo)}" alt="${s.name}"
-              loading="lazy" decoding="async"></div>`
-          : s.art
-            ? `<div class="ph stk stk-${s.art}">
-                <img class="lg" src="assets/brand/logo.webp" alt="" loading="lazy" decoding="async"></div>`
-            : `<div class="ph empty"></div>`}
+          ? `<div class="ph${s.cutout ? " cut" : ""}${s.invert ? " inv" : ""}"><img
+              src="${imgSrc("assets/shop/", s.photo)}" alt="${s.name}" loading="lazy" decoding="async"></div>`
+          : `<div class="ph empty"></div>`}
         <div class="nm">${s.name}</div>
         ${s.note  ? `<div class="sub">${s.note}</div>`   : ""}
         ${s.size  ? `<div class="size">${s.size}</div>`  : ""}
