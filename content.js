@@ -123,10 +123,11 @@ window.CONTENT = {
     items: [
       // art: "white" / "black" と書くと、写真が無くてもステッカーの絵を描きます。
       // 実物の写真を撮ったら assets/shop/ に入れて photo: "ファイル名" に書き換えてください。
+      // size は商品名の下に小さく出ます。実寸と違ったらここの数字を直してください
       { name: "ロゴステッカー（白）", price: "¥200", art: "white",
-        note: "白地 × 黒ロゴ／防水・屋外OK" },
+        note: "白地 × 黒ロゴ／防水・屋外OK", size: "約 60 × 25 mm" },
       { name: "ロゴステッカー（黒）", price: "¥200", art: "black",
-        note: "黒地 × 白ロゴ／防水・屋外OK" }
+        note: "黒地 × 白ロゴ／防水・屋外OK", size: "約 60 × 25 mm" }
     ]
   },
 
