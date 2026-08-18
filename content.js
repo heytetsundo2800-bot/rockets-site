@@ -121,12 +121,12 @@ window.CONTENT = {
     url:      "",                    // オンラインストアのURL（無ければ空でOK）
     urlLabel: "オンラインストアへ",
     items: [
-      // photo は assets/shop/ の中の画像。size は商品名の下に小さく出ます
+      // 実物のステッカーを撮った写真を切り抜いて使っています（assets/shop/ の中）
+      // size は商品名の下に小さく出ます。実寸と違ったらここの数字を直してください
       // cutout: true ＝ 背景が透明な切り抜き画像（普通の商品写真なら消してください）
-      // invert: true ＝ 白の画像を色反転して黒版として出す（画像は1枚で済みます）
-      { name: "ロゴステッカー（白）", price: "¥200", photo: "sticker-white.webp", cutout: true,
+      { name: "ロゴステッカー（白）", price: "¥200", photo: "sticker-white-photo.webp", cutout: true,
         note: "白地 × 黒ロゴ／防水・屋外OK", size: "約 90 × 35 mm" },
-      { name: "ロゴステッカー（黒）", price: "¥200", photo: "sticker-white.webp", cutout: true, invert: true,
+      { name: "ロゴステッカー（黒）", price: "¥200", photo: "sticker-black-photo.webp", cutout: true,
         note: "黒地 × 白ロゴ／防水・屋外OK", size: "約 90 × 35 mm" }
     ]
   },
@@ -165,4 +165,4 @@ window.CONTENT = {
   }
 };
 
-/* 最終更新: 2026-08-11 ライブ情報 */
+/* 最終更新: 2026-08-18 ステッカー実物写真 */
