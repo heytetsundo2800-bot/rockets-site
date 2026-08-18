@@ -83,11 +83,27 @@ window.CONTENT = {
     // { id: "動画IDをここに", title: "スタジオ" }
   ],
 
-  /* ---------- 音源（DEMO） ----------
-     website/assets/audio/ フォルダに mp3 を入れて、
-     file にそのファイル名を書く（例 "take1.mp3"）           */
+  /* ---------- 音源（SOUND） ----------
+     ★mp3をサイト上で鳴らしたくなったら：
+       ① mp3 を assets/audio/ フォルダに入れる
+       ② 下の file: "" に、そのファイル名を書く（例 file: "punk.mp3"）
+       これだけで、その曲に再生バーが出ます。何もしなければEggsのボタンだけが出ます。 */
+  sound: {
+    // Eggs のアーティストページ（"" にするとEggsのボタンが消える）
+    eggs:      "https://eggs.mu/artist/rockets_punk",
+    eggsLabel: "Eggs で聴く",
+    note:      "Eggsは登録なしでそのまま聴けます。"
+  },
+
   tracks: [
-    // { title: "曲名", file: "take1.mp3", note: "スタジオ録音 2026.05" }
+    {
+      title:  "パンクのススメ",
+      note:   "作詞・作曲：ゴーザキ",
+      jacket: "jacket-punk-no-susume.webp",   // assets/audio/ の中の画像
+      file:   "",                             // ← ここに mp3 のファイル名を書くと再生バーが出る
+      // この曲だけのEggsページ（"" ならアーティストページに飛ぶ）
+      eggs:   "https://eggs.mu/artist/rockets_punk/song/41c0eb8d-30a4-4e59-8bb6-ed8becf20c32"
+    }
   ],
 
   /* ---------- 物販（SHOP） ----------
@@ -97,11 +113,20 @@ window.CONTENT = {
      ・BASE / SUZURI などの外部ストアを使うなら url にそのURLを入れる  */
   shop: {
     note: "ステッカー・Tシャツなどを準備中です。\n出来上がりしだい、ここに並べます。",
+
+    // 商品の上に出る帯。"" にすると帯ごと消える
+    saleLabel: "LIVE VENUE ONLY",
+    saleNote:  "いまはライブ会場でのみ販売しています。\n1枚 ¥200 ／ 白・黒の2枚セット ¥300",
+
     url:      "",                    // オンラインストアのURL（無ければ空でOK）
     urlLabel: "オンラインストアへ",
     items: [
-      // { name: "ステッカー", price: "¥500", photo: "sticker.webp",
-      //   url: "https://ここに購入ページのURL", note: "5枚セット" }
+      // art: "white" / "black" と書くと、写真が無くてもステッカーの絵を描きます。
+      // 実物の写真を撮ったら assets/shop/ に入れて photo: "ファイル名" に書き換えてください。
+      { name: "ロゴステッカー（白）", price: "¥200", art: "white",
+        note: "白地 × 黒ロゴ／防水・屋外OK" },
+      { name: "ロゴステッカー（黒）", price: "¥200", art: "black",
+        note: "黒地 × 白ロゴ／防水・屋外OK" }
     ]
   },
 
