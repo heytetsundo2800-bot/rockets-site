@@ -121,13 +121,13 @@ window.CONTENT = {
     url:      "",                    // オンラインストアのURL（無ければ空でOK）
     urlLabel: "オンラインストアへ",
     items: [
-      // art: "white" / "black" と書くと、写真が無くてもステッカーの絵を描きます。
-      // 実物の写真を撮ったら assets/shop/ に入れて photo: "ファイル名" に書き換えてください。
-      // size は商品名の下に小さく出ます。実寸と違ったらここの数字を直してください
-      { name: "ロゴステッカー（白）", price: "¥200", art: "white",
-        note: "白地 × 黒ロゴ／防水・屋外OK", size: "約 60 × 25 mm" },
-      { name: "ロゴステッカー（黒）", price: "¥200", art: "black",
-        note: "黒地 × 白ロゴ／防水・屋外OK", size: "約 60 × 25 mm" }
+      // photo は assets/shop/ の中の画像。size は商品名の下に小さく出ます
+      // cutout: true ＝ 背景が透明な切り抜き画像（普通の商品写真なら消してください）
+      // invert: true ＝ 白の画像を色反転して黒版として出す（画像は1枚で済みます）
+      { name: "ロゴステッカー（白）", price: "¥200", photo: "sticker-white.webp", cutout: true,
+        note: "白地 × 黒ロゴ／防水・屋外OK", size: "約 90 × 35 mm" },
+      { name: "ロゴステッカー（黒）", price: "¥200", photo: "sticker-white.webp", cutout: true, invert: true,
+        note: "黒地 × 白ロゴ／防水・屋外OK", size: "約 90 × 35 mm" }
     ]
   },
 
