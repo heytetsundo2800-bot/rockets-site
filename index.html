@@ -245,18 +245,25 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .scard:hover .ph img{transform:scale(1.06)}
 .scard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
   font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
-/* 写真が無いときに、ロゴからステッカーの絵をその場で描く（入稿データと同じ比率） */
-.stk{display:grid;place-items:center}
-.stk .pv{position:relative;height:82%;aspect-ratio:1/2.5413;overflow:hidden;
-  border-radius:5.5%/2.16%;box-shadow:0 10px 26px rgba(0,0,0,.55);transition:.7s}
-.scard:hover .stk .pv{transform:scale(1.05)}
-.stk .pv img{position:absolute;top:50%;left:50%;width:242.13%;height:auto;max-width:none;
-  transform:translate(-50%,-50%) rotate(90deg)}
-.stk-white .pv{background:#fff}
-.stk-white .pv img{filter:invert(1)}
-.stk-black .pv{background:#0c0c0c;box-shadow:0 10px 26px rgba(0,0,0,.55),inset 0 0 0 1px #4a4a4e}
+/* 写真が無いときは、実物どおり「ロゴの輪郭で切り抜いた形」で描く（横向き固定）
+   drop-shadow を重ねてフチを作っている。太さは実物の約1mm相当 */
+.stk{display:grid;place-items:center;padding:0 8%}
+.stk .lg{width:100%;height:auto;display:block;transition:.7s}
+.scard:hover .stk .lg{transform:scale(1.05)}
+/* 白フチ × 黒ロゴ（白い塩ビを切り抜いたもの） */
+.stk-white .lg{filter:invert(1)
+  drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)
+  drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)
+  drop-shadow(0 5px 11px rgba(0,0,0,.6))}
+/* 黒フチ × 白ロゴ。暗い背景に沈むので、いちばん外に薄い縁を足している */
+.stk-black .lg{filter:
+  drop-shadow(0 0 1px #0c0c0c) drop-shadow(0 0 1px #0c0c0c)
+  drop-shadow(0 0 1px #0c0c0c) drop-shadow(0 0 1px #0c0c0c)
+  drop-shadow(0 0 1px rgba(255,255,255,.32))
+  drop-shadow(0 5px 11px rgba(0,0,0,.6))}
 .scard .nm{font-size:15.5px;font-weight:700;margin-top:15px}
 .scard .sub{font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:5px}
+.scard .size{font-size:10.5px;color:#6f6b66;letter-spacing:.14em;margin-top:8px}
 .scard .pr{font-family:var(--dp);font-size:17px;letter-spacing:.05em;margin-top:9px;
   color:var(--tint);filter:brightness(1.7) saturate(1.4)}
 .scard .btn{margin-top:14px;font-size:11px;padding:11px 20px}
@@ -922,11 +929,12 @@ if(sItems.length){
           ? `<div class="ph"><img src="${imgSrc("assets/shop/", s.photo)}" alt="${s.name}"
               loading="lazy" decoding="async"></div>`
           : s.art
-            ? `<div class="ph stk stk-${s.art}"><span class="pv">
-                <img src="assets/brand/logo.webp" alt="" loading="lazy" decoding="async"></span></div>`
+            ? `<div class="ph stk stk-${s.art}">
+                <img class="lg" src="assets/brand/logo.webp" alt="" loading="lazy" decoding="async"></div>`
             : `<div class="ph empty"></div>`}
         <div class="nm">${s.name}</div>
         ${s.note  ? `<div class="sub">${s.note}</div>`   : ""}
+        ${s.size  ? `<div class="size">${s.size}</div>`  : ""}
         ${s.price ? `<div class="pr">${s.price}</div>`   : ""}
         ${s.url   ? `<a class="btn accent" href="${s.url}" target="_blank" rel="noopener">購入する</a>` : ""}
       </div>`).join("") + `</div>` +
