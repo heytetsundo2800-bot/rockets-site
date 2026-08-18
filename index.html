@@ -220,14 +220,22 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vcard h3{font-size:13.5px;font-weight:500;margin-top:12px;color:var(--dim);letter-spacing:.06em}
 
-/* ---------- DEMO（音源） ---------- */
-.trk{display:flex;align-items:center;gap:clamp(14px,2.5vw,26px);padding:20px 0;
-  border-bottom:1px solid var(--line);flex-wrap:wrap}
-.trk .no{font-family:var(--dp);font-size:22px;color:var(--dim);min-width:34px}
-.trk .meta{flex:1;min-width:180px}
-.trk .meta b{font-size:15px;font-weight:700;display:block}
-.trk .meta span{font-size:11.5px;color:var(--dim);letter-spacing:.1em}
-.trk audio{height:36px;flex:1;min-width:230px;filter:invert(1) hue-rotate(180deg) contrast(.85)}
+/* ---------- SOUND（音源） ---------- */
+.trk{display:flex;gap:clamp(18px,3vw,34px);padding:clamp(20px,3vw,30px) 0;
+  border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.trk .jk{width:clamp(112px,17vw,168px);flex:0 0 auto;aspect-ratio:1/1;
+  border:1px solid var(--line);background:#101012;overflow:hidden;position:relative}
+.trk .jk img{width:100%;height:100%;object-fit:cover;transition:.7s}
+.trk:hover .jk img{transform:scale(1.05)}
+.trk .meta{flex:1 1 260px;min-width:225px}
+.trk .meta b{font-size:clamp(17px,2.6vw,22px);font-weight:700;display:block;line-height:1.35}
+.trk .meta span{display:block;font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:7px}
+.trk audio{width:100%;height:36px;margin-top:15px;filter:invert(1) hue-rotate(180deg) contrast(.85)}
+.trk .srow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.trk .srow .btn{font-size:11px;padding:10px 19px}
+.trk .srow .btn svg{width:13px;height:13px;fill:currentColor}
+.sndnote{margin-top:clamp(20px,3.4vw,28px);font-size:12.5px;line-height:1.95;
+  color:var(--dim);letter-spacing:.04em;white-space:pre-line}
 
 /* ---------- SHOP（物販） ---------- */
 .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(16px,2.6vw,34px)}
@@ -236,6 +244,16 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .scard:hover .ph img{transform:scale(1.06)}
 .scard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
   font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
+/* 写真が無いときに、ロゴからステッカーの絵をその場で描く（入稿データと同じ比率） */
+.stk{display:grid;place-items:center}
+.stk .pv{position:relative;height:82%;aspect-ratio:1/2.5413;overflow:hidden;
+  border-radius:5.5%/2.16%;box-shadow:0 10px 26px rgba(0,0,0,.55);transition:.7s}
+.scard:hover .stk .pv{transform:scale(1.05)}
+.stk .pv img{position:absolute;top:50%;left:50%;width:242.13%;height:auto;max-width:none;
+  transform:translate(-50%,-50%) rotate(90deg)}
+.stk-white .pv{background:#fff}
+.stk-white .pv img{filter:invert(1)}
+.stk-black .pv{background:#0c0c0c;box-shadow:0 10px 26px rgba(0,0,0,.55),inset 0 0 0 1px #4a4a4e}
 .scard .nm{font-size:15.5px;font-weight:700;margin-top:15px}
 .scard .sub{font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:5px}
 .scard .pr{font-family:var(--dp);font-size:17px;letter-spacing:.05em;margin-top:9px;
@@ -250,6 +268,13 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .soon .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
 .soon .row .btn svg{width:14px;height:14px;fill:currentColor}
 .storerow{display:flex;justify-content:center;margin-top:clamp(28px,5vh,44px)}
+/* 「会場でのみ販売」の帯 */
+.saleband{border:1px solid var(--line);padding:clamp(20px,3.2vw,28px) clamp(20px,3.2vw,30px);
+  margin-bottom:clamp(24px,4vw,38px);
+  background:linear-gradient(120deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.13),transparent 72%)}
+.saleband .lb{font-family:var(--dp);font-size:clamp(15px,2.5vw,21px);letter-spacing:.16em;line-height:1;
+  color:var(--tint);filter:brightness(1.85) saturate(1.35)}
+.saleband p{margin-top:12px;font-size:13.5px;line-height:1.95;color:#cfcbc5;white-space:pre-line}
 
 /* ---------- MEMBER ---------- */
 .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:clamp(16px,2.6vw,34px)}
@@ -499,9 +524,9 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
   <div class="vgrid" id="vgrid"></div>
 </section>
 
-<!-- ===== DEMO（音源） ===== -->
+<!-- ===== SOUND（音源） ===== -->
 <section class="blk" id="music">
-  <div class="head reveal"><h2>DEMO</h2><span class="ja">音源</span></div>
+  <div class="head reveal"><h2>SOUND</h2><span class="ja">音源</span></div>
   <div id="tracks"></div>
 </section>
 
@@ -573,6 +598,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 </div>
 
 <script src="assets/photos.js"></script>
+<script src="assets/images.js"></script>
 <script src="content.js"></script>
 <script>
 (function(){
@@ -582,6 +608,9 @@ const S = Object.assign({fadeSeconds:6,crossfade:2.4,kenBurns:true,tintStrength:
 const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
 const PH = "assets/photos/", TH = "assets/thumbs/";
 const byName = {}; P.photos.forEach(p=>byName[p.f]=p);
+// 画像の場所を決める。assets/images.js に埋め込みがあればそれを、無ければフォルダの中を見る
+const IMG = window.IMG || {};
+const imgSrc = (dir, name) => IMG[name] || (dir + name);
 
 /* ---------- 基本テキスト ---------- */
 document.title = C.band.title || C.band.name;
@@ -820,15 +849,26 @@ if(vids.length){
   $("#video").style.display="none"; $("#nv-video").parentElement.style.display="none";
 }
 
-/* ---------- 音源 ---------- */
-const trks = (C.tracks||[]).filter(t=>t.file);
-if(trks.length){
-  $("#tracks").innerHTML = trks.map((t,i)=>
-    `<div class="trk reveal">
-      <span class="no">${String(i+1).padStart(2,"0")}</span>
-      <div class="meta"><b>${t.title||""}</b><span>${t.note||""}</span></div>
-      <audio controls preload="none" src="assets/audio/${t.file}"></audio>
-    </div>`).join("");
+/* ---------- 音源 ----------
+   ・file に mp3 名があれば、その場で鳴る再生バーを出す
+   ・Eggs のURLがあれば、あわせて Eggs へのボタンも出す
+   ・曲も Eggs も無いときだけセクションごと隠す                */
+const SND  = C.sound || {};
+const trks = (C.tracks||[]).filter(t => t.title || t.file);
+if(trks.length || SND.eggs){
+  $("#tracks").innerHTML = trks.map(t=>{
+    const eggsUrl = t.eggs || SND.eggs || "";
+    return `<div class="trk reveal">
+      ${t.jacket ? `<div class="jk"><img src="${imgSrc("assets/audio/", t.jacket)}" alt="${t.title||""}"
+        loading="lazy" decoding="async"></div>` : ""}
+      <div class="meta">
+        <b>${t.title||""}</b>${t.note ? `<span>${t.note}</span>` : ""}
+        ${t.file ? `<audio controls preload="none" src="assets/audio/${t.file}"></audio>` : ""}
+        ${eggsUrl ? `<div class="srow"><a class="btn accent" href="${eggsUrl}"
+          target="_blank" rel="noopener">${SND.eggsLabel || "Eggs で聴く"}</a></div>` : ""}
+      </div>
+    </div>`;
+  }).join("") + (SND.note ? `<p class="sndnote reveal">${SND.note}</p>` : "");
 }else{
   $("#music").style.display="none"; $("#nv-music").parentElement.style.display="none";
 }
@@ -866,12 +906,24 @@ const sItems = (SH.items || []).filter(s => s.name);
 const storeBtn = SH.url
   ? `<a class="btn accent" href="${SH.url}" target="_blank" rel="noopener">${SH.urlLabel || "オンラインストアへ"}</a>` : "";
 
+// 「ライブ会場でのみ販売」などの帯（saleNote が空なら出ない）
+const band = SH.saleNote
+  ? `<div class="saleband reveal">
+      ${SH.saleLabel ? `<div class="lb">${SH.saleLabel}</div>` : ""}
+      <p>${SH.saleNote}</p>
+    </div>` : "";
+
 if(sItems.length){
-  $("#shopwrap").innerHTML =
+  $("#shopwrap").innerHTML = band +
     `<div class="sgrid">` + sItems.map(s =>
       `<div class="scard reveal">
-        <div class="ph${s.photo ? "" : " empty"}">${s.photo
-          ? `<img src="assets/shop/${s.photo}" alt="${s.name}" loading="lazy" decoding="async">` : ""}</div>
+        ${s.photo
+          ? `<div class="ph"><img src="${imgSrc("assets/shop/", s.photo)}" alt="${s.name}"
+              loading="lazy" decoding="async"></div>`
+          : s.art
+            ? `<div class="ph stk stk-${s.art}"><span class="pv">
+                <img src="assets/brand/logo.webp" alt="" loading="lazy" decoding="async"></span></div>`
+            : `<div class="ph empty"></div>`}
         <div class="nm">${s.name}</div>
         ${s.note  ? `<div class="sub">${s.note}</div>`   : ""}
         ${s.price ? `<div class="pr">${s.price}</div>`   : ""}
