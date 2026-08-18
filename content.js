@@ -100,7 +100,7 @@ window.CONTENT = {
       title:  "パンクのススメ",
       note:   "作詞・作曲：ゴーザキ",
       jacket: "jacket-punk-no-susume.webp",   // assets/audio/ の中の画像
-      file:   "",                             // ← ここに mp3 のファイル名を書くと再生バーが出る
+      file:   "punk-no-susume.m4a",           // ← assets/audio/ の中の音源ファイル
       // この曲だけのEggsページ（"" ならアーティストページに飛ぶ）
       eggs:   "https://eggs.mu/artist/rockets_punk/song/41c0eb8d-30a4-4e59-8bb6-ed8becf20c32"
     }
