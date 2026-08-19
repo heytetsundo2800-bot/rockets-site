@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- SOUND / SHOP 更新 2026-08-18f 歌詞ぼかし調整 -->
+<!-- 更新 2026-08-19a ライブ自動切替 / 写真初期9枚 -->
 <title>ROCKETs</title>
 <link rel="icon" href="assets/brand/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/brand/icon-512.png">
@@ -738,8 +738,20 @@ function liveRow(l, past){
     <div>${(!past && l.ticket) ? `<a class="btn accent" href="${l.ticket}" target="_blank" rel="noopener">${l.ticketLabel||"チケット"}</a>` : ""}</div>
   </div>`;
 }
-const lives = C.lives||[];
-const up = lives.filter(l=>!l.past), pastL = lives.filter(l=>l.past);
+/* ライブは日付で自動的に振り分ける。
+   その日のうちは NEXT LIVE のまま残り、翌日になると自動で「過去の公演」に移る。
+   content.js に past: true を書けば、日付に関係なく過去あつかいにもできる。 */
+const lives = (C.lives||[]).slice();
+const liveDate = l => {
+  const m = String(l.date||"").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  return m ? new Date(+m[1], +m[2]-1, +m[3]).getTime() : NaN;
+};
+const todayMs = (()=>{ const d=new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
+const isOver = l => l.past === true || (!isNaN(liveDate(l)) && liveDate(l) < todayMs);
+const byDate = (x,y)=>{ const a=liveDate(x), c=liveDate(y);
+  if(isNaN(a)&&isNaN(c)) return 0; if(isNaN(a)) return 1; if(isNaN(c)) return -1; return a-c; };
+const up    = lives.filter(l=>!isOver(l)).sort(byDate);          // 近い順
+const pastL = lives.filter(isOver).sort((x,y)=>byDate(y,x));     // 新しい順
 $("#upcoming").innerHTML = up.length ? up.map(l=>liveRow(l,false)).join("")
   : `<p style="color:var(--dim);font-size:14px;padding:20px 0">現在、予定されている公演はありません。</p>`;
 if(pastL.length){ $("#pastlist").innerHTML = pastL.map(l=>liveRow(l,true)).join(""); }
@@ -768,7 +780,7 @@ $("#pastbtn").addEventListener("click", ()=>{
 
 /* ---------- 写真グリッド ---------- */
 let filter="all", shown=[], expanded=false;
-const FIRST = 18;                      // 最初に見せる枚数（全体の約1/3）
+const FIRST = 9;                       // 最初に見せる枚数（残りは「もっと表示する」で出る）
 function currentList(){
   return P.photos.filter(p => filter==="all" ? true : filter==="land" ? p.land : !p.land);
 }
