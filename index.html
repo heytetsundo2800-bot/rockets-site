@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- SOUND / SHOP 更新 2026-08-18e 歌詞スマホ配置 -->
+<!-- SOUND / SHOP 更新 2026-08-18f 歌詞ぼかし調整 -->
 <title>ROCKETs</title>
 <link rel="icon" href="assets/brand/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/brand/icon-512.png">
@@ -241,10 +241,11 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .trk .lyrhd{font-family:var(--dp);font-size:11px;letter-spacing:.34em;color:var(--dim);
   margin-bottom:12px;display:flex;align-items:baseline;gap:10px}
 .trk .lyrhd span{font-family:inherit;font-size:9.5px;letter-spacing:.22em;opacity:.6}
-.trk .lyrbody{max-height:clamp(148px,19vw,206px);overflow-y:auto;overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;padding-right:14px;outline:none;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 26px),transparent 100%);
-          mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 26px),transparent 100%);
+.trk .lyrbody{--fadeTop:0px;--fadeBot:30px;
+  max-height:clamp(148px,19vw,206px);overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;padding:6px 14px 10px 0;outline:none;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fadeTop),#000 calc(100% - var(--fadeBot)),transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fadeTop),#000 calc(100% - var(--fadeBot)),transparent 100%);
   scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
 .trk .lyrbody::-webkit-scrollbar{width:3px}
 .trk .lyrbody::-webkit-scrollbar-track{background:transparent}
@@ -261,7 +262,7 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
     padding-left:clamp(14px,4vw,20px);padding-top:0;margin-top:0}
   .trk .meta{order:3;flex:1 1 100%;min-width:0}
   .trk .lyrhd{margin-bottom:9px}
-  .trk .lyrbody{max-height:152px;padding-right:10px}
+  .trk .lyrbody{max-height:152px;padding:6px 10px 10px 0}
   .trk .lyrbody p{font-size:12.5px;line-height:1.95}
 }
 .sndnote{margin-top:clamp(20px,3.4vw,28px);font-size:12.5px;line-height:1.95;
@@ -910,6 +911,18 @@ if(trks.length || SND.eggs){
       </div>` : ""}
     </div>`;
   }).join("") + (SND.note ? `<p class="sndnote reveal">${SND.note}</p>` : "");
+  // 歌詞パネル：一番上／一番下まで来たら、そちら側のぼかしを消して文字をクリアに見せる
+  $$(".lyrbody").forEach(el=>{
+    const upd = () => {
+      const atTop = el.scrollTop > 2;
+      const atBot = el.scrollTop + el.clientHeight < el.scrollHeight - 2;
+      el.style.setProperty("--fadeTop", atTop ? "22px" : "0px");
+      el.style.setProperty("--fadeBot", atBot ? "30px" : "0px");
+    };
+    upd();
+    el.addEventListener("scroll", upd, {passive:true});
+    window.addEventListener("resize", upd);
+  });
 }else{
   $("#music").style.display="none"; $("#nv-music").parentElement.style.display="none";
 }
