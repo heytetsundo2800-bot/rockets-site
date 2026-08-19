@@ -189,7 +189,7 @@ Oi! Oi! Oi!
 
     { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
       word: "Punks not dead",
-      x: "https://x.com/k_rockets_",    instagram: "https://www.instagram.com/_k666yy._",  tiktok: "" },
+      x: "https://x.com/k_rockets_",    instagram: "",  tiktok: "" },
 
     { name: "アダチ テツンド", part: "Dr",      photo: "members/m4.webp",
       word: "ろっくんろーる",
@@ -208,4 +208,4 @@ Oi! Oi! Oi!
   }
 };
 
-/* 最終更新: 2026-08-18 歌詞パネル */
+/* 最終更新: 2026-08-19 Koudaiのインスタ非表示 */
