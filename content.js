@@ -102,7 +102,12 @@ window.CONTENT = {
       jacket: "jacket-punk-no-susume.webp",   // assets/audio/ の中の画像
       file:   "punk-no-susume.m4a",           // ← assets/audio/ の中の音源ファイル
       // この曲だけのEggsページ（"" ならアーティストページに飛ぶ）
-      eggs:   "https://eggs.mu/artist/rockets_punk/song/41c0eb8d-30a4-4e59-8bb6-ed8becf20c32"
+      eggs:   "https://eggs.mu/artist/rockets_punk/song/41c0eb8d-30a4-4e59-8bb6-ed8becf20c32",
+
+      /* 歌詞。バッククォート（`）の中に、そのまま改行して書く。
+         空行を1つ入れるとブロックの区切りになります。
+         中身が空のあいだは、歌詞パネルごと出ません。          */
+      lyrics: ``
     }
   ],
 
@@ -165,4 +170,4 @@ window.CONTENT = {
   }
 };
 
-/* 最終更新: 2026-08-18 ステッカー実物写真 */
+/* 最終更新: 2026-08-18 歌詞パネル */
