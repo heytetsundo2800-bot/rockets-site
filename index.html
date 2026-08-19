@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- SOUND / SHOP 更新 2026-08-18d 歌詞パネル -->
+<!-- SOUND / SHOP 更新 2026-08-18e 歌詞スマホ配置 -->
 <title>ROCKETs</title>
 <link rel="icon" href="assets/brand/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/brand/icon-512.png">
@@ -253,9 +253,16 @@ section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:
 .trk .lyrbody p{margin:0;font-size:13px;line-height:2.1;letter-spacing:.07em;color:#c2beb7}
 .trk .lyrbody p.sp{height:.95em}
 @media(max-width:760px){
-  .trk .lyr{flex-basis:100%;border-left:0;border-top:1px solid var(--line);
-    padding-left:0;padding-top:20px;margin-top:4px}
-  .trk .lyrbody{max-height:190px}
+  /* スマホ：ジャケット写真の右の余白に歌詞を入れる（曲名・再生バーはその下） */
+  .trk{align-items:flex-start}
+  .trk .jk{order:1}
+  .trk .lyr{order:2;flex:1 1 0;min-width:0;align-self:flex-start;
+    border-left:1px solid var(--line);border-top:0;
+    padding-left:clamp(14px,4vw,20px);padding-top:0;margin-top:0}
+  .trk .meta{order:3;flex:1 1 100%;min-width:0}
+  .trk .lyrhd{margin-bottom:9px}
+  .trk .lyrbody{max-height:152px;padding-right:10px}
+  .trk .lyrbody p{font-size:12.5px;line-height:1.95}
 }
 .sndnote{margin-top:clamp(20px,3.4vw,28px);font-size:12.5px;line-height:1.95;
   color:var(--dim);letter-spacing:.04em;white-space:pre-line}
