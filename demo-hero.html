@@ -13,6 +13,7 @@
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN",sans-serif;
   --dp:"Anton","Zen Kaku Gothic New",Impact,sans-serif;
   --pinvh:300;
+  --demoFont:"Zen Kaku Gothic New",sans-serif; --demoW:700;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:auto}
@@ -49,9 +50,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--jp);overflow-x:hidde
   padding:0 clamp(20px,6vw,60px);pointer-events:none}
 .line{position:absolute;text-align:center;width:min(92vw,940px);
   opacity:0;will-change:transform,opacity,filter}
-.line b{display:block;font-family:var(--dp);letter-spacing:.05em;line-height:1.25;
-  font-size:clamp(31px,5.8vw,70px);font-weight:400}
-.line span{display:block;margin-top:18px;font-size:clamp(14px,1.9vw,20px);
+.line b{display:block;font-family:var(--demoFont);font-weight:var(--demoW);letter-spacing:.04em;line-height:1.3;
+  font-size:clamp(31px,5.8vw,70px)}
+.line span{display:block;margin-top:18px;font-family:var(--demoFont);font-weight:400;font-size:clamp(14px,1.9vw,20px);
   color:#c6c2bb;letter-spacing:.08em;line-height:2}
 
 .cue{position:absolute;z-index:25;left:50%;bottom:34px;transform:translateX(-50%);
@@ -125,7 +126,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--jp);overflow-x:hidde
 <div class="panel" id="panel">
   <button class="close" onclick="this.parentElement.style.display='none';document.getElementById('mini').style.display='block'">×</button>
   <h4>デモ設定</h4>
-  <label>ピンの長さ <input type="range" id="pin" min="150" max="500" step="25" value="300"><span class="v" id="pinv">300</span></label>
+  <label>ピンの長さ <input type="range" id="pin" min="150" max="1000" step="25" value="300"><span class="v" id="pinv">300</span></label>
   <label>ロゴの縮み <input type="range" id="shr" min="0" max="100" step="5" value="70"><span class="v" id="shrv">70</span></label>
   <div class="tog">
     <button id="bGrain" class="on">ノイズ</button>
@@ -133,6 +134,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--jp);overflow-x:hidde
     <button id="bSwap"  class="on">写真切替</button>
     <button id="bHead"  class="on">ヘッダーへ吸込</button>
   </div>
+  <h4 style="margin-top:16px">フォント</h4>
+  <div class="tog" id="fonts"></div>
   <p style="color:var(--dim);margin-top:11px;line-height:1.7">
     ゆっくりスクロールしてください。<br>画面は止まったまま、文字だけが流れます。</p>
 </div>
@@ -165,6 +168,39 @@ LINES.forEach(l=>{
 const lineEls=[...linesEl.querySelectorAll(".line")];
 
 const S={pin:300, shrink:0.70, grain:true, zoom:true, swap:true, head:true};
+
+/* ---- フォント候補（押したときだけ読み込む） ---- */
+const FONTS=[
+ {n:"Zen角ゴシック",  f:"Zen Kaku Gothic New", q:"Zen+Kaku+Gothic+New:wght@400;700;900", w:700},
+ {n:"Noto Sans",     f:"Noto Sans JP",        q:"Noto+Sans+JP:wght@400;700;900",        w:900},
+ {n:"M PLUS 2",      f:"M PLUS 2",            q:"M+PLUS+2:wght@400;700;800",            w:800},
+ {n:"Murecho",       f:"Murecho",             q:"Murecho:wght@400;700;800",             w:800},
+ {n:"デラゴシック",   f:"Dela Gothic One",     q:"Dela+Gothic+One",                      w:400},
+ {n:"しっぽり明朝",   f:"Shippori Mincho B1",  q:"Shippori+Mincho+B1:wght@400;700;800",  w:800},
+ {n:"Zen旧明朝",     f:"Zen Old Mincho",      q:"Zen+Old+Mincho:wght@400;700;900",      w:900},
+ {n:"Noto明朝",      f:"Noto Serif JP",       q:"Noto+Serif+JP:wght@400;700;900",       w:900},
+ {n:"ヒナ明朝",       f:"Hina Mincho",         q:"Hina+Mincho",                          w:400},
+ {n:"ロックンロール", f:"RocknRoll One",       q:"RocknRoll+One",                        w:400},
+ {n:"Zenアンティーク",f:"Zen Antique",         q:"Zen+Antique",                          w:400}
+];
+const loaded={};
+function useFont(i){
+  const F=FONTS[i];
+  if(!loaded[F.q]){
+    const l=document.createElement("link"); l.rel="stylesheet";
+    l.href="https://fonts.googleapis.com/css2?family="+F.q+"&display=swap";
+    document.head.appendChild(l); loaded[F.q]=1;
+  }
+  document.documentElement.style.setProperty("--demoFont",'"'+F.f+'",sans-serif');
+  document.documentElement.style.setProperty("--demoW",F.w);
+  [...document.querySelectorAll("#fonts button")].forEach((b,k)=>b.classList.toggle("on",k===i));
+}
+const fw=document.getElementById("fonts");
+FONTS.forEach((F,i)=>{
+  const b=document.createElement("button"); b.textContent=F.n;
+  b.addEventListener("click",()=>useFont(i)); fw.appendChild(b);
+});
+useFont(0);
 const $=id=>document.getElementById(id);
 function setPin(v){ S.pin=+v; document.documentElement.style.setProperty("--pinvh",v); $("pinv").textContent=v; }
 $("pin").addEventListener("input",e=>{setPin(e.target.value); onScroll();});
