@@ -45,9 +45,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--jp);overflow-x:hidde
   transform-origin:center;will-change:transform,opacity}
 #logo img{width:100%;display:block}
 
-#lines{position:absolute;z-index:15;inset:0;display:grid;place-items:center;
+#lines{position:absolute;z-index:15;inset:14% 0 0;display:grid;place-items:center;
   padding:0 clamp(20px,6vw,60px);pointer-events:none}
-.line{position:absolute;text-align:center;max-width:22ch;
+.line{position:absolute;text-align:center;width:min(92vw,940px);
   opacity:0;will-change:transform,opacity,filter}
 .line b{display:block;font-family:var(--dp);letter-spacing:.05em;line-height:1.25;
   font-size:clamp(24px,4.4vw,52px);font-weight:400}
