@@ -744,6 +744,8 @@ body.en .head .ja{display:none}
 .nl8 .acts .y{background:var(--fg);color:#000}
 .nl8 .acts button{background:none;border:1px solid #444;color:var(--fg)}
 .nl8 .acts svg{width:15px;height:15px}
+.nl8 .acts .mapb{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:#24242a;color:var(--fg);font-weight:700;border:0;border-radius:0}
+.nl8 .acts .mapb svg{fill:currentColor}
 /* ===== 言語スイッチ（電源スイッチ型） ===== */
 .lsw{position:relative;width:88px;height:34px;border-radius:17px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);
   display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
@@ -752,11 +754,11 @@ body.en .head .ja{display:none}
 .lsw.drag .kn{transition:none}
 .lsw .l{position:relative;z-index:1;font-family:var(--dp);font-size:12px;letter-spacing:.08em;color:var(--dim);text-align:center;transition:color .25s}
 .lsw:not(.en) .j,.lsw.en .e{color:#000}
-#lfade{position:fixed;inset:0;z-index:400;background:#0b0b0c;opacity:0;pointer-events:none;transition:opacity .16s ease}
+#lfade{position:fixed;inset:0;z-index:400;background:#0b0b0c;opacity:0;pointer-events:none;transition:opacity .12s ease}
 #lfade.on{opacity:1}
 html.lsw-in{background:#0b0b0c}
 html.lsw-in body{opacity:0}
-html.lsw-in.lsw-go body{opacity:1;transition:opacity .28s ease}
+html.lsw-in.lsw-go body{opacity:1;transition:opacity .18s ease}
 /* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
 .snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
 .snote b{font-family:var(--dp);font-weight:400;font-size:11px;letter-spacing:.26em;color:var(--dim)}
@@ -1897,8 +1899,8 @@ hdr.appendChild(tr);
     try{ localStorage.setItem("rockets.lang", toEN?"en":"ja");
          sessionStorage.setItem("rockets.noload","1"); sessionStorage.setItem("rockets.lsw.y", String(scrollY)); }catch(e){}
     const f=document.createElement("div"); f.id="lfade"; document.body.appendChild(f);
-    setTimeout(()=>f.classList.add("on"), 170);
-    setTimeout(()=>{ if(location.search) location.replace(location.pathname+location.hash); else location.reload(); }, 340);
+    requestAnimationFrame(()=>f.classList.add("on"));
+    setTimeout(()=>{ if(location.search) location.replace(location.pathname+location.hash); else location.reload(); }, 150);
   }
   sw.addEventListener("pointerdown",e=>{ if(busy) return; pid=e.pointerId; x0=e.clientX; base=sw.classList.contains("en")?MAX():0; cur=base; moved=false;
     try{ sw.setPointerCapture(pid); }catch(_){} });
@@ -1942,6 +1944,9 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
   // ポスター見出し：日付（赤）→ 地名 → 会場名。会場名は「地名 会場」の形で書いてあれば自動で2行に分ける
   const sp=ven.indexOf(" "), area=sp>0?ven.slice(0,sp):"", place=sp>0?ven.slice(sp+1):ven;
   const isJa=t=>/[^\x00-\x7f]/.test(t);
+  // 地図：Googleマップで会場をひらく（content.js の address があるときだけ）
+  const mapUrl=N.address ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent((N.mapQuery||(place+" "+String(N.address).split(" ")[0]))) : "";
+  const PINI='<svg viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.6" fill="#000"/></svg>';
   card.innerHTML=`<div class="top"><span>NEXT LIVE</span><b>${esc(calC)}</b></div>
     <div class="pst"><div class="d">${md} ${DOW[d.getDay()]}</div>
       ${area?`<div class="${isJa(area)?"jp":"en"}">${esc(isJa(area)?area:area.toUpperCase())}</div>`:""}
@@ -1950,6 +1955,7 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
     ${inf?`<div class="inf">${inf}</div>`:""}
     <div class="acts">
       ${N.ticket?`<a class="y" href="${esc(TK.url(N))}" target="_blank" rel="noopener">${N.ticket==="x-dm"?SNSI.x:""}${esc(TK.label(N))}</a>`:""}
+      ${mapUrl?`<a class="mapb" href="${esc(mapUrl)}" target="_blank" rel="noopener">${PINI}${T("地図を見る","View map")}</a>`:""}
       <button type="button" data-a="share">${T("友だちに送る","Send to a friend")}</button>
     </div>`;
   const head=sec.querySelector(".head"); if(head) head.after(card); else sec.prepend(card);
@@ -1977,8 +1983,7 @@ show(H[location.hash]||"live", true);
   let y=0; try{ y=+sessionStorage.getItem("rockets.lsw.y")||0; sessionStorage.removeItem("rockets.lsw.y"); }catch(e){}
   const done=()=>{ if(y){ de.style.scrollBehavior="auto"; window.scrollTo(0,y); de.style.scrollBehavior=""; }
     requestAnimationFrame(()=>{ de.classList.add("lsw-go"); setTimeout(()=>de.classList.remove("lsw-in","lsw-go"),400); }); };
-  if(document.readyState==="complete") done(); else addEventListener("load",done,{once:true});
-  setTimeout(done,900);
+  done();   // 画像の読み込みを待たずに、すぐ表示
 })();
 // #photo などで開いたとき、ブラウザが勝手にその場所までスクロールするのを止める
 try{ history.scrollRestoration="manual"; }catch(e){}
