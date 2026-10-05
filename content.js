@@ -198,24 +198,40 @@ Oi! Oi! Oi!
     ]
   },
 
+  /* ---------- お知らせ（右上のベル） ----------
+     ・上に足していけばOK。まだ見ていない人にはベルに赤い数字が出る
+     ・link は "#live"（ライブ一覧）"#photo" "#member" "#music" "#shop" か、http から始まるURL
+     ・titleEn / bodyEn を書くと英語表示のときに使われる                         */
+  news: [
+    { date: "2026-10-05", tag: "ライブ決定", tagEn: "NEW SHOW",
+      title: "10/26(月) 府中 Flight「newest」出演決定", titleEn: "Oct 26 (Mon) — Fuchu Flight \"newest\"",
+      body: "OPEN 17:30 / START 18:00　取り置きはXのDMへ", bodyEn: "Doors 17:30 / Start 18:00. DM us on X for tickets.", link: "#live" },
+    { date: "2026-10-05", tag: "写真", tagEn: "PHOTOS",
+      title: "ライブ写真を48枚追加しました", titleEn: "48 new live photos added",
+      body: "8/18 立川 BABEL ほか", bodyEn: "Tachikawa BABEL (Aug 18) and more", link: "#photo" },
+    { date: "2026-10-04", tag: "ライブ決定", tagEn: "NEW SHOW",
+      title: "10/14(水) 高円寺 Club ROOTS!「THE RIOT GARDEN」", titleEn: "Oct 14 (Wed) — Koenji Club ROOTS! \"THE RIOT GARDEN\"",
+      body: "OPEN 18:30 / START 19:00", bodyEn: "Doors 18:30 / Start 19:00", link: "#live" }
+  ],
+
   /* ---------- メンバー ----------
      photo は members/○○.webp（メンバー写真）または p○○○.webp（ライブ写真）
      word  は名前の下に出る一言（空 "" にすればその人だけ非表示）
      x / instagram / tiktok に個人アカウントのURLを入れると、一言の下にリンクが出ます */
   members: [
-    { name: "いまちま",       part: "Ba",      photo: "members/m1.webp",
+    { name: "いまちま",       part: "Ba",      photo: "members/m1.webp", font: "cb", nameEn: "Imachima", partEn: "Bass",
       word: "やるしかねぇ!",
       x: "https://x.com/imymellsc",     instagram: "https://www.instagram.com/car666lose", tiktok: "" },
 
-    { name: "ゴーザキ",       part: "Vo / Gt", photo: "members/m2.webp",
+    { name: "ゴーザキ",       part: "Vo / Gt", photo: "members/m2.webp", font: "rg", nameEn: "Gozaki", partEn: "Vocal / Guitar",
       word: "LET'S GO!! PUNK ROCK!!",
       x: "https://x.com/gorockets11",   instagram: "https://www.instagram.com/go._rockets", tiktok: "" },
 
-    { name: "Koudai",         part: "Gt",      photo: "members/m3.webp",
+    { name: "Koudai",         part: "Gt",      photo: "members/m3.webp", font: "se", nameEn: "Koudai", partEn: "Guitar",
       word: "Punks not dead",
       x: "https://x.com/k_rockets_",    instagram: "",  tiktok: "" },
 
-    { name: "アダチ テツンド", part: "Dr",      photo: "members/m4.webp",
+    { name: "アダチテツンド",  part: "Dr",      photo: "members/m4.webp", font: "zk", nameEn: "Adachi Tetsundo", partEn: "Drums",
       word: "ろっくんろーる",
       x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
@@ -232,4 +248,4 @@ Oi! Oi! Oi!
   }
 };
 
-/* 最終更新: 2026-10-05 10/26 府中Flight ライブ追加 */
+/* 最終更新: 2026-10-05 アプリ化（お知らせ・メンバーのフォント） */
