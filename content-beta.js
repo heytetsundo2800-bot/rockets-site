@@ -40,7 +40,7 @@ window.CONTENT = {
     {
       date:   "2026.08.18",
       day:    "TUE",
-      title:  "青春火花",
+      title:  "青春火花",   titleEn: "Seishun Hibana",
       venue:  "立川 BABEL",          venueEn: "Tachikawa BABEL",
       open:   "18:15",
       start:  "18:30",
@@ -54,7 +54,7 @@ window.CONTENT = {
     {
       date:   "2026.09.18",
       day:    "FRI",
-      title:  "共鳴",
+      title:  "共鳴",       titleEn: "Kyomei",
       venue:  "立川 COSMIC HALL",    venueEn: "Tachikawa COSMIC HALL",
       open:   "18:00",
       start:  "18:30",
@@ -68,7 +68,7 @@ window.CONTENT = {
     {
       date:   "2026.09.24",
       day:    "THU",
-      title:  "画零時",
+      title:  "画零時",     titleEn: "Gareiji",
       venue:  "大久保 HOT SHOT",     venueEn: "Okubo HOT SHOT",
       open:   "18:10",
       start:  "18:30",

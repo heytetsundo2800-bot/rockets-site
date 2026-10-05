@@ -622,6 +622,13 @@ body[data-view="photo"] .wordmark{text-align:center}
 body[data-view="photo"] .wordmark img{width:min(68vw,400px);margin:0 auto}
 body[data-view="photo"] .catch,body[data-view="photo"] .scroller{display:none}
 body[data-view="photo"] #photo{padding-top:22px}
+.nl .acts button{font-size:13px;white-space:nowrap;padding:14px 4px}
+/* ヘッダー下の余白を少し詰めて、メンバーの名前まで1画面に入れる */
+body:not([data-view="photo"]) section.blk{padding-top:clamp(80px,12vh,130px)}
+#member .head{margin-bottom:18px}
+.mc{flex-basis:min(76vw,400px)}
+.mgrid::before,.mgrid::after{flex-basis:max(0px,calc(50% - min(38vw,200px) - 14px))}
+.mc .pw{padding-right:64px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -1638,6 +1645,9 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
 })();
 
 show(H[location.hash]||"live", true);
+// #photo などで開いたとき、ブラウザが勝手にその場所までスクロールするのを止める
+try{ history.scrollRestoration="manual"; }catch(e){}
+addEventListener("load",()=>setTimeout(()=>window.scrollTo(0,0),0),{once:true});
 
 /* ---------- シート（下から出る画面） ---------- */
 function sheet(html){
