@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 更新 2026-10-05a アプリ化（下タブ・日めくり・ベル・JA/EN・メンバー横スワイプ・写真Pinterest型） -->
+<title>ROCKETs</title>
+<link rel="icon" href="assets/brand/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/brand/icon-512.png">
+<meta name="theme-color" content="#080809">
+<!-- ホーム画面に追加したときの設定 -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="ROCKETs">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="ROCKETs オフィシャルサイト｜ライブ情報・写真・映像">
+<meta property="og:title" content="ROCKETs">
+<meta property="og:description" content="ROCKETs オフィシャルサイト｜ライブ情報・写真・映像">
+<!-- ↓ SNSに貼ったときのサムネイル。Vercel公開後、下の2行を
+     https://自分のURL/assets/photos/p084.webp のようにフルURLに書き換えると確実に出ます -->
+<meta property="og:image" content="assets/photos/p084.webp">
+<meta property="og:image:alt" content="ROCKETs">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cherry+Bomb+One&family=Reggae+One&family=Special+Elite&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080809;
+  --fg:#f2f0ec;
+  --dim:#8e8a84;
+  --line:rgba(242,240,236,.14);
+  --tint-r:120; --tint-g:110; --tint-b:130;
+  --tint:rgb(var(--tint-r),var(--tint-g),var(--tint-b));
+  /* --tint は写真から自動抽出するので暗くなることがある。
+     読ませたい文字にはこの固定色を使う（背景は常にほぼ黒なので必ず読める） */
+  --pop:#ffd84a;
+  --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",-apple-system,sans-serif;
+  --dp:"Anton","Zen Kaku Gothic New",Impact,sans-serif;
+  --pad:clamp(20px,5vw,64px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--fg);font-family:var(--jp);
+  transition:background-color 3s ease;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-feature-settings:"palt";letter-spacing:.02em;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--tint);color:#000}
+
+/* ページ全体にうっすら乗る色被り（写真に連動してゆっくり変わる） */
+#globaltint{
+  position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:soft-light;
+  background:radial-gradient(120% 90% at 50% 0%,var(--tint) 0%,transparent 65%);
+  opacity:.5;transition:background 3s ease;
+}
+#grain{
+  position:fixed;inset:-50%;pointer-events:none;z-index:3;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:gr 1.2s steps(3) infinite;
+}
+@keyframes gr{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}100%{transform:translate(0,0)}}
+/* スマホでは粒子を止める（常時再描画はバッテリーを食うため。質感は残る） */
+@media(max-width:760px){#grain{animation:none;opacity:.045}}
+
+/* ---------- ローディング ---------- */
+#loader{position:fixed;inset:0;z-index:200;background:#000;display:grid;place-items:center;
+  transition:opacity .9s ease,visibility .9s}
+#loader.done{opacity:0;visibility:hidden}
+#loader .lg{width:min(46vw,340px);animation:lgin 2s ease forwards;opacity:0}
+@keyframes lgin{0%{opacity:0;filter:blur(18px);transform:scale(1.14)}100%{opacity:.92;filter:blur(0);transform:none}}
+
+/* ---------- ナビ ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:60;padding:16px var(--pad);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  transition:background .4s,backdrop-filter .4s,padding .4s}
+header.solid{background:rgba(8,8,9,.82);backdrop-filter:blur(14px);padding:11px var(--pad);
+  border-bottom:1px solid var(--line)}
+.brand{display:block;line-height:0}
+.brand img{width:clamp(104px,13vw,158px);transition:width .4s ease}
+header.solid .brand img{width:clamp(92px,10vw,124px)}
+nav ul{display:flex;gap:clamp(14px,2.2vw,30px);list-style:none;align-items:center}
+nav a{font-size:12.5px;font-weight:500;letter-spacing:.14em;color:var(--dim);
+  transition:color .3s;position:relative;padding:4px 0}
+nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--tint);transition:right .35s ease}
+nav a:hover{color:var(--fg)}
+nav a:hover::after{right:0}
+.burger{display:none;background:none;border:0;color:var(--fg);cursor:pointer;padding:6px}
+.burger span{display:block;width:24px;height:1.5px;background:currentColor;margin:5px 0;transition:.3s}
+
+/* ---------- HERO ---------- */
+#hero{position:relative;height:100svh;min-height:560px;overflow:hidden;isolation:isolate}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity var(--cf,2.4s) cubic-bezier(.4,0,.2,1);
+  background-size:cover;background-position:center;will-change:opacity,transform}
+.slide.on{opacity:1}
+.slide.kb{animation:kb 22s linear forwards}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.13)}}
+#hero .veil{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,rgba(8,8,9,.62) 0%,rgba(8,8,9,.28) 30%,rgba(8,8,9,.55) 62%,rgba(8,8,9,.96) 100%)}
+#hero .colorveil{position:absolute;inset:0;z-index:1;mix-blend-mode:color;opacity:.28;
+  background:var(--tint);transition:background 3s ease}
+
+.heroInner{position:relative;z-index:4;height:100%;padding:0 var(--pad) clamp(28px,5vh,56px);
+  display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(22px,4vh,44px)}
+.wordmark{line-height:0}
+.wordmark img{width:min(78vw,860px);
+  filter:drop-shadow(0 10px 46px rgba(0,0,0,.7));
+  opacity:0;transform:translateY(18px) scale(1.03);
+  animation:up 1.3s .25s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.catch{color:var(--dim);font-size:13px;letter-spacing:.3em;margin-top:14px}
+/* PCではトップの大きいロゴを中央に */
+@media(min-width:761px){
+  .wordmark{text-align:center}
+  .wordmark img{margin-left:auto;margin-right:auto}
+  .catch{text-align:center}
+}
+
+/* 直近ライブカード */
+.nextlive{display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,3vw,48px);
+  border-top:1px solid var(--line);padding-top:20px;max-width:1100px;
+  opacity:0;animation:up 1s .7s cubic-bezier(.2,.8,.2,1) forwards}
+.nextlive .lab{font-size:10.5px;letter-spacing:.34em;color:var(--tint);
+  filter:brightness(1.7) saturate(1.4);white-space:nowrap}
+.nextlive .d{font-family:var(--dp);font-size:clamp(28px,4.6vw,52px);line-height:1;letter-spacing:.03em}
+.nextlive .d small{font-size:.42em;letter-spacing:.18em;margin-left:.5em;opacity:.65}
+.nextlive .v{font-size:15px;font-weight:700}
+.nextlive .m{font-size:12.5px;color:var(--dim);margin-top:5px;line-height:1.7}
+.btn{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--fg);
+  padding:11px 22px;font-size:12px;letter-spacing:.2em;font-weight:700;
+  transition:.35s;white-space:nowrap;background:transparent;color:var(--fg);cursor:pointer}
+.btn:hover{background:var(--fg);color:#000}
+.btn.accent{border-color:var(--tint);color:#fff;
+  background:linear-gradient(90deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.28),transparent)}
+.btn.accent:hover{background:var(--tint);color:#000}
+
+.scroller{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:5;
+  font-size:9.5px;letter-spacing:.3em;color:var(--dim);display:flex;flex-direction:column;
+  align-items:center;gap:8px}
+.scroller i{display:block;width:1px;height:34px;background:linear-gradient(var(--dim),transparent);
+  animation:sc 2.2s ease-in-out infinite}
+@keyframes sc{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* ---------- セクション共通 ---------- */
+section.blk{padding:clamp(72px,11vh,140px) var(--pad);position:relative;z-index:4}
+.head{display:flex;align-items:baseline;gap:18px;margin-bottom:clamp(28px,5vh,54px);
+  border-bottom:1px solid var(--line);padding-bottom:16px;flex-wrap:wrap}
+.head h2{font-family:var(--dp);font-size:clamp(30px,5.2vw,64px);letter-spacing:.05em;line-height:1}
+.head .ja{font-size:12px;letter-spacing:.28em;color:var(--dim)}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- LIVE ---------- */
+.liverow{display:grid;grid-template-columns:minmax(140px,190px) 1fr auto;gap:clamp(14px,3vw,40px);
+  align-items:center;padding:24px 0;border-bottom:1px solid var(--line);transition:.4s}
+.liverow:hover{background:linear-gradient(90deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.10),transparent);
+  padding-left:14px}
+.liverow .dt{font-family:var(--dp);font-size:clamp(22px,3vw,34px);line-height:1;letter-spacing:.03em}
+.liverow .dt small{display:block;font-family:var(--jp);font-size:10.5px;letter-spacing:.28em;
+  color:var(--dim);margin-top:7px}
+.liverow .ttl{font-size:16px;font-weight:700;margin-bottom:7px}
+.liverow .info{font-size:12.5px;color:var(--dim);line-height:1.85}
+.liverow .info b{color:var(--fg);font-weight:500}
+.liverow.past{opacity:.42}
+.liverow.past:hover{opacity:.7}
+#pastwrap{max-height:0;overflow:hidden;transition:max-height .7s ease}
+#pastwrap.open{max-height:2600px}
+.toggle{margin-top:26px;font-size:11.5px;letter-spacing:.22em;color:var(--dim);
+  background:none;border:0;cursor:pointer;font-family:var(--jp);padding:8px 0;transition:color .3s}
+.toggle:hover{color:var(--fg)}
+
+/* ---------- PHOTO ---------- */
+.photobar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.chip{font-size:11px;letter-spacing:.18em;padding:8px 16px;border:1px solid var(--line);
+  cursor:pointer;background:none;color:var(--dim);font-family:var(--jp);transition:.3s}
+.chip:hover{color:var(--fg);border-color:var(--fg)}
+.chip.on{background:var(--fg);color:#000;border-color:var(--fg)}
+.pcount{font-size:11px;color:var(--dim);letter-spacing:.12em;margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:5px}
+.grid figure{position:relative;aspect-ratio:1;overflow:hidden;cursor:pointer;background:#111}
+.grid figure.hide{display:none}
+.morewrap{display:flex;justify-content:center;margin-top:26px}
+.morebtn{border:1px solid var(--line);background:none;color:var(--dim);cursor:pointer;
+  font-family:var(--jp);font-size:12px;letter-spacing:.2em;padding:14px 34px;transition:.35s}
+.morebtn:hover{color:var(--fg);border-color:var(--fg);background:rgba(255,255,255,.04)}
+.grid img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.05);
+  transition:filter .6s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.grid figure:hover img{filter:none;transform:scale(1.07)}
+
+/* 全画面スライドショー */
+#viewer{position:fixed;inset:0;z-index:150;background:#000;display:none}
+#viewer.on{display:block}
+#viewer .vs{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;
+  background-size:contain;background-repeat:no-repeat;background-position:center}
+#viewer .vs.on{opacity:1}
+#viewer .vbg{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;
+  background-size:cover;background-position:center;filter:blur(46px) brightness(.34);transform:scale(1.15)}
+#viewer .vbg.on{opacity:1}
+.vclose{position:absolute;top:18px;right:20px;z-index:5;background:none;border:0;color:#fff;
+  font-size:26px;cursor:pointer;line-height:1;opacity:.7;transition:.3s;padding:8px}
+.vclose:hover{opacity:1;transform:rotate(90deg)}
+.vhint{position:absolute;bottom:20px;left:0;right:0;text-align:center;z-index:5;
+  font-size:10.5px;letter-spacing:.26em;color:rgba(255,255,255,.42)}
+.vnav{position:absolute;top:0;bottom:0;cursor:pointer;background:none;border:0;-webkit-tap-highlight-color:transparent}
+.vnav.next{left:0;right:0;z-index:4}
+.vnav.prev{left:0;width:30%;z-index:5}
+@media(max-width:760px){
+  .vclose{top:12px;right:12px;font-size:32px;padding:12px}
+  .vhint{bottom:14px;font-size:9.5px;letter-spacing:.18em}
+}
+
+/* ---------- VIDEO ---------- */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(14px,2.4vw,28px)}
+.vcard .fr{position:relative;aspect-ratio:16/9;background:#111;overflow:hidden;border:1px solid var(--line)}
+.vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vcard h3{font-size:13.5px;font-weight:500;margin-top:12px;color:var(--dim);letter-spacing:.06em}
+
+/* ---------- SOUND（音源） ---------- */
+.trk{display:flex;gap:clamp(18px,3vw,34px);padding:clamp(20px,3vw,30px) 0;
+  border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.trk .jk{width:clamp(112px,17vw,168px);flex:0 0 auto;aspect-ratio:1/1;
+  border:1px solid var(--line);background:#101012;overflow:hidden;position:relative}
+.trk .jk img{width:100%;height:100%;object-fit:cover;transition:.7s}
+.trk:hover .jk img{transform:scale(1.05)}
+.trk .meta{flex:1 1 260px;min-width:225px}
+.trk .meta b{font-size:clamp(17px,2.6vw,22px);font-weight:700;display:block;line-height:1.35}
+.trk .meta span{display:block;font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:7px}
+.trk audio{width:100%;height:36px;margin-top:15px;filter:invert(1) hue-rotate(180deg) contrast(.85)}
+.trk .srow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.trk .srow .btn{font-size:11px;padding:10px 19px}
+.trk .srow .btn svg{width:13px;height:13px;fill:currentColor}
+/* 歌詞パネル（曲の右側。指でスクロールして全部読める） */
+.trk .lyr{flex:1 1 300px;min-width:230px;align-self:stretch;display:flex;flex-direction:column;
+  justify-content:center;border-left:1px solid var(--line);padding-left:clamp(18px,2.6vw,30px)}
+.trk .lyrhd{font-family:var(--dp);font-size:11px;letter-spacing:.34em;color:var(--dim);
+  margin-bottom:12px;display:flex;align-items:baseline;gap:10px}
+.trk .lyrhd span{font-family:inherit;font-size:9.5px;letter-spacing:.22em;opacity:.6}
+.trk .lyrbody{--fadeTop:0px;--fadeBot:30px;
+  max-height:clamp(148px,19vw,206px);overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;padding:6px 14px 10px 0;outline:none;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fadeTop),#000 calc(100% - var(--fadeBot)),transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fadeTop),#000 calc(100% - var(--fadeBot)),transparent 100%);
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+.trk .lyrbody::-webkit-scrollbar{width:3px}
+.trk .lyrbody::-webkit-scrollbar-track{background:transparent}
+.trk .lyrbody::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:3px}
+.trk .lyrbody:hover::-webkit-scrollbar-thumb{background:rgba(255,255,255,.34)}
+.trk .lyrbody p{margin:0;font-size:13px;line-height:2.1;letter-spacing:.07em;color:#c2beb7}
+.trk .lyrbody p.sp{height:.95em}
+@media(max-width:760px){
+  /* スマホ：ジャケット写真の右の余白に歌詞を入れる（曲名・再生バーはその下） */
+  .trk{align-items:flex-start}
+  .trk .jk{order:1}
+  .trk .lyr{order:2;flex:1 1 0;min-width:0;align-self:flex-start;
+    border-left:1px solid var(--line);border-top:0;
+    padding-left:clamp(14px,4vw,20px);padding-top:0;margin-top:0}
+  .trk .meta{order:3;flex:1 1 100%;min-width:0}
+  .trk .lyrhd{margin-bottom:9px}
+  .trk .lyrbody{max-height:152px;padding:6px 10px 10px 0}
+  .trk .lyrbody p{font-size:12.5px;line-height:1.95}
+}
+.sndnote{margin-top:clamp(20px,3.4vw,28px);font-size:12.5px;line-height:1.95;
+  color:var(--dim);letter-spacing:.04em;white-space:pre-line}
+
+/* ---------- SHOP（物販） ---------- */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(16px,2.6vw,34px)}
+.scard .ph{aspect-ratio:1/1;background:#101012;overflow:hidden;position:relative;border:1px solid var(--line)}
+.scard .ph img{width:100%;height:100%;object-fit:cover;transition:.7s}
+.scard:hover .ph img{transform:scale(1.06)}
+.scard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
+  font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
+/* 切り抜き画像（背景が透明なステッカー）の見せ方。
+   .scard .ph img の height:100% / object-fit:cover より詳細度を上げる必要がある */
+/* 黒ステッカーが黒背景に沈むので、ステッカーを置く面だけ明るいグレーにする */
+.scard .ph.cut{display:grid;place-items:center;padding:0 11%;aspect-ratio:3/2;
+  background:radial-gradient(120% 110% at 50% 32%, #4c4c53 0%, #303036 55%, #232328 100%)}
+.scard .ph.cut img{width:100%;height:auto;object-fit:contain;transition:.7s;transform:rotate(-4.5deg);
+  filter:drop-shadow(0 0 1px rgba(255,255,255,.40)) drop-shadow(0 6px 13px rgba(0,0,0,.65))}
+.scard:hover .ph.cut img{transform:rotate(-4.5deg) scale(1.05)}
+/* 黒ステッカーは白の画像を色反転して作る（白地→黒地／黒ロゴ→白ロゴ） */
+.scard .ph.cut.inv img{filter:invert(1)
+  drop-shadow(0 0 1px rgba(255,255,255,.40)) drop-shadow(0 6px 13px rgba(0,0,0,.65))}
+.scard .nm{font-size:15.5px;font-weight:700;margin-top:15px}
+.scard .sub{font-size:11.5px;color:var(--dim);letter-spacing:.1em;margin-top:5px}
+.scard .size{font-size:10.5px;color:#6f6b66;letter-spacing:.14em;margin-top:8px}
+.scard .pr{font-family:var(--dp);font-size:17px;letter-spacing:.05em;margin-top:9px;
+  color:var(--tint);filter:brightness(1.7) saturate(1.4)}
+.scard .btn{margin-top:14px;font-size:11px;padding:11px 20px}
+/* 商品がまだ無いときの画面 */
+.soon{border:1px solid var(--line);text-align:center;padding:clamp(44px,8vw,78px) 24px;
+  background:linear-gradient(160deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.11),transparent 70%)}
+.soon .lb{font-family:var(--dp);font-size:clamp(30px,7vw,58px);line-height:1;letter-spacing:.12em;
+  color:var(--tint);filter:brightness(1.85) saturate(1.35)}
+.soon p{margin-top:20px;font-size:13.5px;line-height:2.1;color:var(--dim);white-space:pre-line}
+.soon .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
+.soon .row .btn svg{width:14px;height:14px;fill:currentColor}
+.storerow{display:flex;justify-content:center;margin-top:clamp(28px,5vh,44px)}
+/* 「会場でのみ販売」の帯 */
+.saleband{border:1px solid var(--line);padding:clamp(20px,3.2vw,28px) clamp(20px,3.2vw,30px);
+  margin-bottom:clamp(24px,4vw,38px);
+  background:linear-gradient(120deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.13),transparent 72%)}
+.saleband .lb{font-family:var(--dp);font-size:clamp(15px,2.5vw,21px);letter-spacing:.16em;line-height:1;
+  color:var(--tint);filter:brightness(1.85) saturate(1.35)}
+.saleband p{margin-top:12px;font-size:13.5px;line-height:1.95;color:#cfcbc5;white-space:pre-line}
+
+/* ---------- MEMBER ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:clamp(16px,2.6vw,34px)}
+.mcard .ph{aspect-ratio:3/4;background:#101012;overflow:hidden;position:relative;border:1px solid var(--line)}
+.mcard .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08);transition:.7s}
+.mcard:hover .ph img{filter:grayscale(0) contrast(1);transform:scale(1.05)}
+.mcard .ph.empty::after{content:"NO IMAGE";position:absolute;inset:0;display:grid;place-items:center;
+  font-size:10px;letter-spacing:.28em;color:#3a3a3e;font-family:var(--dp)}
+.mcard .part{font-size:10.5px;letter-spacing:.26em;color:var(--tint);
+  filter:brightness(1.7) saturate(1.4);margin-top:16px}
+.mcard .nm{font-size:18px;font-weight:700;margin-top:7px}
+/* 欧文は Anton、和文は Zen Kaku の900。font-synthesis:none で Anton に偽ボールドを掛けない */
+.mcard .wd{font-family:var(--dp);font-weight:900;font-synthesis:none;
+  font-size:13.5px;line-height:1.5;letter-spacing:.05em;
+  margin-top:10px;min-height:1.5em;color:#a39f9a;transition:color .5s}
+.mcard:hover .wd{color:var(--fg)}
+.mcard .ms{display:flex;gap:9px;margin-top:13px}
+.mcard .ms a{width:36px;height:36px;display:grid;place-items:center;
+  border:1px solid var(--line);color:var(--dim);transition:.3s}
+.mcard .ms a:hover{color:#000;background:var(--fg);border-color:var(--fg);transform:translateY(-2px)}
+.mcard .ms svg{width:15px;height:15px;fill:currentColor}
+.bio{max-width:720px;font-size:14.5px;line-height:2.15;color:#cfcbc5;white-space:pre-line;margin-top:clamp(34px,6vh,60px)}
+
+/* ---------- CONTACT ---------- */
+#contact{text-align:center}
+.cnote{font-size:14px;color:var(--dim);line-height:2;max-width:560px;margin:0 auto clamp(28px,5vh,46px)}
+.snsrow{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.snsrow a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
+  width:118px;height:118px;border:1px solid var(--line);transition:.4s;font-size:10.5px;letter-spacing:.2em}
+.snsrow a:hover{border-color:var(--fg);background:rgba(255,255,255,.05);transform:translateY(-4px)}
+.snsrow a.main{border-color:var(--tint);
+  background:linear-gradient(160deg,rgba(var(--tint-r),var(--tint-g),var(--tint-b),.22),transparent)}
+.snsrow svg{width:24px;height:24px;fill:currentColor}
+
+footer{padding:44px var(--pad);border-top:1px solid var(--line);position:relative;z-index:4;
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+footer .fb img{width:110px;opacity:.75}
+footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
+
+/* ---------- スマホ ---------- */
+@media(max-width:760px){
+  .burger{display:block;z-index:70;position:relative}
+  /* メニューは三本線の真下に、文字だけを縦に並べる（枠なし） */
+  nav{position:absolute;top:100%;right:var(--pad);left:auto;
+    background:none;border:0;box-shadow:none;padding:10px 0 0;
+    opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .26s ease,transform .26s cubic-bezier(.2,.8,.2,1),visibility .26s}
+  nav.open{opacity:1;visibility:visible;transform:none}
+  nav ul{flex-direction:column;gap:0;align-items:flex-end}
+  nav li{border:0}
+  nav a{display:block;padding:11px 2px;font-size:15px;font-weight:700;
+    color:var(--fg);letter-spacing:.22em;text-align:right;
+    text-shadow:0 1px 3px #000, 0 2px 14px rgba(0,0,0,.95)}
+  nav a::after{display:none}
+  nav a:active{opacity:.55}
+  /* 開いている間は三本線を × に */
+  .burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+  .burger.open span:nth-child(2){opacity:0}
+  .burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+  /* トップ：ロゴを大きく、直近ライブとの間を詰める */
+  .heroInner{gap:15px;padding-bottom:24px}
+  .wordmark img{width:min(90vw,460px)}
+  .catch:empty{display:none}
+  .nextlive{gap:14px;padding-top:16px}
+  .scroller{display:none}
+
+  /* 横位置の写真：寄りを抑えつつ、上下をぼかしに溶かして「写真の枠」を見せない */
+  .slide.land{background-size:0 0}
+  .slide.land::before,.slide.land::after{content:"";position:absolute;
+    background-image:inherit;background-repeat:no-repeat}
+  .slide.land::before{inset:0;background-size:cover;background-position:center;
+    filter:blur(30px) brightness(.62) saturate(1.1);transform:scale(1.35)}
+  .slide.land::after{
+    inset:16% 0 24%;                       /* 上下に逃がす＝その分クロップが減る */
+    background-size:cover;background-position:center 45%;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 26%,#000 74%,transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 26%,#000 74%,transparent 100%)}
+
+  .liverow{grid-template-columns:1fr;gap:12px}
+  .liverow .dt{font-size:26px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:3px}
+  .snsrow a{width:96px;height:96px}
+}
+/* 指で操作する端末：なぞった写真だけカラーになる（指を離すとゆっくり戻る） */
+@media(hover:none){
+  .grid figure:hover img{transform:none}
+  .grid img{transition:filter .45s ease,transform .6s ease}
+  .grid figure.lit img{filter:none;transform:scale(1.04)}
+  .mcard .ph img{filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.15s!important}
+  .slide.kb{animation:none}
+}
+
+/* ============================================================
+   ホーム画面に追加の導線（下から出るバー ＋ 手順シート）
+   ライブ会場でQRから来た人が、あとから戻ってこれるようにするための導線。
+   サイトの見え方そのものは変えない。
+   ============================================================ */
+
+[hidden]{display:none!important}
+
+#a2hs{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(8,8,9,.94);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  padding:14px var(--pad) calc(14px + env(safe-area-inset-bottom,0px));
+  transform:translateY(110%);transition:transform .5s cubic-bezier(.2,.7,.3,1)
+}
+#a2hs.in{transform:none}
+.a2-row{display:flex;align-items:center;gap:14px;max-width:1000px;margin:0 auto}
+.a2-ico{flex:0 0 auto;width:42px;height:42px;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+.a2-ico img{width:100%;height:100%;object-fit:cover}
+.a2-txt{flex:1 1 auto;min-width:0;display:block}
+/* 1行ずつに固定する。折り返すとバーが高くなって邪魔になるため */
+.a2-t,.a2-s{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a2-t{font-size:12.5px;font-weight:700;line-height:1.55;letter-spacing:-.01em}
+.a2-t em{font-style:normal;color:var(--tint);font-size:.85em;letter-spacing:.14em;margin-right:.5em}
+/* 文中で「アプリ」だけ光らせる（ラベル用のemとは別扱い） */
+.a2-t em.hi{color:var(--pop);font-size:1em;letter-spacing:.02em;margin:0;font-weight:800}
+.a2-s{font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.5}
+.a2-btn{flex:0 0 auto;font-size:11px;letter-spacing:.04em;font-weight:700;
+  padding:10px 12px;border:1px solid var(--fg);background:transparent;color:var(--fg);
+  cursor:pointer;transition:.3s;white-space:nowrap}
+.a2-btn:hover{background:var(--fg);color:#000}
+.a2-x{flex:0 0 auto;width:28px;height:28px;border:0;background:none;color:var(--dim);
+  font-size:15px;cursor:pointer;line-height:1}
+.a2-x:hover{color:var(--fg)}
+@media(max-width:600px){
+  #a2hs{padding-left:16px;padding-right:12px}
+  .a2-row{gap:10px}
+  .a2-ico{width:34px;height:34px}
+  .a2-t{font-size:11.5px}
+  .a2-s{font-size:10.5px}
+  .a2-btn{padding:9px 9px;font-size:10px;letter-spacing:0}
+  .a2-x{width:24px}
+}
+
+/* ---------- 手順シート ---------- */
+#a2sheet{position:fixed;inset:0;z-index:61;display:flex;align-items:flex-end;justify-content:center}
+#a2sheet .bg{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+#a2sheet .panel{position:relative;width:100%;max-width:520px;background:#0d0d0f;
+  border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+  padding:10px 24px calc(30px + env(safe-area-inset-bottom,0px));
+  max-height:92vh;overflow-y:auto;animation:a2rise .28s cubic-bezier(.2,.7,.3,1)}
+@keyframes a2rise{from{transform:translateY(30px);opacity:.3}to{transform:none;opacity:1}}
+@media(min-width:560px){#a2sheet{align-items:center}
+  #a2sheet .panel{border-radius:20px;border:1px solid var(--line)}}
+#a2sheet .grip{width:38px;height:3px;border-radius:3px;background:var(--line);margin:2px auto 20px}
+#a2sheet h3{font-size:15px;font-weight:700;letter-spacing:.03em;margin-bottom:8px;line-height:1.6}
+#a2sheet .why{font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:24px}
+
+.a2steps{list-style:none;counter-reset:a2;margin:0 0 24px;padding:0}
+.a2steps li{counter-increment:a2;position:relative;padding:0 0 20px 42px;font-size:13.5px;line-height:1.75}
+.a2steps li::before{content:counter(a2);position:absolute;left:0;top:0;width:26px;height:26px;
+  border-radius:50%;background:var(--fg);color:#000;font-size:11.5px;font-weight:900;
+  display:flex;align-items:center;justify-content:center}
+.a2steps li::after{content:"";position:absolute;left:12.5px;top:30px;bottom:5px;width:1px;background:var(--line)}
+.a2steps li:last-child{padding-bottom:2px}
+.a2steps li:last-child::after{display:none}
+.a2steps b{font-weight:700}
+.a2steps .ui{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:30px;
+  border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin:0 3px;
+  background:rgba(242,240,236,.06);font-size:12.5px;font-weight:700;vertical-align:-1px;white-space:nowrap}
+.a2acts{display:flex;flex-direction:column;gap:9px}
+.a2acts .btn{justify-content:center;width:100%}
+.a2close{display:block;margin:20px auto 0;border:0;background:none;color:var(--dim);
+  font-size:11.5px;letter-spacing:.1em;cursor:pointer;text-decoration:underline;
+  text-underline-offset:3px;padding:8px}
+.a2close:hover{color:var(--fg)}
+
+/* フッターの常設リンク（バーを閉じた人でも、あとから追加できる入口） */
+.a2foot-box{margin:0 auto 22px;text-align:center}
+.a2foot-box p{margin:0 0 10px;font-size:12.5px;color:var(--dim);line-height:1.7}
+.a2foot-box b{color:var(--pop);font-weight:800}
+.a2foot{display:block;margin:0 auto;border:1px solid var(--line);background:none;
+  color:var(--dim);font-size:11px;letter-spacing:.18em;padding:10px 20px;
+  cursor:pointer;transition:.3s;font-family:inherit}
+.a2foot:hover{color:var(--fg);border-color:var(--fg)}
+
+/* ============ アプリ化（2026-10-05）============
+   下のタブ：MEMBER / PHOTO / 次のライブ（日めくり）/ SOUND / SHOP
+   右上：JA/EN 切り替え ＋ お知らせベル                         */
+#nav,#burger,#hero .nextlive,#contact,.mhint{display:none!important}
+body{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+.vw-off{display:none!important}
+body:not([data-view="home"]) header{background:rgba(8,8,9,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body:not([data-view="home"]) section.blk{padding-top:clamp(96px,14vh,140px)}
+body.en .head .ja{display:none}
+/* 右上 */
+#topr{display:flex;align-items:center;gap:12px}
+.lang{display:flex;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:3px;background:rgba(0,0,0,.35)}
+.lang button{border:0;background:none;color:var(--dim);font-family:var(--dp);font-size:12px;letter-spacing:.08em;
+  padding:5px 10px;border-radius:99px;cursor:pointer}
+.lang button.on{background:var(--fg);color:#000}
+#bell{position:relative;width:38px;height:38px;border:0;background:none;color:var(--fg);cursor:pointer;display:grid;place-items:center}
+#bell svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#bell i{position:absolute;top:2px;right:1px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#ff2d2d;
+  color:#fff;font-style:normal;font-family:var(--dp);font-size:11px;line-height:18px;text-align:center;border:2px solid #0a0a0b}
+/* 下のタブ */
+#tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:65;width:min(100%,640px);
+  display:grid;grid-template-columns:repeat(5,1fr);align-items:end;
+  background:rgba(10,10,12,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-top:1px solid rgba(255,255,255,.12);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+@media(min-width:641px){#tabbar{border:1px solid rgba(255,255,255,.12);border-bottom:0;border-radius:18px 18px 0 0}}
+#tabbar button{border:0;background:none;color:#8c8a86;font-family:var(--dp);font-size:10.5px;letter-spacing:.08em;
+  display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 4px;cursor:pointer}
+#tabbar button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#tabbar button.on{color:var(--pop)}
+#tcal{position:relative;padding:0!important}
+.cal{width:76px;margin-top:-34px;border-radius:14px;overflow:hidden;background:#f5f2ec;color:#111;
+  box-shadow:0 0 0 1px rgba(0,0,0,.4),0 0 22px rgba(255,216,74,.55);text-align:center;font-family:var(--dp)}
+.cal .cm{background:#ff2d2d;color:#fff;font-size:11px;letter-spacing:.06em;padding:4px 0 3px}
+.cal .cd{font-size:34px;line-height:1;padding:3px 0 0}
+.cal .cc{font-family:var(--jp);font-weight:700;font-size:10px;color:#ff2d2d;padding:2px 0 5px}
+#a2hs{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+#ntf{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+/* 下から出るシート（ライブ詳細・お知らせ） */
+.sheet{position:fixed;inset:0;z-index:90}
+.sheet .bg{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.sheet .pn{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,640px);max-height:86vh;overflow:auto;
+  background:#141417;border-radius:22px 22px 0 0;padding:16px 24px calc(28px + env(safe-area-inset-bottom,0px));animation:shup .35s ease}
+@keyframes shup{from{transform:translate(-50%,40px);opacity:0}}
+.sheet .grip{width:56px;height:5px;border-radius:3px;background:#444;margin:0 auto 18px}
+.sheet .lab{font-family:var(--dp);letter-spacing:.24em;font-size:12px;color:var(--pop);display:flex;justify-content:space-between}
+.sheet .lab b{font-family:var(--jp);color:#ff4a4a;letter-spacing:.02em;font-size:14px}
+.sheet .bigd{font-family:var(--dp);font-size:44px;line-height:1.1;margin-top:8px}
+.sheet .ven{font-size:20px;font-weight:900;margin-top:6px}
+.sheet .ttl{font-size:13px;color:#cfcbc5;margin-top:4px}
+.sheet .inf{font-size:13px;color:var(--dim);line-height:1.9;margin-top:12px;white-space:pre-line}
+.sheet .acts{display:grid;gap:10px;margin-top:20px}
+.sheet .acts a,.sheet .acts button{display:block;text-align:center;border-radius:99px;padding:15px;font-weight:700;font-size:14px;
+  border:0;cursor:pointer;background:#24242a;color:var(--fg);font-family:var(--jp)}
+.sheet .acts .y{background:var(--pop);color:#111}
+.sheet .more{display:block;margin-top:16px;color:var(--dim);font-size:13px;text-align:center;background:none;border:0;width:100%;cursor:pointer;font-family:var(--jp)}
+.news h3{font-family:var(--dp);font-size:34px;letter-spacing:.04em}
+.news .it{display:flex;gap:14px;padding:14px;border-radius:16px;margin-top:10px;background:#1b1b1f;text-decoration:none;color:inherit}
+.news .it.new{background:#221f14}
+.news .it .tx{flex:1;min-width:0}
+.news .it .tg{font-size:11px;color:var(--pop);font-weight:700}
+.news .it .t{font-size:14px;font-weight:700;margin-top:3px;line-height:1.5}
+.news .it .b{font-size:12px;color:var(--dim);margin-top:3px;line-height:1.6}
+.news .it .dt{font-size:11px;color:var(--dim);white-space:nowrap}
+.news .it .dot{width:9px;height:9px;border-radius:50%;background:#ff2d2d;margin-top:6px;flex:0 0 auto}
+/* PHOTO：Pinterest型（高さバラバラ） */
+.grid{display:block;columns:2;column-gap:8px}
+@media(min-width:761px){.grid{columns:3;column-gap:10px}}
+@media(min-width:1180px){.grid{columns:4}}
+.grid figure{aspect-ratio:auto!important;break-inside:avoid;margin:0 0 8px;border-radius:12px;display:block}
+.grid img{height:auto!important;filter:none!important}
+.grid .phh{column-span:all;display:flex;align-items:baseline;gap:12px;margin:18px 0 10px;font-family:var(--dp);font-size:24px;letter-spacing:.04em}
+.grid .phh small{font-family:var(--jp);font-size:12px;color:var(--dim);letter-spacing:.04em}
+.grid .phh:first-child{margin-top:0}
+/* MEMBER：1人ずつ大きく横スワイプ */
+.mgrid{gap:14px;padding-bottom:4px}
+.mc{flex:0 0 min(80vw,420px);scroll-snap-align:center;position:relative;aspect-ratio:7/9;border-radius:24px;overflow:hidden;background:#111}
+.mc img{width:100%;height:100%;object-fit:cover}
+.mc .ov{position:absolute;left:0;right:0;bottom:0;padding:90px 22px 20px;background:linear-gradient(to bottom,transparent,rgba(0,0,0,.88))}
+.mc .nm{font-size:clamp(30px,8.4vw,44px);line-height:1.15;color:#fff}
+.mc .pw{font-weight:700;font-size:13.5px;color:var(--pop);margin-top:6px}
+.mc .ms{display:flex;gap:16px;position:absolute;right:20px;bottom:20px}
+.mc .ms a{color:#fff;width:auto;height:auto;border:0}
+.mc .ms svg{width:22px;height:22px;fill:currentColor}
+.f-cb{font-family:"Cherry Bomb One",var(--jp)}
+.f-rg{font-family:"Reggae One",var(--jp)}
+.f-se{font-family:"Special Elite",var(--jp)}
+.f-zk{font-family:"Zen Kaku Gothic New",var(--jp);font-weight:900}
+.mdots{display:flex;justify-content:center;gap:10px;margin-top:16px}
+.mdots i{width:9px;height:9px;border-radius:50%;background:#46464c}
+.mdots i.on{background:var(--pop)}
+.biglinks{margin-top:26px;max-width:720px}
+.biglinks a{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #303036;padding:8px 0 10px}
+.biglinks .l{font-family:var(--dp);font-size:clamp(34px,10vw,52px);line-height:1.15;display:flex;align-items:center;gap:12px}
+.biglinks .l svg{width:30px;height:30px;stroke:var(--pop);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.biglinks .h{font-size:12px;color:var(--dim)}
+.mcontact{margin-top:22px;color:var(--pop);font-weight:700;font-size:13.5px;display:block;text-align:center}
+.mgrid{display:flex!important;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;margin:0 calc(-1*var(--pad));padding-left:var(--pad);padding-right:var(--pad)}
+.mgrid::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+
+<div id="loader"><img class="lg" src="assets/brand/logo.webp" alt="ROCKETs" data-logo></div>
+<div id="globaltint"></div>
+<div id="grain"></div>
+
+<header id="hdr">
+  <a href="#hero" class="brand" id="brand"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></a>
+  <nav id="nav">
+    <ul>
+      <li><a href="#live">ライブ</a></li>
+      <li><a href="#photo">写真</a></li>
+      <li><a href="#video" id="nv-video">映像</a></li>
+      <li><a href="#music" id="nv-music">音源</a></li>
+      <li><a href="#shop">物販</a></li>
+      <li><a href="#member">メンバー</a></li>
+      <li><a href="#contact">連絡</a></li>
+    </ul>
+  </nav>
+  <button class="burger" id="burger" aria-label="メニュー"><span></span><span></span><span></span></button>
+</header>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div id="slides"></div>
+  <div class="colorveil" id="colorveil"></div>
+  <div class="veil"></div>
+  <div class="heroInner">
+    <div>
+      <h1 class="wordmark" id="wordmark"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></h1>
+      <p class="catch" id="catch"></p>
+    </div>
+    <div class="nextlive" id="nextlive"></div>
+  </div>
+  <div class="scroller">SCROLL<i></i></div>
+</section>
+
+<!-- ===== LIVE ===== -->
+<section class="blk" id="live">
+  <div class="head reveal"><h2>LIVE</h2><span class="ja">ライブ情報</span></div>
+  <div id="upcoming"></div>
+  <button class="toggle" id="pastbtn">＋ 過去の公演を見る</button>
+  <div id="pastwrap"><div id="pastlist"></div></div>
+</section>
+
+<!-- ===== PHOTO ===== -->
+<section class="blk" id="photo">
+  <div class="head reveal"><h2>PHOTO</h2><span class="ja">写真</span></div>
+  <div class="photobar reveal">
+    <button class="chip on" data-m="shuffle">シャッフル</button>
+    <button class="chip" data-m="live">ライブ順</button>
+    <button class="chip" id="playall">▶ 全画面スライドショー</button>
+    <span class="pcount" id="pcount"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="morewrap"><button class="morebtn" id="morebtn"></button></div>
+</section>
+
+<!-- ===== VIDEO ===== -->
+<section class="blk" id="video">
+  <div class="head reveal"><h2>VIDEO</h2><span class="ja">映像</span></div>
+  <div class="vgrid" id="vgrid"></div>
+</section>
+
+<!-- ===== SOUND（音源） ===== -->
+<section class="blk" id="music">
+  <div class="head reveal"><h2>SOUND</h2><span class="ja">音源</span></div>
+  <div id="tracks"></div>
+</section>
+
+<!-- ===== SHOP（物販） ===== -->
+<section class="blk" id="shop">
+  <div class="head reveal"><h2>SHOP</h2><span class="ja">物販</span></div>
+  <div id="shopwrap"></div>
+</section>
+
+<!-- ===== MEMBER ===== -->
+<section class="blk" id="member">
+  <div class="head reveal"><h2>MEMBER</h2><span class="ja">メンバー</span></div>
+  <div class="mgrid" id="mgrid"></div>
+  <p class="bio reveal" id="bio"></p>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="blk" id="contact">
+  <div class="head reveal" style="justify-content:center"><h2>CONTACT</h2><span class="ja">連絡</span></div>
+  <p class="cnote reveal" id="cnote"></p>
+  <div class="snsrow reveal" id="snsrow"></div>
+</section>
+
+<footer>
+  <span class="fb"><img src="assets/brand/logo.webp" alt="ROCKETs" data-logo></span>
+  <div class="a2foot-box" id="a2footbox" hidden>
+    <p>ROCKETsのホームページは、<b>アプリにできます</b></p>
+    <button class="a2foot" id="a2foot" type="button">やり方はこちら</button>
+  </div>
+  <small>© <span id="yr"></span> ROCKETs</small>
+</footer>
+
+<!-- 全画面ビューア -->
+<div id="viewer">
+  <div class="vbg" id="vbgA"></div><div class="vbg" id="vbgB"></div>
+  <div class="vs" id="vsA"></div><div class="vs" id="vsB"></div>
+  <button class="vnav prev" id="vprev" aria-label="前へ"></button>
+  <button class="vnav next" id="vnext" aria-label="次へ"></button>
+  <button class="vclose" id="vclose" aria-label="閉じる">×</button>
+  <div class="vhint">タップ／スワイプで次へ　・　ESC で閉じる</div>
+</div>
+
+<!-- ホーム画面に追加：下から出るバー -->
+<div id="a2hs" hidden>
+  <div class="a2-row">
+    <span class="a2-ico"><img src="assets/brand/icon-192.png" alt=""></span>
+    <span class="a2-txt">
+      <span class="a2-t" id="a2t"></span>
+      <span class="a2-s" id="a2s">ホーム画面に入れておくと、いつでもすぐ見られます</span>
+    </span>
+    <button class="a2-btn" id="a2go" type="button">やり方はこちら</button>
+    <button class="a2-x" id="a2x" type="button" aria-label="閉じる">×</button>
+  </div>
+</div>
+
+<!-- ホーム画面に追加：手順シート -->
+<div id="a2sheet" hidden>
+  <div class="bg" id="a2bg"></div>
+  <div class="panel">
+    <div class="grip"></div>
+    <h3 id="a2h"></h3>
+    <p class="why" id="a2why"></p>
+    <ol class="a2steps" id="a2list"></ol>
+    <div class="a2acts">
+      <button class="btn accent" id="a2primary" type="button" hidden></button>
+    </div>
+    <button class="a2close" id="a2cl" type="button">閉じる</button>
+  </div>
+</div>
+
+<script src="assets/photos.js"></script>
+<script src="assets/images.js"></script>
+<script src="content.js"></script>
+<script>
+(function(){
+"use strict";
+const C = window.CONTENT, P = window.PHOTO_DATA;
+const S = Object.assign({fadeSeconds:6,crossfade:2.4,kenBurns:true,tintStrength:.55}, C.settings||{});
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const PH = "assets/photos/", TH = "assets/thumbs/";
+const byName = {}; P.photos.forEach(p=>byName[p.f]=p);
+// 画像の場所を決める。assets/images.js に埋め込みがあればそれを、無ければフォルダの中を見る
+const IMG = window.IMG || {};
+const imgSrc = (dir, name) => IMG[name] || (dir + name);
+
+/* ---------- 基本テキスト ---------- */
+document.title = C.band.title || C.band.name;
+$("#yr").textContent = new Date().getFullYear();
+$("#catch").textContent = C.band.catch || "";
+$$('img[data-logo]').forEach(i=>i.alt = C.band.name);
+
+/* ---------- 色をページ全体に反映 ---------- */
+function applyTint(rgb){
+  const [r,g,b] = rgb;
+  // 暗すぎる色は持ち上げて“くすみ色”に整える
+  const mx = Math.max(r,g,b,1), k = Math.min(1, 165/mx);
+  const R = Math.round(Math.min(255, r*k + 42)),
+        G = Math.round(Math.min(255, g*k + 40)),
+        B = Math.round(Math.min(255, b*k + 46));
+  const rs = document.documentElement.style;
+  rs.setProperty("--tint-r", String(R));
+  rs.setProperty("--tint-g", String(G));
+  rs.setProperty("--tint-b", String(B));
+  // ページの地の色もごくわずかに引きずる（写真に合わせて全体がふわっと変わる）
+  rs.setProperty("--bg", `rgb(${Math.round(R*.055)+7},${Math.round(G*.055)+7},${Math.round(B*.06)+8})`);
+  $("#globaltint").style.opacity = String(S.tintStrength);
+}
+
+/* ---------- HERO 背景クロスフェード ---------- */
+const heroList = (P.hero && P.hero.length ? P.hero : P.photos.filter(p=>p.land).map(p=>p.f)).slice();
+for(let i=heroList.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[heroList[i],heroList[j]]=[heroList[j],heroList[i]];}
+
+const slidesEl = $("#slides");
+let layers = [document.createElement("div"), document.createElement("div")];
+layers.forEach(l=>{l.className="slide"; l.style.setProperty("--cf", S.crossfade+"s"); slidesEl.appendChild(l);});
+let cur=0, idx=0, heroTimer=null;
+
+function preload(src){ const i=new Image(); i.src=src; }
+
+function showHero(n){
+  const file = heroList[n % heroList.length];
+  const next = layers[1-cur];
+  next.style.backgroundImage = `url("${PH}${file}")`;
+  // 横位置の写真だけ、スマホで「全体が入る」表示に切り替えるための目印
+  next.classList.toggle("land", !!(byName[file] && byName[file].land));
+  next.classList.remove("kb"); void next.offsetWidth;
+  if(S.kenBurns) next.classList.add("kb");
+  next.classList.add("on");
+  layers[cur].classList.remove("on");
+  cur = 1-cur;
+  const p = byName[file];
+  if(p){ applyTint(p.c); $("#colorveil").style.background = `rgb(${p.c.join(",")})`; }
+  preload(PH + heroList[(n+1) % heroList.length]);
+}
+function startHero(){
+  showHero(idx);
+  clearInterval(heroTimer);
+  heroTimer = setInterval(()=>{ idx++; showHero(idx); }, S.fadeSeconds*1000);
+}
+// 最初の1枚を読み終わってから開始（チラつき防止）
+(function boot(){
+  const first = new Image();
+  first.onload = first.onerror = ()=>{
+    startHero();
+    setTimeout(()=>$("#loader").classList.add("done"), 900);
+  };
+  first.src = PH + heroList[0];
+  setTimeout(()=>$("#loader").classList.add("done"), 3500); // 保険
+})();
+// タブが裏に回ったら止める（電池とCPUの節約）
+document.addEventListener("visibilitychange", ()=>{
+  clearInterval(heroTimer);
+  if(!document.hidden){
+    heroTimer = setInterval(()=>{ idx++; showHero(idx); }, S.fadeSeconds*1000);
+  }
+});
+
+/* ---------- ライブ ---------- */
+function liveRow(l, past){
+  const t = [];
+  if(l.open)  t.push(`OPEN <b>${l.open}</b>`);
+  if(l.start) t.push(`START <b>${l.start}</b>`);
+  const pr = [];
+  if(l.price)     pr.push(`<b>${l.price}</b>`);          // 自由記述の料金（一般/学生など）
+  else {
+    if(l.adv)  pr.push(`ADV <b>${l.adv}</b>`);
+    if(l.door) pr.push(`DOOR <b>${l.door}</b>`);
+  }
+  const line2 = [t.join("　/　"), pr.join("　/　"), l.note||""].filter(Boolean).join("　　");
+  return `<div class="liverow reveal${past?" past":""}">
+    <div class="dt">${l.date||""}<small>${l.day||""}</small></div>
+    <div>
+      ${l.title ? `<div class="ttl">${l.title}</div>` : ""}
+      <div class="info"><b>${l.venue||""}</b><br>${line2}</div>
+    </div>
+    <div>${(!past && l.ticket) ? `<a class="btn accent" href="${l.ticket}" target="_blank" rel="noopener">${l.ticketLabel||"チケット"}</a>` : ""}</div>
+  </div>`;
+}
+/* ライブは日付で自動的に振り分ける。
+   その日のうちは NEXT LIVE のまま残り、翌日になると自動で「過去の公演」に移る。
+   content.js に past: true を書けば、日付に関係なく過去あつかいにもできる。 */
+const lives = (C.lives||[]).slice();
+const liveDate = l => {
+  const m = String(l.date||"").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  return m ? new Date(+m[1], +m[2]-1, +m[3]).getTime() : NaN;
+};
+const todayMs = (()=>{ const d=new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
+const isOver = l => l.past === true || (!isNaN(liveDate(l)) && liveDate(l) < todayMs);
+const byDate = (x,y)=>{ const a=liveDate(x), c=liveDate(y);
+  if(isNaN(a)&&isNaN(c)) return 0; if(isNaN(a)) return 1; if(isNaN(c)) return -1; return a-c; };
+const up    = lives.filter(l=>!isOver(l)).sort(byDate);          // 近い順
+const pastL = lives.filter(isOver).sort((x,y)=>byDate(y,x));     // 新しい順
+$("#upcoming").innerHTML = up.length ? up.map(l=>liveRow(l,false)).join("")
+  : `<p style="color:var(--dim);font-size:14px;padding:20px 0">現在、予定されている公演はありません。</p>`;
+if(pastL.length){ $("#pastlist").innerHTML = pastL.map(l=>liveRow(l,true)).join(""); }
+else { $("#pastbtn").style.display="none"; }
+$("#pastbtn").addEventListener("click", ()=>{
+  const w=$("#pastwrap"), o=w.classList.toggle("open");
+  $("#pastbtn").textContent = o ? "− 閉じる" : "＋ 過去の公演を見る";
+  if(o) setTimeout(()=>$$("#pastlist .reveal").forEach(e=>e.classList.add("in")),50);
+});
+
+/* HERO の直近ライブカード */
+(function(){
+  const n = up[0];
+  if(!n){ $("#nextlive").innerHTML = `<span class="lab">NEXT LIVE</span>
+    <div class="v" style="color:var(--dim);font-weight:400">次回公演は決まり次第お知らせします</div>`; return; }
+  const meta = [n.open?`OPEN ${n.open}`:"", n.start?`START ${n.start}`:"",
+                n.price ? n.price : [n.adv?`ADV ${n.adv}`:"", n.door?`DOOR ${n.door}`:""].filter(Boolean).join("　/　"),
+                n.note||""].filter(Boolean).join("　/　");
+  $("#nextlive").innerHTML =
+    `<span class="lab">NEXT LIVE</span>
+     <div class="d">${n.date}<small>${n.day||""}</small></div>
+     <div><div class="v">${n.title || n.venue || ""}</div><div class="m">${(n.title && n.venue) ? n.venue+"<br>" : ""}${meta}</div></div>
+     ${n.ticket ? `<a class="btn accent" href="${n.ticket}" target="_blank" rel="noopener">${n.ticketLabel||"チケット"}</a>`
+                : `<a class="btn" href="#live">詳細を見る</a>`}`;
+})();
+
+/* ---------- 写真グリッド（Pinterest型） ----------
+   ・シャッフル：開くたびに並びが変わる（時系列にしない）
+   ・ライブ順：photos.js の live（日付）ごとに見出しをつけて新しい順   */
+let pmode="shuffle", shown=[], expanded=false;
+const FIRST = 24;                      // 最初に見せる枚数（残りは「もっと表示する」で出る）
+const shuf = P.photos.slice();
+for(let i=shuf.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[shuf[i],shuf[j]]=[shuf[j],shuf[i]];}
+const lkey = p => p.live || "";
+function currentList(){
+  return pmode==="live" ? P.photos.slice().sort((a,b)=>lkey(b).localeCompare(lkey(a))) : shuf;
+}
+function liveName(d){
+  const k=String(d).replace(/\D/g,"");
+  const l=(C.lives||[]).find(x=>String(x.date||"").replace(/\D/g,"")===k);
+  return l ? (l.venue||"") + (l.title ? "「"+l.title+"」" : "") : "";
+}
+function renderGrid(){
+  shown = currentList();
+  $("#pcount").textContent = shown.length + " 枚";
+  let html="", last=null;
+  shown.forEach((p,i)=>{
+    if(pmode==="live" && lkey(p)!==last){ last=lkey(p);
+      html += `<div class="phh">${last||"ARCHIVE"}${last?`<small>${liveName(last)}</small>`:""}</div>`; }
+    const hide = pmode!=="live" && !expanded && i>=FIRST;
+    html += `<figure data-i="${i}"${hide?' class="hide"':''}><img src="${TH}${p.f}" alt="" loading="lazy" decoding="async" width="${p.w||3}" height="${p.h||2}"></figure>`;
+  });
+  $("#grid").innerHTML = html;
+  const btn = $("#morebtn"), wrap = $(".morewrap");
+  if(pmode!=="live" && !expanded && shown.length > FIRST){
+    wrap.style.display = "flex";
+    btn.textContent = `もっと表示する（残り ${shown.length - FIRST} 枚）`;
+  } else {
+    wrap.style.display = "none";
+  }
+}
+$("#morebtn").addEventListener("click", ()=>{ expanded = true; renderGrid(); });
+$$(".chip[data-m]").forEach(b=>b.addEventListener("click",()=>{
+  $$(".chip[data-m]").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); pmode=b.dataset.m; expanded=false; renderGrid();
+}));
+renderGrid();
+
+/* ---------- 全画面スライドショー ---------- */
+const V=$("#viewer"), vs=[$("#vsA"),$("#vsB")], vbg=[$("#vbgA"),$("#vbgB")];
+let vcur=0, vi=0, vTimer=null, vList=[];
+function vShow(n){
+  const p = vList[((n % vList.length)+vList.length) % vList.length];
+  const a = vs[1-vcur], b = vbg[1-vcur];
+  a.style.backgroundImage = b.style.backgroundImage = `url("${PH}${p.f}")`;
+  a.classList.add("on"); b.classList.add("on");
+  vs[vcur].classList.remove("on"); vbg[vcur].classList.remove("on");
+  vcur = 1-vcur;
+  applyTint(p.c);
+  const nx = vList[(n+1)%vList.length]; if(nx) preload(PH+nx.f);
+}
+function vOpen(list, start){
+  vList = list.slice();
+  if(start==null){ // ランダム順に並べ替え
+    for(let i=vList.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[vList[i],vList[j]]=[vList[j],vList[i]];}
+    vi=0;
+  } else vi=start;
+  V.classList.add("on"); document.body.style.overflow="hidden";
+  vShow(vi); clearInterval(vTimer);
+  vTimer = setInterval(()=>{vi++; vShow(vi);}, S.fadeSeconds*1000);
+}
+function vClose(){ V.classList.remove("on"); document.body.style.overflow=""; clearInterval(vTimer); }
+function vStep(d){ vi+=d; vShow(vi); clearInterval(vTimer);
+  vTimer=setInterval(()=>{vi++; vShow(vi);}, S.fadeSeconds*1000); }
+
+$("#grid").addEventListener("click", e=>{
+  const f = e.target.closest("figure"); if(!f) return;
+  vOpen(shown, +f.dataset.i);
+});
+
+/* --- スマホ：指でなぞると色がつく／タップした時だけ拡大 --- */
+if (matchMedia("(hover:none)").matches) {
+  const gridEl = $("#grid");
+  let sx=0, sy=0, dragged=false;
+  const lit = new Set();
+  function light(x,y){
+    const el = document.elementFromPoint(x,y);
+    const f  = el && el.closest ? el.closest("#grid figure") : null;
+    if(!f) return;
+    f.classList.add("lit"); lit.add(f);
+    clearTimeout(f._fade);
+    f._fade = setTimeout(()=>{ f.classList.remove("lit"); lit.delete(f); }, 1500);
+  }
+  gridEl.addEventListener("touchstart", e=>{
+    const t=e.touches[0]; sx=t.clientX; sy=t.clientY; dragged=false; light(sx,sy);
+  }, {passive:true});
+  gridEl.addEventListener("touchmove", e=>{
+    const t=e.touches[0];
+    if(Math.abs(t.clientX-sx)>10 || Math.abs(t.clientY-sy)>10) dragged=true;
+    light(t.clientX, t.clientY);
+  }, {passive:true});
+  // 指を滑らせていた場合は、写真を開かない
+  gridEl.addEventListener("click", e=>{
+    if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; }
+  }, true);
+}
+$("#playall").addEventListener("click", ()=>vOpen(currentList(), null));
+$("#vclose").addEventListener("click", vClose);
+$("#vnext").addEventListener("click", ()=>vStep(1));
+$("#vprev").addEventListener("click", ()=>vStep(-1));
+document.addEventListener("keydown", e=>{
+  if(!V.classList.contains("on")) return;
+  if(e.key==="Escape") vClose();
+  if(e.key==="ArrowRight") vStep(1);
+  if(e.key==="ArrowLeft") vStep(-1);
+});
+// スマホ：左右スワイプで送る／下スワイプで閉じる
+let tx=0, ty=0;
+V.addEventListener("touchstart", e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; }, {passive:true});
+V.addEventListener("touchend", e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) vStep(dx<0?1:-1);
+  else if(dy>90 && Math.abs(dy)>Math.abs(dx)) vClose();
+}, {passive:true});
+
+/* ---------- 映像 ---------- */
+const vids = (C.videos||[]).filter(v=>v.id);
+if(vids.length){
+  $("#vgrid").innerHTML = vids.map(v=>
+    `<div class="vcard reveal"><div class="fr">
+      <iframe src="https://www.youtube-nocookie.com/embed/${v.id}" title="${v.title||""}"
+        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+        allowfullscreen loading="lazy"></iframe>
+    </div><h3>${v.title||""}</h3></div>`).join("");
+}else{
+  $("#video").style.display="none"; $("#nv-video").parentElement.style.display="none";
+}
+
+/* ---------- 音源 ----------
+   ・file に mp3 名があれば、その場で鳴る再生バーを出す
+   ・Eggs のURLがあれば、あわせて Eggs へのボタンも出す
+   ・曲も Eggs も無いときだけセクションごと隠す                */
+const SND  = C.sound || {};
+const trks = (C.tracks||[]).filter(t => t.title || t.file);
+if(trks.length || SND.eggs){
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  $("#tracks").innerHTML = trks.map(t=>{
+    const eggsUrl = t.eggs || SND.eggs || "";
+    // 歌詞（content.js の lyrics）。空なら歌詞パネルごと出ない
+    const ly = (t.lyrics||"").replace(/\r/g,"").trim();
+    const lyHtml = ly ? ly.split("\n").map(l =>
+      l.trim()==="" ? `<p class="sp"></p>` : `<p>${esc(l.trim())}</p>`).join("") : "";
+    return `<div class="trk reveal">
+      ${t.jacket ? `<div class="jk"><img src="${imgSrc("assets/audio/", t.jacket)}" alt="${t.title||""}"
+        loading="lazy" decoding="async"></div>` : ""}
+      <div class="meta">
+        <b>${t.title||""}</b>${t.note ? `<span>${t.note}</span>` : ""}
+        ${t.file ? `<audio controls preload="none" src="assets/audio/${t.file}"></audio>` : ""}
+        ${eggsUrl ? `<div class="srow"><a class="btn accent" href="${eggsUrl}"
+          target="_blank" rel="noopener">${SND.eggsLabel || "Eggs で聴く"}</a></div>` : ""}
+      </div>
+      ${ly ? `<div class="lyr">
+        <div class="lyrhd">LYRICS<span>歌詞</span></div>
+        <div class="lyrbody" tabindex="0">${lyHtml}</div>
+      </div>` : ""}
+    </div>`;
+  }).join("") + (SND.note ? `<p class="sndnote reveal">${SND.note}</p>` : "");
+  // 歌詞パネル：一番上／一番下まで来たら、そちら側のぼかしを消して文字をクリアに見せる
+  $$(".lyrbody").forEach(el=>{
+    const upd = () => {
+      const atTop = el.scrollTop > 2;
+      const atBot = el.scrollTop + el.clientHeight < el.scrollHeight - 2;
+      el.style.setProperty("--fadeTop", atTop ? "22px" : "0px");
+      el.style.setProperty("--fadeBot", atBot ? "30px" : "0px");
+    };
+    upd();
+    el.addEventListener("scroll", upd, {passive:true});
+    window.addEventListener("resize", upd);
+  });
+}else{
+  $("#music").style.display="none"; $("#nv-music").parentElement.style.display="none";
+}
+
+/* ---------- メンバー ---------- */
+/* ---------- SNSアイコン（メンバー欄と連絡欄で共用） ---------- */
+const ICON = {
+  x:'<svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.1 8.1L23.2 22h-6.6l-5.2-6.8L5.5 22H2.4l7.6-8.7L1.2 2H8l4.7 6.2L18.9 2Zm-1.1 18h1.7L7.3 3.8H5.4L17.8 20Z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.6-1.6 1.5 1.5 0 0 1 1.6 1.6Z"/></svg>',
+  tiktok:'<svg viewBox="0 0 24 24"><path d="M20.5 8.6a6.9 6.9 0 0 1-4.6-1.8v7.4a5.9 5.9 0 1 1-5.9-5.9c.3 0 .6 0 .9.1v3a2.9 2.9 0 1 0 2 2.8V2h2.9a4 4 0 0 0 4.7 3.9Z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24"><path d="M23 12s0-3.5-.4-5.1a2.7 2.7 0 0 0-1.9-1.9C19 4.6 12 4.6 12 4.6s-7 0-8.7.4A2.7 2.7 0 0 0 1.4 6.9C1 8.5 1 12 1 12s0 3.5.4 5.1a2.7 2.7 0 0 0 1.9 1.9c1.7.4 8.7.4 8.7.4s7 0 8.7-.4a2.7 2.7 0 0 0 1.9-1.9C23 15.5 23 12 23 12ZM9.8 15.3V8.7l5.7 3.3Z"/></svg>'
+};
+const LBL = {x:"X (TWITTER)", instagram:"INSTAGRAM", tiktok:"TIKTOK", youtube:"YOUTUBE"};
+
+function msLinks(m){
+  return ["x","instagram","tiktok"].filter(k=>m[k]).map(k=>
+    `<a href="${m[k]}" target="_blank" rel="noopener" aria-label="${LBL[k]}" title="${LBL[k]}">${ICON[k]}</a>`
+  ).join("");
+}
+// photo に "/" が入っていれば assets/ からのパス、無ければ assets/photos/ の中
+const photoSrc = f => f.includes("/") ? "assets/" + f : PH + f;
+$("#mgrid").innerHTML = (C.members||[]).map(m=>
+  `<div class="mcard reveal">
+    <div class="ph${m.photo?"":" empty"}">${m.photo?`<img src="${photoSrc(m.photo)}" alt="${m.name||""}" loading="lazy">`:""}</div>
+    <div class="part">${m.part||""}</div>
+    <div class="nm">${m.name||""}</div>
+    <div class="wd">${m.word||""}</div>
+    <div class="ms">${msLinks(m)}</div>
+  </div>`).join("");
+$("#bio").textContent = C.bio || "";
+
+/* ---------- 物販 ---------- */
+const SH = C.shop || {};
+const sItems = (SH.items || []).filter(s => s.name);
+const storeBtn = SH.url
+  ? `<a class="btn accent" href="${SH.url}" target="_blank" rel="noopener">${SH.urlLabel || "オンラインストアへ"}</a>` : "";
+
+// 「ライブ会場でのみ販売」などの帯（saleNote が空なら出ない）
+const band = SH.saleNote
+  ? `<div class="saleband reveal">
+      ${SH.saleLabel ? `<div class="lb">${SH.saleLabel}</div>` : ""}
+      <p>${SH.saleNote}</p>
+    </div>` : "";
+
+if(sItems.length){
+  $("#shopwrap").innerHTML = band +
+    `<div class="sgrid">` + sItems.map(s =>
+      `<div class="scard reveal">
+        ${s.photo
+          ? `<div class="ph${s.cutout ? " cut" : ""}${s.invert ? " inv" : ""}"><img
+              src="${imgSrc("assets/shop/", s.photo)}" alt="${s.name}" loading="lazy" decoding="async"></div>`
+          : `<div class="ph empty"></div>`}
+        <div class="nm">${s.name}</div>
+        ${s.note  ? `<div class="sub">${s.note}</div>`   : ""}
+        ${s.size  ? `<div class="size">${s.size}</div>`  : ""}
+        ${s.price ? `<div class="pr">${s.price}</div>`   : ""}
+        ${s.url   ? `<a class="btn accent" href="${s.url}" target="_blank" rel="noopener">購入する</a>` : ""}
+      </div>`).join("") + `</div>` +
+    (storeBtn ? `<div class="storerow reveal">${storeBtn}</div>` : "");
+}else{
+  const xurl = (C.sns && C.sns.x) || "";
+  $("#shopwrap").innerHTML =
+    `<div class="soon reveal">
+      <div class="lb">COMING SOON</div>
+      <p>${SH.note || "準備中です。"}</p>
+      <div class="row">
+        ${storeBtn}
+        ${xurl ? `<a class="btn" href="${xurl}" target="_blank" rel="noopener">${ICON.x}最新情報を見る</a>` : ""}
+      </div>
+    </div>`;
+}
+
+/* ---------- 連絡 ---------- */
+$("#cnote").textContent = C.contactNote || "";
+$("#snsrow").innerHTML = ["x","instagram","tiktok","youtube"]
+  .filter(k => C.sns && C.sns[k])
+  .map(k => `<a href="${C.sns[k]}" target="_blank" rel="noopener" class="${k==="x"?"main":""}">
+      ${ICON[k]}<span>${LBL[k]}</span></a>`).join("");
+
+/* ---------- スクロールで出現 ---------- */
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+}), {threshold:.12, rootMargin:"0px 0px -8% 0px"});
+$$(".reveal").forEach(e=>io.observe(e));
+
+/* ---------- ヘッダー ---------- */
+const hdr=$("#hdr");
+addEventListener("scroll", ()=>hdr.classList.toggle("solid", scrollY>60), {passive:true});
+const navEl=$("#nav"), burger=$("#burger");
+function setNav(open){
+  navEl.classList.toggle("open", open);
+  burger.classList.toggle("open", open);
+  burger.setAttribute("aria-expanded", open ? "true" : "false");
+}
+burger.addEventListener("click", e=>{ e.stopPropagation(); setNav(!navEl.classList.contains("open")); });
+$$("#nav a").forEach(a=>a.addEventListener("click", ()=>setNav(false)));
+// メニュー以外を触ったら閉じる
+document.addEventListener("click", e=>{
+  if(navEl.classList.contains("open") && !navEl.contains(e.target) && e.target!==burger) setNav(false);
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") setNav(false); });
+
+
+/* ============================================================
+   ホーム画面に追加の導線
+   ------------------------------------------------------------
+   ROCKETsの新しい情報（ライブ日程・音源・物販）がいちばん早く出るのは
+   このサイト。SNSの投稿は流れていくが、ここは流れない。
+   だから「どの入口から来た人にも」ホーム画面に置いてもらう。
+
+   入口は主に4つ：
+     ① ライブ会場でBEAMのQR（?from=beam）
+     ② Instagramのプロフィールリンク／ストーリーズ  ← アプリ内ブラウザ注意
+     ③ X・TikTokなどのプロフィールリンク
+     ④ 検索
+   ============================================================ */
+(function(){
+  const KEY  = "rockets.a2hs.dismissed.v2";   // 値＝閉じた日時（ミリ秒）
+  const SNOOZE = 30 * 24 * 60 * 60 * 1000;    // 閉じても30日たったらもう一度だけ出す
+  const UA = navigator.userAgent || "";
+
+  const env = {
+    line:      /\bLine\//i.test(UA),
+    instagram: /Instagram/i.test(UA),
+    facebook:  /FBAN|FBAV|FB_IAB/i.test(UA),
+    ios:       /iPad|iPhone|iPod/.test(UA) ||
+               (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
+    android:   /Android/.test(UA),
+    standalone: matchMedia("(display-mode: standalone)").matches || navigator.standalone === true
+  };
+  env.inApp     = env.line || env.instagram || env.facebook;
+  env.mobile    = env.ios || env.android;
+  env.iosSafari = env.ios && !env.inApp && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(UA);
+  // アプリ内ブラウザの呼び名（案内文で使う）
+  env.appName   = env.line ? "LINE" : env.instagram ? "Instagram" : env.facebook ? "Facebook" : "アプリ";
+
+  const fromBeam = new URLSearchParams(location.search).get("from") === "beam";
+
+  let deferredInstall = null;
+  addEventListener("beforeinstallprompt", e => {
+    e.preventDefault(); deferredInstall = e;
+    if(!$("#a2sheet").hidden) buildSheet();
+  });
+
+  // Androidの「1タップで追加」を出すための素通し用SW（キャッシュはしない）
+  if("serviceWorker" in navigator){
+    addEventListener("load", ()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+  }
+
+  // ?from=beam はアドレス欄から消す。
+  // 検索エンジンに別URLとして拾われないよう、この下のどの早期returnより先に実行する。
+  if(fromBeam){ try{ history.replaceState(null,"",location.pathname); }catch(e){} }
+
+  const n = up[0];   // 直近のライブ（無ければ undefined）
+
+  /* ============================================================
+     手順シート
+     ============================================================ */
+
+  const ICO = {
+    share:'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 3v12M12 3l-3.5 3.5M12 3l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 13v5.5A1.5 1.5 0 0 0 7.5 20h9a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    v:'<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>',
+    h:'<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" width="14" height="14"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 8.5v7M8.5 12h7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'
+  };
+  const chip = k => `<span class="ui">${ICO[k]}</span>`;
+  const setSteps = arr => { $("#a2list").innerHTML = arr.map(s=>`<li>${s}</li>`).join(""); };
+
+  // 「なぜ入れてほしいのか」— ここが一番伝えたいところ
+  // アプリ内ブラウザのときは「読ませる」より「動かす」を優先し、短く言い切る。
+  // ちゃんとした誘い文句は、ブラウザに移ったあとの画面で読んでもらう。
+  function whyText(){
+    if(env.inApp){
+      // 開く先の名前は環境で変わる（iPhone＝Safari、Android＝Chrome とは限らない。
+      // 既定のブラウザは人によって違う）ので、名指しせず「ブラウザ」で通す。
+      return env.appName + "の中で開いているので、このままでは作れません。"
+           + "下の手順でブラウザに移れば作れます。";
+    }
+    const live = n ? `次のライブ（${n.date}　${n.venue||""}）の詳細も、` : "次のライブが決まったら、その日程も、";
+    return "このホームページは、ホーム画面に置くとアプリのように使えます。" + live
+         + "録りたての音源も、物販が並ぶのも、いちばん最初に出るのはこのアプリです。"
+         + "SNSの投稿は流れていくけど、ここは流れません。思い出したときに1タップで来られます。";
+  }
+
+  function copyUrl(btn){
+    const u = location.origin + "/";
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(u)
+        .then(()=>{ btn.textContent = "コピーしました"; })
+        .catch(()=>{ btn.textContent = "コピーできませんでした"; });
+    }
+  }
+
+  function buildSheet(){
+    const p = $("#a2primary");
+    p.hidden = true;
+    $("#a2why").textContent = whyText();
+
+    /* --- アプリ内ブラウザ（Instagram / LINE / Facebook）--- */
+    if(env.inApp){
+      $("#a2h").textContent = "ホームページをアプリにしよう";
+
+      if(env.line){
+        // LINEだけは、このパラメータ付きURLを標準ブラウザで開いてくれる
+        setSteps([
+          "下の<b>「ブラウザで開く」</b>を押す",
+          "開いたブラウザで、もう一度この案内を開く",
+          "出てくる手順どおりに追加する"
+        ]);
+        p.hidden = false; p.textContent = "ブラウザで開く";
+        p.onclick = ()=>{ location.href = location.origin + "/?openExternalBrowser=1"; };
+      } else {
+        // Instagram / Facebook には自動で外に出す手段が無い。
+        // URLコピーは「コピーしたあと何をすればいいか」が分からず手が止まるので出さない。
+        // ⋯ メニューから外部ブラウザに移ってもらう一本道にする。
+        setSteps([
+          `画面の<b>右上</b>にある${chip("h")}を押す`,
+          "<b>「外部ブラウザで開く」</b>を押す",
+          "同じページが開いたら、<b>下に出るこの案内から続けてください</b>"
+        ]);
+      }
+      return;
+    }
+
+    /* --- Android：1タップで追加できる --- */
+    if(env.android && deferredInstall){
+      $("#a2h").textContent = "ホームページをアプリにしよう";
+      setSteps([
+        "下の<b>「ホーム画面に追加」</b>を押す",
+        "確認が出たら<b>「インストール」</b>を押す",
+        "ホーム画面にROCKETsのアイコンができれば完了"
+      ]);
+      p.hidden = false; p.textContent = "ホーム画面に追加";
+      p.onclick = ()=>{
+        deferredInstall.prompt();
+        deferredInstall.userChoice.then(r=>{
+          deferredInstall = null;
+          if(r && r.outcome === "accepted"){ closeSheet(); hide(true); } else buildSheet();
+        });
+      };
+      return;
+    }
+
+    /* --- Android：手動 --- */
+    if(env.android){
+      $("#a2h").textContent = "ホームページをアプリにしよう";
+      setSteps([
+        `画面の<b>右上</b>にある${chip("v")}を押す`,
+        "<b>「ホーム画面に追加」</b>（または「アプリをインストール」）を押す",
+        "<b>「追加」</b>を押す → ホーム画面にROCKETsのアイコンができます"
+      ]);
+      return;
+    }
+
+    /* --- iPhone だが Safari ではない --- */
+    if(env.ios && !env.iosSafari){
+      $("#a2h").textContent = "ホームページをアプリにしよう";
+      setSteps([
+        "下の<b>「URLをコピーする」</b>を押す",
+        "<b>Safari</b>を開いて、アドレス欄に貼り付ける",
+        "出てくる手順どおりに追加する"
+      ]);
+      p.hidden = false; p.textContent = "URLをコピーする";
+      p.onclick = ()=>copyUrl(p);
+      return;
+    }
+
+    /* --- iPhone Safari --- */
+    $("#a2h").textContent = "ホームページをアプリにしよう";
+    setSteps([
+      `画面の<b>右下</b>にある${chip("h")}を押す（${chip("share")}が直接ある場合はそれを押して③へ）`,
+      `<b>「共有」</b>を押す`,
+      "<b>「表示を増やす」</b>を押す（この項目が無ければとばしてOK）",
+      `${chip("plus")}<b>「ホーム画面に追加」</b>→ <b>右上の「追加」</b>を押す`
+    ]);
+  }
+
+  function openSheet(){ buildSheet(); $("#a2sheet").hidden = false; }
+  function closeSheet(){ $("#a2sheet").hidden = true; }
+
+  $("#a2bg").addEventListener("click", closeSheet);
+  $("#a2cl").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSheet(); });
+
+  /* ============================================================
+     下から出るバー
+     ============================================================ */
+
+  const bar = $("#a2hs");
+
+  function show(){ bar.hidden = false; requestAnimationFrame(()=>bar.classList.add("in")); }
+  function hide(remember){
+    bar.classList.remove("in");
+    setTimeout(()=>{ bar.hidden = true; }, 500);
+    if(remember){ try{ localStorage.setItem(KEY, String(Date.now())); }catch(e){} }
+  }
+
+  $("#a2go").addEventListener("click", openSheet);
+  $("#a2x").addEventListener("click", ()=>hide(true));
+
+  // フッターの常設リンク。バーを閉じた人でも、あとから開ける入口を必ず残しておく
+  const footBox = $("#a2footbox");
+  if(footBox && env.mobile && !env.standalone){
+    footBox.hidden = false;
+    $("#a2foot").addEventListener("click", openSheet);
+  }
+
+  /* ---------- 出すかどうか ---------- */
+  if(env.standalone) return;    // すでにホーム画面から開いている＝目的達成ずみ
+  if(!env.mobile) return;       // PCでは出さない（追加してもうれしくないため）
+
+  let last = 0;
+  try{ last = Number(localStorage.getItem(KEY) || 0); }catch(e){}
+  if(last && Date.now() - last < SNOOZE) return;   // 閉じた人には30日出さない
+
+  /* ---------- バーの文言 ----------
+     1行目は「何ができるのか」。「追加」だと何が起きるのか伝わらないので、
+     ホーム画面のアイコン＝アプリ、という言い方で統一している。          */
+  $("#a2t").innerHTML = `ホームページを<em class="hi">アプリ</em>にしよう`;
+
+  if(env.inApp){
+    $("#a2s").textContent = env.appName + "の中では作れません";
+  } else if(n){
+    const md = (n.date||"").split(".");
+    const short = md.length === 3 ? `${+md[1]}/${+md[2]}` : n.date;
+    $("#a2s").textContent = `次のライブ ${short} ${n.venue||""}`;
+  } else {
+    $("#a2s").textContent = "ライブも音源も、ここが一番早い";
+  }
+
+  /* ---------- 出すタイミング ---------- */
+  if(fromBeam){
+    setTimeout(show, 900);              // 会場で会った直後。いちばん熱いので即
+  } else {
+    // Instagram・X・検索など、どの入口から来た人にも出す。
+    // ただし着地直後は避け、少し中を見てもらってから。
+    let done = false;
+    const fire = ()=>{ if(done) return; done = true; removeEventListener("scroll", onScroll); show(); };
+    const onScroll = ()=>{ if(scrollY > innerHeight * 0.45) fire(); };
+    addEventListener("scroll", onScroll, {passive:true});
+    setTimeout(fire, 8000);
+  }
+})();
+
+})();
+</script>
+<script>
+/* ============================================================
+   アプリ化（2026-10-05）
+   ・下のタブで画面を切り替える（MEMBER / PHOTO / 次のライブ / SOUND / SHOP）
+   ・真ん中は「次のライブ」の日めくり。押すと詳細が出る
+   ・右上：JA / EN 切り替え ＋ お知らせベル（未読があると赤い数字）
+   ・お知らせの中身は content.js の news に書く
+   ============================================================ */
+(function(){
+"use strict";
+const C = window.CONTENT || {};
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+let EN=false;
+try{
+  const q=new URLSearchParams(location.search).get("lang");
+  if(q==="en"||q==="ja") localStorage.setItem("rockets.lang",q);
+  const s=localStorage.getItem("rockets.lang");
+  EN = s ? s==="en" : !/^ja/i.test(navigator.language||"");
+}catch(e){}
+const T=(j,e)=>EN?e:j;
+document.body.classList.toggle("en",EN);
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const SVG=(p,vb)=>`<svg viewBox="${vb||"0 0 24 24"}">${p}</svg>`;
+const IC={
+  member:SVG('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>'),
+  photo:SVG('<rect x="3" y="6.5" width="18" height="13.5" rx="3"/><circle cx="12" cy="13.2" r="3.4"/><path d="M8.6 6.5l1.4-2.5h4l1.4 2.5"/>'),
+  sound:SVG('<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'),
+  shop:SVG('<path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8a3 3 0 0 1 6 0"/>'),
+  bell:SVG('<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.6 2.2H4.4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>'),
+  arrow:SVG('<path d="M7 17L17 7M9 7h8v8"/>')
+};
+const SNSI={
+  x:'<svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.1 8.1L23.2 22h-6.6l-5.2-6.8L5.5 22H2.4l7.6-8.7L1.2 2H8l4.7 6.2L18.9 2Zm-1.1 18h1.7L7.3 3.8H5.4L17.8 20Z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.5 1.5 0 1 1-1.6-1.6 1.5 1.5 0 0 1 1.6 1.6Z"/></svg>',
+  tiktok:'<svg viewBox="0 0 24 24"><path d="M20.5 8.6a6.9 6.9 0 0 1-4.6-1.8v7.4a5.9 5.9 0 1 1-5.9-5.9c.3 0 .6 0 .9.1v3a2.9 2.9 0 1 0 2 2.8V2h2.9a4 4 0 0 0 4.7 3.9Z"/></svg>'
+};
+
+/* ---------- 次のライブ ---------- */
+const pd=l=>{const m=String(l.date||"").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); return m?new Date(+m[1],+m[2]-1,+m[3]):null;};
+const today=(()=>{const d=new Date(); d.setHours(0,0,0,0); return d;})();
+const up=(C.lives||[]).filter(l=>l.past!==true && pd(l) && pd(l)>=today).sort((a,b)=>pd(a)-pd(b));
+const N=up[0];
+const MON=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"], DOW=["SUN","MON","TUE","WED","THU","FRI","SAT"];
+let calM="NEXT", calD="—", calC=T("未定","TBA");
+if(N){ const d=pd(N), diff=Math.round((d-today)/864e5);
+  calM=MON[d.getMonth()]+" "+DOW[d.getDay()]; calD=String(d.getDate());
+  calC= diff===0?T("今日","TODAY"): diff===1?T("明日","TOMORROW"): T("あと"+diff+"日","IN "+diff+" DAYS"); }
+
+/* ---------- 下のタブ ---------- */
+const tb=document.createElement("nav"); tb.id="tabbar";
+tb.innerHTML=
+  `<button type="button" data-v="member">${IC.member}<span>MEMBER</span></button>`+
+  `<button type="button" data-v="photo">${IC.photo}<span>PHOTO</span></button>`+
+  `<button type="button" id="tcal" aria-label="NEXT LIVE"><div class="cal"><div class="cm">${calM}</div><div class="cd">${calD}</div><div class="cc">${calC}</div></div></button>`+
+  `<button type="button" data-v="sound">${IC.sound}<span>SOUND</span></button>`+
+  `<button type="button" data-v="shop">${IC.shop}<span>SHOP</span></button>`;
+document.body.appendChild(tb);
+
+/* ---------- 右上（言語・ベル） ---------- */
+const hdr=$("#hdr"), tr=document.createElement("div"); tr.id="topr";
+tr.innerHTML=`<div class="lang"><button type="button" data-l="ja" class="${EN?"":"on"}">JA</button><button type="button" data-l="en" class="${EN?"on":""}">EN</button></div>`+
+  `<button type="button" id="bell" aria-label="${T("お知らせ","News")}">${IC.bell}<i hidden></i></button>`;
+hdr.appendChild(tr);
+$$(".lang button").forEach(b=>b.addEventListener("click",()=>{
+  try{localStorage.setItem("rockets.lang",b.dataset.l);}catch(e){}
+  location.replace(location.pathname+location.hash);
+}));
+
+/* ---------- 画面の切り替え ---------- */
+const VIEWS={home:["hero","live"],member:["member"],photo:["photo"],sound:["music","video"],shop:["shop"]};
+const SECS=["hero","live","photo","video","music","shop","member","contact"];
+function show(v,keepUrl){
+  if(!VIEWS[v]) v="home";
+  document.body.dataset.view=v;
+  SECS.forEach(id=>{const el=document.getElementById(id); if(el) el.classList.toggle("vw-off",!VIEWS[v].includes(id));});
+  const ft=$("footer"); if(ft) ft.classList.toggle("vw-off",v!=="home");
+  $$("#tabbar [data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  window.scrollTo(0,0);
+  if(!keepUrl){ try{ history.replaceState(null,"", v==="home" ? location.pathname : "#"+v); }catch(e){} }
+  setTimeout(()=>VIEWS[v].forEach(id=>$$("#"+id+" .reveal").forEach(e=>e.classList.add("in"))),80);
+}
+$$("#tabbar [data-v]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.v)));
+const brand=$("#brand"); if(brand) brand.addEventListener("click",e=>{e.preventDefault(); show("home");});
+const H={"#member":"member","#photo":"photo","#music":"sound","#sound":"sound","#shop":"shop","#video":"sound"};
+show(H[location.hash]||"home", true);
+if(location.hash==="#live") setTimeout(()=>{const l=$("#live"); if(l) l.scrollIntoView();},300);
+
+/* ---------- シート（下から出る画面） ---------- */
+function sheet(html){
+  const s=document.createElement("div"); s.className="sheet";
+  s.innerHTML=`<div class="bg"></div><div class="pn"><div class="grip"></div>${html}</div>`;
+  document.body.appendChild(s); document.body.style.overflow="hidden";
+  const close=()=>{s.remove(); document.body.style.overflow="";};
+  s.querySelector(".bg").addEventListener("click",close);
+  let y0=null; const pn=s.querySelector(".pn");
+  pn.addEventListener("touchstart",e=>{y0=pn.scrollTop<=0?e.touches[0].clientY:null;},{passive:true});
+  pn.addEventListener("touchend",e=>{ if(y0!=null && e.changedTouches[0].clientY-y0>90) close(); },{passive:true});
+  return {el:s,close};
+}
+
+/* 真ん中＝次のライブの詳細 */
+$("#tcal").addEventListener("click",()=>{
+  if(!N){ show("home"); setTimeout(()=>$("#live").scrollIntoView({behavior:"smooth"}),100); return; }
+  const tm=(N.open||N.start)?`OPEN ${N.open||"—"} / START ${N.start||"—"}`:"";
+  const pr=N.price||[N.adv&&("ADV "+N.adv),N.door&&("DOOR "+N.door)].filter(Boolean).join(" / ");
+  const inf=[tm,pr,N.note].filter(Boolean).map(esc).join("\n");
+  const s=sheet(`<div class="lab">NEXT LIVE<b>${esc(calC)}</b></div>
+    <div class="bigd">${esc(N.date)} ${esc(N.day||"")}</div>
+    <div class="ven">${esc(N.venue)}</div>${N.title?`<div class="ttl">${esc(N.title)}</div>`:""}
+    <div class="inf">${inf}</div>
+    <div class="acts">
+      ${N.ticket?`<a class="y" href="${esc(N.ticket)}" target="_blank" rel="noopener">${esc(N.ticketLabel||T("チケット","Tickets"))}</a>`:""}
+      <button type="button" data-a="cal">${T("カレンダーに入れる","Add to calendar")}</button>
+      <button type="button" data-a="share">${T("友だちに送る","Share")}</button>
+    </div>
+    <button type="button" class="more" data-a="more">${T("その後のライブ →","All shows →")}</button>`);
+  s.el.querySelector('[data-a="cal"]').addEventListener("click",()=>{
+    const d=pd(N), ymd=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+    const st=(N.start||N.open||"").replace(":","");
+    const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ROCKETs//JP","BEGIN:VEVENT",
+      "UID:rockets-"+ymd+"@rockets-band.vercel.app",
+      st?("DTSTART:"+ymd+"T"+st+"00"):("DTSTART;VALUE=DATE:"+ymd),
+      "SUMMARY:ROCKETs @ "+(N.venue||""),"LOCATION:"+(N.venue||""),
+      "DESCRIPTION:"+[N.title,tm,pr].filter(Boolean).join(" / ").replace(/[,;]/g," "),
+      "URL:https://rockets-band.vercel.app/","END:VEVENT","END:VCALENDAR"];
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([lines.join("\r\n")],{type:"text/calendar"}));
+    a.download="rockets-"+ymd+".ics"; document.body.appendChild(a); a.click(); a.remove();
+  });
+  s.el.querySelector('[data-a="share"]').addEventListener("click",async()=>{
+    const txt=`ROCKETs ${N.date} ${N.venue}`; const url="https://rockets-band.vercel.app/";
+    try{ if(navigator.share){ await navigator.share({title:"ROCKETs",text:txt,url}); return; } }catch(e){ return; }
+    try{ await navigator.clipboard.writeText(txt+" "+url); alert(T("リンクをコピーしました","Link copied")); }catch(e){}
+  });
+  s.el.querySelector('[data-a="more"]').addEventListener("click",()=>{ s.close(); show("home"); setTimeout(()=>$("#live").scrollIntoView({behavior:"smooth"}),120); });
+});
+
+/* ---------- お知らせ（ベル） ---------- */
+const NEWS=(C.news||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+const nid=n=>n.date+"|"+n.title;
+let READ=[]; try{READ=JSON.parse(localStorage.getItem("rockets.news.read")||"[]");}catch(e){}
+function badge(){
+  const n=NEWS.filter(x=>!READ.includes(nid(x))).length, i=$("#bell i");
+  i.hidden=!n; i.textContent=n>9?"9+":String(n);
+}
+badge();
+$("#bell").addEventListener("click",()=>{
+  const items=NEWS.map(x=>{
+    const isNew=!READ.includes(nid(x));
+    const t=EN&&x.titleEn?x.titleEn:x.title, b=EN&&x.bodyEn?x.bodyEn:(x.body||"");
+    return `<a class="it${isNew?" new":""}" href="${esc(x.link||"#")}" data-link="${esc(x.link||"")}">
+      <div class="tx"><div class="tg">${esc(EN&&x.tagEn?x.tagEn:(x.tag||""))}</div><div class="t">${esc(t)}</div>${b?`<div class="b">${esc(b)}</div>`:""}</div>
+      <div class="dt">${esc(String(x.date).slice(5).replace("-","."))}</div>${isNew?'<i class="dot"></i>':""}</a>`;}).join("");
+  const s=sheet(`<div class="news"><h3>NEWS</h3>${items||`<p style="color:var(--dim);margin-top:14px">${T("お知らせはまだありません","No news yet")}</p>`}</div>`);
+  s.el.querySelectorAll(".it").forEach(a=>a.addEventListener("click",e=>{
+    const l=a.dataset.link; if(!l || l.startsWith("http")) return;
+    e.preventDefault(); s.close();
+    if(l==="#live"){ show("home"); setTimeout(()=>$("#live").scrollIntoView({behavior:"smooth"}),120); } else show(H[l]||"home");
+  }));
+  READ=NEWS.map(nid); try{localStorage.setItem("rockets.news.read",JSON.stringify(READ));}catch(e){}
+  badge();
+});
+
+/* ---------- メンバー（1人ずつ大きく横スワイプ） ---------- */
+const FONT={cb:"f-cb",rg:"f-rg",se:"f-se",zk:"f-zk"};
+const psrc=f=>f.includes("/")?"assets/"+f:"assets/photos/"+f;
+const mg=$("#mgrid");
+if(mg){
+  const MS=C.members||[];
+  mg.innerHTML=MS.map(m=>{
+    const links=["x","instagram","tiktok"].filter(k=>m[k]).map(k=>`<a href="${esc(m[k])}" target="_blank" rel="noopener" aria-label="${k}">${SNSI[k]}</a>`).join("");
+    const nm=EN&&m.nameEn?m.nameEn:m.name, pt=EN&&m.partEn?m.partEn:m.part;
+    return `<div class="mc">${m.photo?`<img src="${esc(psrc(m.photo))}" alt="${esc(nm)}" loading="lazy">`:""}
+      <div class="ov"><div class="nm ${FONT[m.font]||"f-zk"}">${esc(nm)}</div><div class="pw">${esc(pt)}${m.word?"　／　"+esc(m.word):""}</div></div>
+      <div class="ms">${links}</div></div>`;}).join("");
+  const dots=document.createElement("div"); dots.className="mdots";
+  dots.innerHTML=MS.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("");
+  mg.after(dots);
+  mg.addEventListener("scroll",()=>{
+    const c=mg.querySelector(".mc"); if(!c) return;
+    const i=Math.round(mg.scrollLeft/(c.offsetWidth+14));
+    dots.querySelectorAll("i").forEach((d,k)=>d.classList.toggle("on",k===i));
+  },{passive:true});
+  const S=C.sns||{}, handle=u=>{const p=String(u).replace(/\/+$/,"").split("/").pop(); return p?(p.startsWith("@")?p:"@"+p):"";};
+  const bl=document.createElement("div"); bl.className="biglinks";
+  bl.innerHTML=[["x","X"],["instagram","Instagram"],["tiktok","TikTok"],["youtube","YouTube"]].filter(([k])=>S[k])
+    .map(([k,l])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener"><span class="l">${l}${IC.arrow}</span><span class="h">${esc(handle(S[k]))}</span></a>`).join("");
+  dots.after(bl);
+  if(S.x){ const c=document.createElement("a"); c.className="mcontact"; c.href=S.x; c.target="_blank"; c.rel="noopener";
+    c.textContent=T("✉ 出演依頼・お問い合わせは X の DM へ →","✉ Booking & inquiries: DM us on X →"); bl.after(c); }
+}
+})();
+</script>
+
+</body>
+</html>
