@@ -557,11 +557,25 @@ body.en .head .ja{display:none}
 .news .it .dt{font-size:11px;color:var(--dim);white-space:nowrap}
 .news .it .dot{width:9px;height:9px;border-radius:50%;background:#ff2d2d;margin-top:6px;flex:0 0 auto}
 /* PHOTO：Pinterest型（高さバラバラ） */
-.grid{display:block;columns:2;column-gap:8px}
-@media(min-width:761px){.grid{columns:3;column-gap:10px}}
-@media(min-width:1180px){.grid{columns:4}}
-.grid figure{aspect-ratio:auto!important;break-inside:avoid;margin:0 0 8px;border-radius:12px;display:block}
-.grid img{height:auto!important;filter:none!important}
+.grid{display:block}
+.mcols{display:flex;gap:8px;align-items:flex-start}
+.mcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:8px}
+@media(min-width:761px){.mcols,.mcol{gap:10px}}
+.grid figure{margin:0;border-radius:12px;display:block;contain:layout paint}
+.grid img{height:100%!important;filter:none!important;transition:none!important;transform:none!important}
+/* 下で引っぱって、さらに表示 */
+.pullmore{display:flex;flex-direction:column;align-items:center;gap:10px;padding:30px 0 6px;color:var(--dim);
+  font-size:12px;letter-spacing:.06em;cursor:pointer;-webkit-user-select:none;user-select:none}
+.pullmore[hidden]{display:none}
+.pullmore .ring{position:relative;width:46px;height:46px}
+.pullmore svg{width:46px;height:46px;transform:rotate(-90deg)}
+.pullmore circle{fill:none;stroke-width:3.2}
+.pullmore .bg{stroke:#2e2e34}
+.pullmore .fg{stroke:var(--pop);stroke-linecap:round;stroke-dasharray:100.53;stroke-dashoffset:100.53;transition:stroke-dashoffset .08s linear}
+.pullmore i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:var(--fg);font-size:18px;transition:transform .2s,color .2s}
+.pullmore.ready i{transform:scale(1.3);color:var(--pop)}
+.pullmore.go svg{animation:pmspin .6s linear infinite}
+@keyframes pmspin{from{transform:rotate(-90deg)}to{transform:rotate(270deg)}}
 .grid .phh{column-span:all;display:flex;align-items:baseline;gap:12px;margin:18px 0 10px;font-family:var(--dp);font-size:24px;letter-spacing:.04em}
 .grid .phh small{font-family:var(--jp);font-size:12px;color:var(--dim);letter-spacing:.04em}
 .grid .phh:first-child{margin-top:0}
@@ -702,7 +716,7 @@ body[data-view] section.blk{padding-top:clamp(80px,12vh,130px)}
     <span class="pcount" id="pcount"></span>
   </div>
   <div class="grid" id="grid"></div>
-  <div class="morewrap"><button class="morebtn" id="morebtn"></button></div>
+  <div class="pullmore" id="pullmore" hidden><div class="ring"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"/><circle class="fg" id="pullarc" cx="20" cy="20" r="16"/></svg><i>↑</i></div><span id="pullt"></span></div>
 </section>
 
 <!-- ===== VIDEO ===== -->
@@ -817,7 +831,7 @@ function tkUrl(l){
   if(l.ticket !== "x-dm") return l.ticket || "";
   const md = String(l.date||"").split(".").slice(1).map(Number).join("/");
   const msg = LANG_EN
-    ? `Hi! I'd like to reserve ticket(s) for ${md} at ${LF(l,"venue")}.
+    ? `Hi! I'd like to reserve ticket(s) for ${md} at ${LF(l,"venue")}
 Name: 
 Number of tickets: `
     : `${md} ${l.venue||""} のチケット取り置きお願いします！
@@ -977,14 +991,19 @@ $("#pastbtn").addEventListener("click", ()=>{
 
 /* ---------- 写真グリッド（Pinterest型） ----------
    ・シャッフル：開くたびに並びが変わる（時系列にしない）
-   ・ライブ順：photos.js の live（日付）ごとに見出しをつけて新しい順   */
-let pmode="shuffle", shown=[], expanded=false;
-const FIRST = 24;                      // 最初に見せる枚数（残りは「もっと表示する」で出る）
-const shuf = P.photos.slice();
+   ・ライブ順：photos.js の live（日付）ごとに見出しをつけて新しい順
+   ・列はJSで決めて、あとから足す写真はいちばん短い列の下に足す（全体が並び替わってガタつかない）
+   ・下まで来て、さらに上にグーっと引っぱると続きが出る（インスタの消えるメッセージ風）
+   ・content.js の photoHide に書いた写真は出さない（似た写真・同じ写真の重複よけ）          */
+const HIDE = new Set((C.photoHide||[]).map(x=>String(x).replace(/\.\w+$/,"")));
+const ALL = P.photos.filter(p=>!HIDE.has(String(p.f).replace(/\.\w+$/,"")));
+const BATCH = 24;                       // 1回に出す枚数
+let pmode="shuffle", shown=[], limit=0, blocks=[];
+const shuf = ALL.slice();
 for(let i=shuf.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[shuf[i],shuf[j]]=[shuf[j],shuf[i]];}
 const lkey = p => p.live || "";
 function currentList(){
-  return pmode==="live" ? P.photos.slice().sort((a,b)=>lkey(b).localeCompare(lkey(a))) : shuf;
+  return pmode==="live" ? ALL.slice().sort((a,b)=>lkey(b).localeCompare(lkey(a))) : shuf;
 }
 function liveName(d){
   const k=String(d).replace(/\D/g,"");
@@ -993,25 +1012,80 @@ function liveName(d){
   const t=LF(l,"title");
   return LF(l,"venue") + (t ? (LANG_EN ? " — "+t : "「"+t+"」") : "");
 }
-function renderGrid(){
-  shown = currentList();
-  $("#pcount").textContent = TT(shown.length + " 枚", shown.length + " photos");
-  let html="", last=null;
-  shown.forEach((p,i)=>{
-    if(pmode==="live" && lkey(p)!==last){ last=lkey(p);
-      html += `<div class="phh">${last||"ARCHIVE"}${last?`<small>${liveName(last)}</small>`:""}</div>`; }
-    const hide = pmode!=="live" && !expanded && i>=FIRST;
-    html += `<figure data-i="${i}"${hide?' class="hide"':''}><img src="${TH}${p.f}" alt="" loading="lazy" decoding="async" width="${p.w||3}" height="${p.h||2}"></figure>`;
-  });
-  $("#grid").innerHTML = html;
-  const btn = $("#morebtn"), wrap = $(".morewrap");
-  if(pmode!=="live" && !expanded && shown.length > FIRST){
-    wrap.style.display = "flex";
-    btn.textContent = TT(`もっと表示する（残り ${shown.length - FIRST} 枚）`, `Show more (${shown.length - FIRST} left)`);
-  } else {
-    wrap.style.display = "none";
-  }
+const nCols = () => innerWidth>=1180 ? 4 : innerWidth>=761 ? 3 : 2;
+function newBlock(){
+  const wrap=document.createElement("div"); wrap.className="mcols";
+  const n=nCols(), cols=[];
+  for(let i=0;i<n;i++){ const c=document.createElement("div"); c.className="mcol"; wrap.appendChild(c); cols.push(c); }
+  $("#grid").appendChild(wrap);
+  const b={cols, h:new Array(n).fill(0)}; blocks.push(b); return b;
 }
+function place(b,p,i){
+  let k=0; for(let j=1;j<b.h.length;j++) if(b.h[j] < b.h[k]-0.01) k=j;
+  const w=p.w||3, h=p.h||2, f=document.createElement("figure");
+  f.dataset.i=i; f.style.aspectRatio = w+" / "+h;
+  f.innerHTML=`<img src="${TH}${p.f}" alt="" loading="lazy" decoding="async" width="${w}" height="${h}">`;
+  b.cols[k].appendChild(f); b.h[k] += h/w;
+}
+function addUpTo(n){
+  const b = blocks[blocks.length-1] || newBlock();
+  const end = Math.min(n, shown.length);
+  for(let i=limit;i<end;i++) place(b, shown[i], i);
+  limit = end; updMore();
+}
+function renderGrid(){
+  shown = currentList(); blocks=[]; limit=0;
+  $("#pcount").textContent = TT(shown.length + " 枚", shown.length + " photos");
+  $("#grid").innerHTML = "";
+  if(pmode==="live"){
+    let last=null, b=null;
+    shown.forEach((p,i)=>{
+      if(!b || lkey(p)!==last){ last=lkey(p);
+        const hd=document.createElement("div"); hd.className="phh";
+        hd.innerHTML = `${last||"ARCHIVE"}${last?`<small>${liveName(last)}</small>`:""}`;
+        $("#grid").appendChild(hd); b=newBlock(); }
+      place(b,p,i);
+    });
+    limit = shown.length; updMore();
+  } else addUpTo(BATCH);
+}
+/* --- 下で引っぱって、さらに表示 --- */
+const pm=$("#pullmore"), arc=$("#pullarc"), CIRC=2*Math.PI*16;
+let pStart=null, pProg=0, pBusy=false;
+function updMore(){
+  const rest = shown.length - limit;
+  pm.hidden = !(pmode!=="live" && rest>0);
+  $("#pullt").textContent = TT(`上にグーっと引っぱると、さらに表示（あと ${rest} 枚）`, `Pull up to see more (${rest} left)`);
+}
+function setProg(v){ pProg=v; arc.style.strokeDashoffset=String(CIRC*(1-v)); pm.classList.toggle("ready", v>=1); }
+function loadMore(){
+  if(pBusy || limit>=shown.length) return;
+  pBusy=true; pm.classList.add("go"); setProg(1);
+  setTimeout(()=>{ addUpTo(limit+BATCH); pm.classList.remove("go"); setProg(0); pBusy=false;
+    try{ if(navigator.vibrate) navigator.vibrate(12); }catch(e){} }, 320);
+}
+const pmActive = () => document.body.dataset.view==="photo" && !pm.hidden && !pBusy;
+const atBottom = () => (innerHeight + scrollY) >= document.documentElement.scrollHeight - 6;
+addEventListener("touchstart", e=>{ pStart = (pmActive() && atBottom()) ? e.touches[0].clientY : null; }, {passive:true});
+addEventListener("touchmove", e=>{
+  if(!pmActive()) return;
+  const y=e.touches[0].clientY;
+  if(pStart==null){ if(atBottom()) pStart=y; return; }
+  setProg(Math.max(0, Math.min(1, (pStart-y)/110)));
+}, {passive:true});
+addEventListener("touchend", ()=>{
+  if(pStart!=null){ if(pProg>=1) loadMore(); else setProg(0); }
+  pStart=null;
+}, {passive:true});
+// PC：いちばん下でさらにホイールを回すと
+let wAcc=0, wT=null;
+addEventListener("wheel", e=>{
+  if(!pmActive() || !atBottom() || e.deltaY<=0) return;
+  wAcc+=e.deltaY; setProg(Math.min(1,wAcc/420));
+  if(wAcc>=420){ wAcc=0; loadMore(); }
+  clearTimeout(wT); wT=setTimeout(()=>{ wAcc=0; if(!pBusy) setProg(0); },450);
+}, {passive:true});
+pm.addEventListener("click", loadMore);
 if(LANG_EN){
   const cs=$('.chip[data-m="shuffle"]'), cl=$('.chip[data-m="live"]'), vh=$(".vhint");
   if(cs) cs.textContent="Shuffle";
@@ -1019,11 +1093,15 @@ if(LANG_EN){
   $("#playall").textContent="▶ Slideshow";
   if(vh) vh.textContent="Tap / swipe for next  ·  ESC to close";
 }
-$("#morebtn").addEventListener("click", ()=>{ expanded = true; renderGrid(); });
 $$(".chip[data-m]").forEach(b=>b.addEventListener("click",()=>{
   $$(".chip[data-m]").forEach(x=>x.classList.remove("on"));
-  b.classList.add("on"); pmode=b.dataset.m; expanded=false; renderGrid();
+  b.classList.add("on"); pmode=b.dataset.m; renderGrid();
 }));
+let lastCols=nCols();
+addEventListener("resize", ()=>{
+  if(nCols()===lastCols) return;
+  lastCols=nCols(); const keep=limit; renderGrid(); if(pmode!=="live") addUpTo(keep);
+});
 renderGrid();
 
 /* ---------- 全画面スライドショー ---------- */
@@ -1058,31 +1136,14 @@ $("#grid").addEventListener("click", e=>{
   vOpen(shown, +f.dataset.i);
 });
 
-/* --- スマホ：指でなぞると色がつく／タップした時だけ拡大 --- */
+/* --- スマホ：指を滑らせていた場合は写真を開かない（なぞって色をつける演出はスクロールが重くなるのでやめた） --- */
 if (matchMedia("(hover:none)").matches) {
   const gridEl = $("#grid");
   let sx=0, sy=0, dragged=false;
-  const lit = new Set();
-  function light(x,y){
-    const el = document.elementFromPoint(x,y);
-    const f  = el && el.closest ? el.closest("#grid figure") : null;
-    if(!f) return;
-    f.classList.add("lit"); lit.add(f);
-    clearTimeout(f._fade);
-    f._fade = setTimeout(()=>{ f.classList.remove("lit"); lit.delete(f); }, 1500);
-  }
-  gridEl.addEventListener("touchstart", e=>{
-    const t=e.touches[0]; sx=t.clientX; sy=t.clientY; dragged=false; light(sx,sy);
-  }, {passive:true});
-  gridEl.addEventListener("touchmove", e=>{
-    const t=e.touches[0];
-    if(Math.abs(t.clientX-sx)>10 || Math.abs(t.clientY-sy)>10) dragged=true;
-    light(t.clientX, t.clientY);
-  }, {passive:true});
-  // 指を滑らせていた場合は、写真を開かない
-  gridEl.addEventListener("click", e=>{
-    if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; }
-  }, true);
+  gridEl.addEventListener("touchstart", e=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; dragged=false; }, {passive:true});
+  gridEl.addEventListener("touchmove", e=>{ if(dragged) return; const t=e.touches[0];
+    if(Math.abs(t.clientX-sx)>10 || Math.abs(t.clientY-sy)>10) dragged=true; }, {passive:true});
+  gridEl.addEventListener("click", e=>{ if(dragged){ e.stopPropagation(); e.preventDefault(); dragged=false; } }, true);
 }
 $("#playall").addEventListener("click", ()=>vOpen(currentList(), null));
 $("#vclose").addEventListener("click", vClose);
