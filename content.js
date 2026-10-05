@@ -83,6 +83,18 @@ window.CONTENT = {
       note:   "共演：The Rowans / ぶらいかん　※ROCKETsへのDMでも取り置きできます",
       ticket: "mailto:clubrootsticket@gmail.com?subject=10/14%20THE%20RIOT%20GARDEN%20%E4%BA%88%E7%B4%84&body=%281%29%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%282%29%E6%9E%9A%E6%95%B0%EF%BC%9A%0A%283%29%E7%9B%AE%E5%BD%93%E3%81%A6%E3%81%AE%E5%87%BA%E6%BC%94%E8%80%85%EF%BC%9AROCKETs%0A%284%29%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%EF%BC%9A%0A",
       ticketLabel: "メールで予約"
+    },
+    {
+      date:   "2026.10.26",
+      day:    "MON",
+      title:  "newest（Flight × COSMIC HALL pre. ／ Flight 35th Anniversary）",
+      venue:  "府中 Flight",
+      open:   "17:30",
+      start:  "18:00",
+      price:  "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000（＋1D ¥600）",
+      note:   "共演：pulse / BamBook(Yanh!!!) / はまたけ(ponkozz) / and more...　FOOD：Handies　※チケットは各アーティスト取り置き",
+      ticket: "https://x.com/rocket_band04",
+      ticketLabel: "取り置きはXのDMへ"
     }
   ],
 
@@ -220,4 +232,4 @@ Oi! Oi! Oi!
   }
 };
 
-/* 最終更新: 2026-08-19 Koudaiのインスタ非表示 */
+/* 最終更新: 2026-10-05 10/26 府中Flight ライブ追加 */
