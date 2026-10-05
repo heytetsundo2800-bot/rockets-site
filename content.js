@@ -71,6 +71,18 @@ window.CONTENT = {
       note:   "共演：ぶらいかん / The April Fools / minami",
       ticket: "https://hotshot.tokyo/",
       ticketLabel: "会場サイト"
+    },
+    {
+      date:   "2026.10.14",
+      day:    "WED",
+      title:  "THE RIOT GARDEN",
+      venue:  "高円寺 Club ROOTS!",
+      open:   "18:30",
+      start:  "19:00",
+      price:  "ADV ¥2,500 / DOOR ¥3,000（＋1D ¥500）",
+      note:   "共演：The Rowans / ぶらいかん　※ROCKETsへのDMでも取り置きできます",
+      ticket: "mailto:clubrootsticket@gmail.com?subject=10/14%20THE%20RIOT%20GARDEN%20%E4%BA%88%E7%B4%84&body=%281%29%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%282%29%E6%9E%9A%E6%95%B0%EF%BC%9A%0A%283%29%E7%9B%AE%E5%BD%93%E3%81%A6%E3%81%AE%E5%87%BA%E6%BC%94%E8%80%85%EF%BC%9AROCKETs%0A%284%29%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%EF%BC%9A%0A",
+      ticketLabel: "メールで予約"
     }
   ],
 
