@@ -628,7 +628,12 @@ body:not([data-view="photo"]) section.blk{padding-top:clamp(80px,12vh,130px)}
 #member .head{margin-bottom:18px}
 .mc{flex-basis:min(76vw,400px)}
 .mgrid::before,.mgrid::after{flex-basis:max(0px,calc(50% - min(38vw,200px) - 14px))}
-.mc .pw{padding-right:64px;line-height:1.5}
+/* 個人SNSのアイコンは名前とぶつからないよう右上に */
+.mc .ms{top:14px;right:14px;bottom:auto;gap:8px}
+.mc .ms a{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.mc .ms svg{width:19px;height:19px}
+.mc .pw{line-height:1.5}
 </style>
 </head>
 <body>
@@ -1648,6 +1653,7 @@ show(H[location.hash]||"live", true);
 // #photo などで開いたとき、ブラウザが勝手にその場所までスクロールするのを止める
 try{ history.scrollRestoration="manual"; }catch(e){}
 addEventListener("load",()=>setTimeout(()=>window.scrollTo(0,0),0),{once:true});
+addEventListener("hashchange",()=>{ const v=H[location.hash]; if(v) show(v,true); });
 
 /* ---------- シート（下から出る画面） ---------- */
 function sheet(html){
