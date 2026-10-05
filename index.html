@@ -1445,7 +1445,7 @@ if(N){ const d=pd(N), diff=Math.round((d-today)/864e5);
   calC= diff===0?T("今日","TODAY"): diff===1?T("明日","TOMORROW"): T("あと"+diff+"日","IN "+diff+" DAYS"); }
 
 /* ---------- 下のタブ ---------- */
-const tb=document.createElement("nav"); tb.id="tabbar";
+const tb=document.createElement("div"); tb.id="tabbar"; /* navタグだとスマホ用メニューのCSSが効いて消えるので div */
 tb.innerHTML=
   `<button type="button" data-v="member">${IC.member}<span>MEMBER</span></button>`+
   `<button type="button" data-v="photo">${IC.photo}<span>PHOTO</span></button>`+
