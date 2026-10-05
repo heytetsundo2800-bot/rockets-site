@@ -718,6 +718,54 @@ body.en .head .ja{display:none}
 .nl.v-photo .bigd{text-shadow:0 4px 18px rgba(0,0,0,.7)}
 .nl.v-photo .bigd small{color:var(--pop)}
 .nl.v-photo .inf{border-top:1px solid rgba(255,255,255,.18)}
+/* ===== シンプル案（2026-10-06）：?nl=line / photo2 / white ===== */
+/* 共通：角なし・光なし・色は1つだけ */
+.nl.v-line,.nl.v-photo2,.nl.v-white{border-radius:0;box-shadow:none}
+.nl.v-line .acts a,.nl.v-line .acts button,.nl.v-photo2 .acts a,.nl.v-photo2 .acts button,.nl.v-white .acts a,.nl.v-white .acts button{border-radius:0}
+.nl.v-line .acts svg,.nl.v-photo2 .acts svg,.nl.v-white .acts svg{width:15px;height:15px}
+/* S1 線だけ（ワクなし） */
+.nl.v-line{background:none;border:0;border-top:2px solid var(--fg);border-bottom:1px solid #3a3a3e;padding:14px 0 22px;max-width:640px}
+.nl.v-line .top{font-family:var(--dp);color:var(--fg);font-size:13px;letter-spacing:.3em}
+.nl.v-line .top b{font-family:var(--dp);color:#ff3b30;font-size:13px;letter-spacing:.18em;font-weight:400}
+.nl.v-line .yr{display:none}
+.nl.v-line .bigd{font-size:clamp(84px,26vw,140px);line-height:.86;margin-top:14px;letter-spacing:-.01em}
+.nl.v-line .bigd small{font-size:.2em;color:var(--fg);letter-spacing:.2em;margin-left:.5em;vertical-align:top;position:relative;top:.35em}
+.nl.v-line .ven{font-size:22px;margin-top:14px}
+.nl.v-line .ttl{color:var(--dim);font-size:12px;letter-spacing:.08em}
+.nl.v-line .inf{border-top:0;padding-top:0;margin-top:14px;font-size:12px}
+.nl.v-line .acts{margin-top:20px}
+.nl.v-line .acts .y{background:var(--fg);color:#000;font-size:14px;letter-spacing:.06em}
+.nl.v-line .acts button{background:none;color:var(--fg);text-decoration:underline;text-underline-offset:5px;padding:8px;font-size:13px;font-weight:500}
+.nl.v-line .hint{display:none}
+/* S2 写真を上・文字を下（重ねない） */
+.nl.v-photo2{background:#0b0b0c;border:1px solid #2a2a2e;padding:0 0 20px}
+.nl.v-photo2 .phbg{display:block;position:relative;aspect-ratio:16/9;background-size:cover;background-position:center 35%;margin-bottom:18px}
+.nl.v-photo2>*:not(.phbg):not(.dc){margin-left:20px;margin-right:20px}
+.nl.v-photo2 .top{font-family:var(--dp);color:var(--fg);font-size:13px;letter-spacing:.3em}
+.nl.v-photo2 .top b{font-family:var(--dp);color:#ff3b30;font-size:13px;letter-spacing:.18em;font-weight:400}
+.nl.v-photo2 .yr{display:none}
+.nl.v-photo2 .bigd{font-size:clamp(70px,21vw,120px);line-height:.88;margin-top:10px}
+.nl.v-photo2 .bigd small{color:var(--fg);font-size:.22em;letter-spacing:.2em}
+.nl.v-photo2 .ven{font-size:20px}
+.nl.v-photo2 .ttl{color:var(--dim);font-size:12px}
+.nl.v-photo2 .inf{border-top:1px solid #2a2a2e;font-size:12px}
+.nl.v-photo2 .acts .y{background:var(--fg);color:#000}
+.nl.v-photo2 .acts button{background:none;border:1px solid #444;color:var(--fg)}
+.nl.v-photo2 .hint{display:none}
+/* S3 白黒反転（白いブロック） */
+.nl.v-white{background:#f2f0ec;color:#0a0a0a;border:0;padding:18px 18px 20px}
+.nl.v-white .top{font-family:var(--dp);color:#0a0a0a;font-size:13px;letter-spacing:.3em}
+.nl.v-white .top b{font-family:var(--dp);color:#d7261e;font-size:13px;letter-spacing:.18em;font-weight:400}
+.nl.v-white .yr{display:none}
+.nl.v-white .bigd{color:#0a0a0a;font-size:clamp(80px,25vw,136px);line-height:.86;margin-top:12px}
+.nl.v-white .bigd small{color:#0a0a0a;font-size:.2em;letter-spacing:.2em}
+.nl.v-white .ven{color:#0a0a0a;font-size:22px}
+.nl.v-white .ttl{color:#555;font-size:12px}
+.nl.v-white .inf{color:#444;border-top:1px solid #0a0a0a;font-size:12px}
+.nl.v-white .acts .y{background:#0a0a0a;color:#fff}
+.nl.v-white .acts button{background:none;color:#0a0a0a;border:1px solid #0a0a0a}
+.nl.v-white .hint{display:none}
+
 
 /* ヘッダー下の余白を少し詰めて、メンバーの名前まで1画面に入れる */
 body[data-view] section.blk{padding-top:clamp(80px,12vh,130px)}
