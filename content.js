@@ -21,6 +21,7 @@ window.CONTENT = {
      使わないものは url を "" にすれば非表示になる       */
   sns: {
     x:         "https://x.com/rocket_band04",              // ★連絡はここ、が基本導線
+    xId:       "2041118138406744064",   // ↑のXアカウントの番号。ライブの ticket: "x-dm" はここ宛てのDMになる
     instagram: "https://www.instagram.com/rockets_official",
     tiktok:    "https://www.tiktok.com/@rockets_band",
     youtube:   ""                          // 使うなら URL を入れる
@@ -28,73 +29,85 @@ window.CONTENT = {
 
   /* ---------- 連絡について出す文章 ---------- */
   contactNote: "出演のご依頼・お問い合わせは X（旧Twitter）の DM にお願いします。",
+  contactNoteEn: "For bookings and inquiries, please DM us on X (Twitter).",
 
   /* ---------- ライブ情報 ----------
      ・上から順に表示される（近い日付を上に）
      ・past: true を付けると「過去の公演」側に入る
      ・料金は price に自由に書ける（書かない場合は adv / door が使われる）
      ・ticket にURLを入れるとボタンが出る。ボタンの文字は ticketLabel で変えられる
-     ・ticket を "" にするとボタンが消える                                */
+     ・ticket を "" にするとボタンが消える
+     ・ticket を "x-dm" にすると「XのDMでチケット取り置き」ボタンになり、
+       押すとROCKETsのXのDM（日付・会場・お名前・枚数の文面入り）が開く      */
   lives: [
     {
       date:   "2026.08.18",
       day:    "TUE",
-      title:  "青春火花",
-      venue:  "立川 BABEL",
+      title:  "青春火花",   titleEn: "Seishun Hibana",
+      venue:  "立川 BABEL",          venueEn: "Tachikawa BABEL",
       open:   "18:15",
       start:  "18:30",
       price:  "一般 ¥2,500 / 学生 ¥1,500（＋1D）",
+      priceEn: "General ¥2,500 / Student ¥1,500 (+1 drink)",
       note:   "共演：THE METRON / LAULA LÖWE / meteorite / Daddy's Punk",
+      noteEn: "With THE METRON / LAULA LÖWE / meteorite / Daddy's Punk",
       ticket: "https://www.babel-rocktower.net/schedule/",
-      ticketLabel: "会場サイト"
+      ticketLabel: "会場サイト", ticketLabelEn: "Venue website"
     },
     {
       date:   "2026.09.18",
       day:    "FRI",
-      title:  "共鳴",
-      venue:  "立川 COSMIC HALL",
+      title:  "共鳴",       titleEn: "Kyomei",
+      venue:  "立川 COSMIC HALL",    venueEn: "Tachikawa COSMIC HALL",
       open:   "18:00",
       start:  "18:30",
       price:  "ADV / DOOR ¥2,500（＋1D）",
+      priceEn: "ADV / DOOR ¥2,500 (+1 drink)",
       note:   "共演：niwaka. / Hold my beer / nakanaori",
+      noteEn: "With niwaka. / Hold my beer / nakanaori",
       ticket: "https://studiopenta.jp/cosmichall/",
-      ticketLabel: "会場サイト"
+      ticketLabel: "会場サイト", ticketLabelEn: "Venue website"
     },
     {
       date:   "2026.09.24",
       day:    "THU",
-      title:  "画零時",
-      venue:  "大久保 HOT SHOT",
+      title:  "画零時",     titleEn: "Gareiji",
+      venue:  "大久保 HOT SHOT",     venueEn: "Okubo HOT SHOT",
       open:   "18:10",
       start:  "18:30",
       price:  "ADV ¥2,000 / DOOR ¥2,500（＋1D）",
+      priceEn: "ADV ¥2,000 / DOOR ¥2,500 (+1 drink)",
       note:   "共演：ぶらいかん / The April Fools / minami",
+      noteEn: "With Buraikan / The April Fools / minami",
       ticket: "https://hotshot.tokyo/",
-      ticketLabel: "会場サイト"
+      ticketLabel: "会場サイト", ticketLabelEn: "Venue website"
     },
     {
       date:   "2026.10.14",
       day:    "WED",
       title:  "THE RIOT GARDEN",
-      venue:  "高円寺 Club ROOTS!",
+      venue:  "高円寺 Club ROOTS!",  venueEn: "Koenji Club ROOTS!",
       open:   "18:30",
       start:  "19:00",
       price:  "ADV ¥2,500 / DOOR ¥3,000（＋1D ¥500）",
-      note:   "共演：The Rowans / ぶらいかん　※ROCKETsへのDMでも取り置きできます",
-      ticket: "mailto:clubrootsticket@gmail.com?subject=10/14%20THE%20RIOT%20GARDEN%20%E4%BA%88%E7%B4%84&body=%281%29%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%282%29%E6%9E%9A%E6%95%B0%EF%BC%9A%0A%283%29%E7%9B%AE%E5%BD%93%E3%81%A6%E3%81%AE%E5%87%BA%E6%BC%94%E8%80%85%EF%BC%9AROCKETs%0A%284%29%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%EF%BC%9A%0A",
-      ticketLabel: "メールで予約"
+      priceEn: "ADV ¥2,500 / DOOR ¥3,000 (+1 drink ¥500)",
+      note:   "共演：The Rowans / ぶらいかん",
+      noteEn: "With The Rowans / Buraikan",
+      ticket: "x-dm"     // ← ROCKETsのXのDM（取り置き）に飛ぶ
     },
     {
       date:   "2026.10.26",
       day:    "MON",
       title:  "newest（Flight × COSMIC HALL pre. ／ Flight 35th Anniversary）",
-      venue:  "府中 Flight",
+      titleEn: "newest (Flight × COSMIC HALL pre. / Flight 35th Anniversary)",
+      venue:  "府中 Flight",         venueEn: "Fuchu Flight",
       open:   "17:30",
       start:  "18:00",
       price:  "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000（＋1D ¥600）",
+      priceEn: "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000 (+1 drink ¥600)",
       note:   "共演：pulse / BamBook(Yanh!!!) / はまたけ(ponkozz) / and more...　FOOD：Handies　※チケットは各アーティスト取り置き",
-      ticket: "https://x.com/rocket_band04",
-      ticketLabel: "取り置きはXのDMへ"
+      noteEn: "With pulse / BamBook (Yanh!!!) / Hamatake (ponkozz) / and more...  Food: Handies. Tickets are reserved through each artist.",
+      ticket: "x-dm"     // ← ROCKETsのXのDM（取り置き）に飛ぶ
     }
   ],
 
@@ -116,13 +129,17 @@ window.CONTENT = {
     // Eggs のアーティストページ（"" にするとEggsのボタンが消える）
     eggs:      "https://eggs.mu/artist/rockets_punk",
     eggsLabel: "Eggs で聴く",
-    note:      "Eggsは登録なしでそのまま聴けます。"
+    eggsLabelEn: "Listen on Eggs",
+    note:      "Eggsは登録なしでそのまま聴けます。",
+    noteEn:    "No sign-up needed — you can listen on Eggs right away."
   },
 
   tracks: [
     {
       title:  "パンクのススメ",
+      titleEn: "Punk no Susume",
       note:   "作詞・作曲：ゴーザキ",
+      noteEn: "Words & music by Gozaki",
       jacket: "jacket-punk-no-susume.webp",   // assets/audio/ の中の画像
       file:   "punk-no-susume.m4a",           // ← assets/audio/ の中の音源ファイル
       // この曲だけのEggsページ（"" ならアーティストページに飛ぶ）
@@ -180,21 +197,26 @@ Oi! Oi! Oi!
      ・BASE / SUZURI などの外部ストアを使うなら url にそのURLを入れる  */
   shop: {
     note: "ステッカー・Tシャツなどを準備中です。\n出来上がりしだい、ここに並べます。",
+    noteEn: "Stickers, T-shirts and more are on the way.\nThey'll show up here as soon as they're ready.",
 
     // 商品の上に出る帯。"" にすると帯ごと消える
     saleLabel: "LIVE VENUE ONLY",
     saleNote:  "いまはライブ会場でのみ販売しています。\n1枚 ¥200 ／ 白・黒の2枚セット ¥300",
+    saleNoteEn: "Currently sold only at our shows.\n¥200 each / White & black set of 2 for ¥300",
 
     url:      "",                    // オンラインストアのURL（無ければ空でOK）
     urlLabel: "オンラインストアへ",
+    urlLabelEn: "Online store",
     items: [
       // 実物のステッカーを撮った写真を切り抜いて使っています（assets/shop/ の中）
       // size は商品名の下に小さく出ます。実寸と違ったらここの数字を直してください
       // cutout: true ＝ 背景が透明な切り抜き画像（普通の商品写真なら消してください）
       { name: "ロゴステッカー（白）", price: "¥200", photo: "sticker-white-photo.webp", cutout: true,
-        note: "白地 × 黒ロゴ／防水・屋外OK", size: "約 90 × 35 mm" },
+        note: "白地 × 黒ロゴ／防水・屋外OK", size: "約 90 × 35 mm",
+        nameEn: "Logo sticker (white)", noteEn: "White base × black logo / waterproof, outdoor-safe", sizeEn: "approx. 90 × 35 mm" },
       { name: "ロゴステッカー（黒）", price: "¥200", photo: "sticker-black-photo.webp", cutout: true,
-        note: "黒地 × 白ロゴ／防水・屋外OK", size: "約 90 × 35 mm" }
+        note: "黒地 × 白ロゴ／防水・屋外OK", size: "約 90 × 35 mm",
+        nameEn: "Logo sticker (black)", noteEn: "Black base × white logo / waterproof, outdoor-safe", sizeEn: "approx. 90 × 35 mm" }
     ]
   },
 
@@ -219,25 +241,30 @@ Oi! Oi! Oi!
      word  は名前の下に出る一言（空 "" にすればその人だけ非表示）
      x / instagram / tiktok に個人アカウントのURLを入れると、一言の下にリンクが出ます */
   members: [
-    { name: "いまちま",       part: "Ba",      photo: "members/m1.webp", font: "cb", nameEn: "Imachima", partEn: "Bass",
-      word: "やるしかねぇ!",
-      x: "https://x.com/imymellsc",     instagram: "https://www.instagram.com/car666lose", tiktok: "" },
-
     { name: "ゴーザキ",       part: "Vo / Gt", photo: "members/m2.webp", font: "rg", nameEn: "Gozaki", partEn: "Vocal / Guitar",
       word: "LET'S GO!! PUNK ROCK!!",
       x: "https://x.com/gorockets11",   instagram: "https://www.instagram.com/go._rockets", tiktok: "" },
+
+    { name: "いまちま",       part: "Ba",      photo: "members/m1.webp", font: "cb", nameEn: "Imachima", partEn: "Bass",
+      word: "やるしかねぇ!",  wordEn: "Gotta go for it!",
+      x: "https://x.com/imymellsc",     instagram: "https://www.instagram.com/car666lose", tiktok: "" },
 
     { name: "Koudai",         part: "Gt",      photo: "members/m3.webp", font: "se", nameEn: "Koudai", partEn: "Guitar",
       word: "Punks not dead",
       x: "https://x.com/k_rockets_",    instagram: "",  tiktok: "" },
 
     { name: "アダチテツンド",  part: "Dr",      photo: "members/m4.webp", font: "zk", nameEn: "Adachi Tetsundo", partEn: "Drums",
-      word: "ろっくんろーる",
+      word: "ろっくんろーる",  wordEn: "Rock 'n' roll",
       x: "https://x.com/rockets_tetsu", instagram: "https://www.instagram.com/tetsu_kasakasa", tiktok: "" }
   ],
 
   /* ---------- バンド紹介文 ---------- */
-  bio: "東京のパンクバンドROCKETs。",
+  bio: "高円寺のパンクバンドROCKETs。",
+  bioEn: "ROCKETs — a punk band from Koenji, Tokyo.",
+
+  /* ---------- 写真で出さないもの ----------
+     似ている写真・同じ写真の重複など、PHOTO に出したくない写真のファイル名を書く */
+  photoHide: ["p191", "p084", "p178", "p182", "p179", "n0818_33"],
 
   /* ---------- 演出の設定 ---------- */
   settings: {
@@ -248,4 +275,5 @@ Oi! Oi! Oi!
   }
 };
 
-/* 最終更新: 2026-10-05 アプリ化（お知らせ・メンバーのフォント） */
+/* 2026-10-06 チケットは ticket: "x-dm" でXのDM取り置きに */
+/* 最終更新: 2026-10-05b 英語表示を追加（〜En）・メンバー順（ゴーザキ→いまちま→Koudai→アダチテツンド）・高円寺 */
