@@ -498,7 +498,7 @@ footer small{font-size:10.5px;color:var(--dim);letter-spacing:.14em}
 #nav,#burger,#hero .nextlive,#contact,.mhint{display:none!important}
 body{padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))}
 .vw-off{display:none!important}
-body:not([data-view="photo"]) header{background:rgba(8,8,9,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body[data-view] header{background:rgba(8,8,9,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 body:not([data-view="home"]) section.blk{padding-top:clamp(96px,14vh,140px)}
 body.en .head .ja{display:none}
 /* 右上 */
@@ -607,24 +607,35 @@ body.en .head .ja{display:none}
 .nl .ven{font-size:21px;font-weight:900;margin-top:10px;line-height:1.35}
 .nl .ttl{font-size:13px;color:#cfcbc5;margin-top:4px;line-height:1.55}
 .nl .inf{font-size:12.5px;color:var(--dim);line-height:1.85;margin-top:12px;padding-top:12px;border-top:1px solid #2a2a30;white-space:pre-line}
-.nl .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-.nl .acts a,.nl .acts button{display:block;text-align:center;border-radius:99px;padding:14px 8px;font-weight:700;font-size:13.5px;
+.nl .acts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
+.nl .acts a,.nl .acts button{display:flex;align-items:center;justify-content:center;gap:9px;text-align:center;border-radius:99px;padding:14px 8px;font-weight:700;font-size:13.5px;
   border:0;cursor:pointer;background:#24242a;color:var(--fg);font-family:var(--jp)}
-.nl .acts .y{grid-column:1/-1;background:var(--pop);color:#111;font-size:15px}
+.nl .acts .y{background:var(--pop);color:#111;font-size:15px}
+.nl .acts svg{width:17px;height:17px;fill:currentColor;flex:0 0 auto}
+.nl .hint{font-size:11.5px;color:var(--dim);text-align:center;margin-top:10px;line-height:1.6}
 .nl-sub{font-family:var(--dp);letter-spacing:.2em;font-size:14px;color:var(--dim);margin:38px 0 0}
 #live .head{margin-bottom:20px}
 /* 真ん中のタブ：ライブ画面のとき */
 #tcal.on .cal{box-shadow:0 0 0 2px var(--pop),0 0 28px rgba(255,216,74,.8)}
-/* PHOTO の上：写真が切り替わるROCKETsのトップ絵（小さめ） */
-body[data-view="photo"] #hero{height:clamp(240px,42svh,420px);min-height:0}
-body[data-view="photo"] .heroInner{justify-content:flex-end;align-items:center;padding:64px var(--pad) 20px;gap:0}
-body[data-view="photo"] .wordmark{text-align:center}
-body[data-view="photo"] .wordmark img{width:min(68vw,400px);margin:0 auto}
-body[data-view="photo"] .catch,body[data-view="photo"] .scroller{display:none}
-body[data-view="photo"] #photo{padding-top:22px}
-.nl .acts button{font-size:13px;white-space:nowrap;padding:14px 4px}
+/* 写真が自動で切り替わるトップ絵は使わない（2026-10-06） */
+#hero{display:none!important}
+/* 開いたときのロゴ：大きく・長めに・ドンと出す */
+#loader{animation:ldshake .5s .62s both}
+#loader::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 50%,rgba(255,45,45,.55),rgba(255,45,45,.12) 38%,transparent 66%);
+  animation:ldflash 1.6s .58s ease-out forwards}
+#loader .lg{position:relative;width:min(86vw,620px);opacity:0;
+  animation:lgslam .95s .18s cubic-bezier(.2,.85,.25,1) forwards;filter:drop-shadow(0 0 26px rgba(255,45,45,.35))}
+@keyframes lgslam{0%{opacity:0;transform:scale(2.3);filter:blur(14px)}48%{opacity:1;transform:scale(.93);filter:blur(0)}
+  66%{transform:scale(1.035)}82%{transform:scale(.995)}100%{opacity:1;transform:scale(1);filter:drop-shadow(0 0 26px rgba(255,45,45,.35))}}
+@keyframes ldflash{0%{opacity:0}12%{opacity:1}100%{opacity:.35}}
+@keyframes ldshake{0%,100%{transform:none}15%{transform:translate(-7px,4px)}30%{transform:translate(6px,-5px)}
+  45%{transform:translate(-5px,-3px)}60%{transform:translate(4px,4px)}80%{transform:translate(-2px,1px)}}
+#loader.done{transition:opacity .7s ease,visibility .7s}
+@media(prefers-reduced-motion:reduce){#loader,#loader::before{animation:none}#loader .lg{animation:lgin 1s ease forwards}}
+.nl .acts button{font-size:14px;white-space:nowrap}
 /* ヘッダー下の余白を少し詰めて、メンバーの名前まで1画面に入れる */
-body:not([data-view="photo"]) section.blk{padding-top:clamp(80px,12vh,130px)}
+body[data-view] section.blk{padding-top:clamp(80px,12vh,130px)}
 #member .head{margin-bottom:18px}
 .mc{flex-basis:min(76vw,400px)}
 .mgrid::before,.mgrid::after{flex-basis:max(0px,calc(50% - min(38vw,200px) - 14px))}
@@ -800,6 +811,24 @@ try{
 const TT=(ja,en)=>LANG_EN?en:ja;
 const LF=(o,k)=>o ? ((LANG_EN && o[k+"En"]) ? o[k+"En"] : (o[k]||"")) : "";
 document.documentElement.lang = LANG_EN ? "en" : "ja";
+/* チケット：content.js の ticket に "x-dm" と書くと、ROCKETsのXのDM（取り置きの文面入り）に飛ぶ */
+const XDM_ID = (C.sns && C.sns.xId) || "";
+function tkUrl(l){
+  if(l.ticket !== "x-dm") return l.ticket || "";
+  const md = String(l.date||"").split(".").slice(1).map(Number).join("/");
+  const msg = LANG_EN
+    ? `Hi! I'd like to reserve ticket(s) for ${md} at ${LF(l,"venue")}.
+Name: 
+Number of tickets: `
+    : `${md} ${l.venue||""} のチケット取り置きお願いします！
+お名前：
+枚数：`;
+  return XDM_ID ? `https://x.com/messages/compose?recipient_id=${XDM_ID}&text=${encodeURIComponent(msg)}`
+                : ((C.sns && C.sns.x) || "");
+}
+const tkLabel = l => LF(l,"ticketLabel") ||
+  (l.ticket === "x-dm" ? TT("XのDMでチケット取り置き","Reserve tickets via X DM") : TT("チケット","Tickets"));
+window.ROCKETS_TICKET = { url: tkUrl, label: tkLabel };
 // 言語を切り替えた直後は、黒いロゴ画面を出さない
 try{ if(sessionStorage.getItem("rockets.noload")){ sessionStorage.removeItem("rockets.noload");
   const ld=document.getElementById("loader"); if(ld) ld.style.display="none"; } }catch(e){}
@@ -859,7 +888,14 @@ function startHero(){
   heroTimer = setInterval(()=>{ idx++; showHero(idx); }, S.fadeSeconds*1000);
 }
 // 最初の1枚を読み終わってから開始（チラつき防止）
+// トップの写真スライドは使わない（2026-10-06）。色合いだけ1枚目の写真からもらう
+const HERO_ON = false;
 (function boot(){
+  if(!HERO_ON){
+    const p0 = byName[heroList[0]]; if(p0) applyTint(p0.c);
+    setTimeout(()=>$("#loader").classList.add("done"), 2700);   // ロゴを長めに見せる
+    return;
+  }
   const first = new Image();
   first.onload = first.onerror = ()=>{
     startHero();
@@ -870,6 +906,7 @@ function startHero(){
 })();
 // タブが裏に回ったら止める（電池とCPUの節約）
 document.addEventListener("visibilitychange", ()=>{
+  if(!HERO_ON) return;
   clearInterval(heroTimer);
   if(!document.hidden){
     heroTimer = setInterval(()=>{ idx++; showHero(idx); }, S.fadeSeconds*1000);
@@ -894,7 +931,7 @@ function liveRow(l, past){
       ${l.title ? `<div class="ttl">${LF(l,"title")}</div>` : ""}
       <div class="info"><b>${LF(l,"venue")}</b><br>${line2}</div>
     </div>
-    <div>${(!past && l.ticket) ? `<a class="btn accent" href="${l.ticket}" target="_blank" rel="noopener">${LF(l,"ticketLabel")||TT("チケット","Tickets")}</a>` : ""}</div>
+    <div>${(!past && l.ticket) ? `<a class="btn accent" href="${tkUrl(l)}" target="_blank" rel="noopener">${tkLabel(l)}</a>` : ""}</div>
   </div>`;
 }
 /* ライブは日付で自動的に振り分ける。
@@ -1561,6 +1598,7 @@ if(N){ const d=pd(N), diff=Math.round((d-today)/864e5);
   calC= diff===0?T("今日","TODAY"): diff===1?T("明日","TOMORROW"): T("あと"+diff+"日","IN "+diff+" DAYS"); }
 
 /* ---------- 下のタブ ---------- */
+const TK=window.ROCKETS_TICKET||{url:l=>l.ticket||"",label:l=>LF(l,"ticketLabel")||T("チケット","Tickets")};
 const tb=document.createElement("div"); tb.id="tabbar"; /* navタグだとスマホ用メニューのCSSが効いて消えるので div */
 tb.innerHTML=
   `<button type="button" data-v="member">${IC.member}<span>MEMBER</span></button>`+
@@ -1585,7 +1623,7 @@ $$(".lang button").forEach(b=>b.addEventListener("click",()=>{
 }));
 
 /* ---------- 画面の切り替え ---------- */
-const VIEWS={live:["live"],member:["member"],photo:["hero","photo"],sound:["music","video"],shop:["shop"]};
+const VIEWS={live:["live"],member:["member"],photo:["photo"],sound:["music","video"],shop:["shop"]};
 const SECS=["hero","live","photo","video","music","shop","member","contact"];
 function show(v,keepUrl){
   if(!VIEWS[v]) v="live";
@@ -1618,10 +1656,10 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
     <div class="ven">${esc(ven)}</div>${ttl?`<div class="ttl">${esc(ttl)}</div>`:""}
     ${inf?`<div class="inf">${inf}</div>`:""}
     <div class="acts">
-      ${N.ticket?`<a class="y" href="${esc(N.ticket)}" target="_blank" rel="noopener">${esc(LF(N,"ticketLabel")||T("チケット","Tickets"))}</a>`:""}
-      <button type="button" data-a="cal">${T("カレンダーに入れる","Add to calendar")}</button>
-      <button type="button" data-a="share">${T("友だちに送る","Share")}</button>
-    </div>`;
+      ${N.ticket?`<a class="y" href="${esc(TK.url(N))}" target="_blank" rel="noopener">${N.ticket==="x-dm"?SNSI.x:""}${esc(TK.label(N))}</a>`:""}
+      <button type="button" data-a="share">${T("友だちに送る","Send to a friend")}</button>
+    </div>
+    <div class="hint">${T("「一緒に行かない？」の文つきで、LINE・インスタ・XのDMから送れます","Sends a “wanna come?” message via LINE, Instagram or X DM")}</div>`;
   const head=sec.querySelector(".head"); if(head) head.after(card); else sec.prepend(card);
   // 下の一覧からは同じライブを外し、残りがあれば「その後のライブ」として見せる
   const first=$("#upcoming .liverow"); if(first) first.remove();
@@ -1629,23 +1667,14 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
     const sub=document.createElement("div"); sub.className="nl-sub"; sub.textContent=T("その後のライブ","MORE SHOWS");
     $("#upcoming").before(sub);
   }
-  card.querySelector('[data-a="cal"]').addEventListener("click",()=>{
-    const ymd=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
-    const st=(N.start||N.open||"").replace(":","");
-    const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ROCKETs//JP","BEGIN:VEVENT",
-      "UID:rockets-"+ymd+"@rockets-band.vercel.app",
-      st?("DTSTART:"+ymd+"T"+st+"00"):("DTSTART;VALUE=DATE:"+ymd),
-      "SUMMARY:ROCKETs @ "+ven,"LOCATION:"+ven,
-      "DESCRIPTION:"+[ttl,tm,pr].filter(Boolean).join(" / ").replace(/[,;]/g," "),
-      "URL:https://rockets-band.vercel.app/","END:VEVENT","END:VCALENDAR"];
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(new Blob([lines.join("\r\n")],{type:"text/calendar"}));
-    a.download="rockets-"+ymd+".ics"; document.body.appendChild(a); a.click(); a.remove();
-  });
+  // 友だちに送る：iPhoneの共有画面が開く → LINE・インスタ・Xの相手を選ぶと、誘いの文が入った状態になる
   card.querySelector('[data-a="share"]').addEventListener("click",async()=>{
-    const txt=`ROCKETs ${N.date} ${ven}`; const url="https://rockets-band.vercel.app/";
-    try{ if(navigator.share){ await navigator.share({title:"ROCKETs",text:txt,url}); return; } }catch(e){ return; }
-    try{ await navigator.clipboard.writeText(txt+" "+url); alert(T("リンクをコピーしました","Link copied")); }catch(e){}
+    const DJ=["日","月","火","水","木","金","土"], ME=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DE=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const msg=EN ? `ROCKETs are playing ${ven} on ${DE[d.getDay()]}, ${ME[d.getMonth()]} ${d.getDate()}. Wanna come with me?`
+                 : `${d.getMonth()+1}月${d.getDate()}日(${DJ[d.getDay()]})に${ven}でROCKETsのライブがあるんだけど、一緒に行かない？`;
+    const full=msg+"\nhttps://rockets-band.vercel.app/";
+    try{ if(navigator.share){ await navigator.share({text:full}); return; } }catch(e){ return; }
+    try{ await navigator.clipboard.writeText(full); alert(T("誘いの文をコピーしました。LINEやDMに貼り付けて送ってね","Message copied. Paste it into LINE or a DM.")); }catch(e){}
   });
 })();
 

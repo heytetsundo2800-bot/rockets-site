@@ -21,6 +21,7 @@ window.CONTENT = {
      使わないものは url を "" にすれば非表示になる       */
   sns: {
     x:         "https://x.com/rocket_band04",              // ★連絡はここ、が基本導線
+    xId:       "2041118138406744064",   // ↑のXアカウントの番号。ライブの ticket: "x-dm" はここ宛てのDMになる
     instagram: "https://www.instagram.com/rockets_official",
     tiktok:    "https://www.tiktok.com/@rockets_band",
     youtube:   ""                          // 使うなら URL を入れる
@@ -35,7 +36,9 @@ window.CONTENT = {
      ・past: true を付けると「過去の公演」側に入る
      ・料金は price に自由に書ける（書かない場合は adv / door が使われる）
      ・ticket にURLを入れるとボタンが出る。ボタンの文字は ticketLabel で変えられる
-     ・ticket を "" にするとボタンが消える                                */
+     ・ticket を "" にするとボタンが消える
+     ・ticket を "x-dm" にすると「XのDMでチケット取り置き」ボタンになり、
+       押すとROCKETsのXのDM（日付・会場・お名前・枚数の文面入り）が開く      */
   lives: [
     {
       date:   "2026.08.18",
@@ -88,10 +91,9 @@ window.CONTENT = {
       start:  "19:00",
       price:  "ADV ¥2,500 / DOOR ¥3,000（＋1D ¥500）",
       priceEn: "ADV ¥2,500 / DOOR ¥3,000 (+1 drink ¥500)",
-      note:   "共演：The Rowans / ぶらいかん　※ROCKETsへのDMでも取り置きできます",
-      noteEn: "With The Rowans / Buraikan. You can also reserve by DMing ROCKETs.",
-      ticket: "mailto:clubrootsticket@gmail.com?subject=10/14%20THE%20RIOT%20GARDEN%20%E4%BA%88%E7%B4%84&body=%281%29%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%282%29%E6%9E%9A%E6%95%B0%EF%BC%9A%0A%283%29%E7%9B%AE%E5%BD%93%E3%81%A6%E3%81%AE%E5%87%BA%E6%BC%94%E8%80%85%EF%BC%9AROCKETs%0A%284%29%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%EF%BC%9A%0A",
-      ticketLabel: "メールで予約", ticketLabelEn: "Reserve by email"
+      note:   "共演：The Rowans / ぶらいかん",
+      noteEn: "With The Rowans / Buraikan",
+      ticket: "x-dm"     // ← ROCKETsのXのDM（取り置き）に飛ぶ
     },
     {
       date:   "2026.10.26",
@@ -105,8 +107,7 @@ window.CONTENT = {
       priceEn: "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000 (+1 drink ¥600)",
       note:   "共演：pulse / BamBook(Yanh!!!) / はまたけ(ponkozz) / and more...　FOOD：Handies　※チケットは各アーティスト取り置き",
       noteEn: "With pulse / BamBook (Yanh!!!) / Hamatake (ponkozz) / and more...  Food: Handies. Tickets are reserved through each artist.",
-      ticket: "https://x.com/rocket_band04",
-      ticketLabel: "取り置きはXのDMへ", ticketLabelEn: "DM us on X to reserve"
+      ticket: "x-dm"     // ← ROCKETsのXのDM（取り置き）に飛ぶ
     }
   ],
 
@@ -270,4 +271,5 @@ Oi! Oi! Oi!
   }
 };
 
+/* 2026-10-06 チケットは ticket: "x-dm" でXのDM取り置きに */
 /* 最終更新: 2026-10-05b 英語表示を追加（〜En）・メンバー順（ゴーザキ→いまちま→Koudai→アダチテツンド）・高円寺 */
