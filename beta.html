@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
+<script>try{if(sessionStorage.getItem("rockets.noload")){document.documentElement.classList.add("lsw-in");setTimeout(function(){document.documentElement.classList.remove("lsw-in")},1600)}}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 更新 2026-10-05b 英語表示の残りを翻訳・JA/EN切替修正・最初はライブ画面・トップ絵はPHOTOへ・メンバー中央寄せ・下タブ大きく -->
 <title>ROCKETs</title>
@@ -728,6 +729,39 @@ body.en .head .ja{display:none}
 .nl.v-photo .bigd{text-shadow:0 4px 18px rgba(0,0,0,.7)}
 .nl.v-photo .bigd small{color:var(--pop)}
 .nl.v-photo .inf{border-top:1px solid rgba(255,255,255,.18)}
+/* ===== 次のライブ：ポスター見出し（案8） ===== */
+.nl.nl8{background:none;border:0;border-top:1px solid var(--fg);border-radius:0;box-shadow:none;padding:12px 0 0;max-width:640px;overflow:visible}
+.nl8 .top{font-family:var(--dp);font-size:12px;letter-spacing:.3em;color:var(--fg)}
+.nl8 .top b{font-family:var(--dp);font-weight:400;font-size:12px;letter-spacing:.2em;color:#ff3b30}
+.nl8 .pst{margin-top:12px;line-height:.92;overflow-wrap:anywhere}
+.nl8 .pst div{font-family:var(--dp);font-size:clamp(52px,16.5vw,92px);color:#fff;letter-spacing:.005em}
+.nl8 .pst .d{color:#ff3b30}
+.nl8 .pst .jp{font-family:"Zen Kaku Gothic New",var(--jp);font-weight:900;font-size:clamp(46px,14.4vw,80px);line-height:1.08}
+.nl8 .ttl{color:var(--dim);font-size:12px;letter-spacing:.08em;margin-top:10px}
+.nl8 .inf{border-top:1px solid #2c2c30;font-size:12px}
+.nl8 .acts{grid-template-columns:1fr}
+.nl8 .acts a,.nl8 .acts button{border-radius:0;font-size:14px}
+.nl8 .acts .y{background:var(--fg);color:#000}
+.nl8 .acts button{background:none;border:1px solid #444;color:var(--fg)}
+.nl8 .acts svg{width:15px;height:15px}
+/* ===== 言語スイッチ（電源スイッチ型） ===== */
+.lsw{position:relative;width:88px;height:34px;border-radius:17px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);
+  display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.lsw .kn{position:absolute;top:3px;left:3px;width:40px;height:26px;border-radius:13px;background:var(--fg);transition:transform .3s cubic-bezier(.3,1.45,.5,1)}
+.lsw.en .kn{transform:translateX(40px)}
+.lsw.drag .kn{transition:none}
+.lsw .l{position:relative;z-index:1;font-family:var(--dp);font-size:12px;letter-spacing:.08em;color:var(--dim);text-align:center;transition:color .25s}
+.lsw:not(.en) .j,.lsw.en .e{color:#000}
+#lfade{position:fixed;inset:0;z-index:400;background:#0b0b0c;opacity:0;pointer-events:none;transition:opacity .16s ease}
+#lfade.on{opacity:1}
+html.lsw-in{background:#0b0b0c}
+html.lsw-in body{opacity:0}
+html.lsw-in.lsw-go body{opacity:1;transition:opacity .28s ease}
+/* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
+.snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
+.snote b{font-family:var(--dp);font-weight:400;font-size:11px;letter-spacing:.26em;color:var(--dim)}
+.snote p{margin-top:6px;font-size:12.5px;line-height:1.85;color:var(--dim);white-space:pre-line}
+
 /* ===== シンプル案（2026-10-06）：?nl=line / photo2 / white ===== */
 /* 共通：角なし・光なし・色は1つだけ */
 .nl.v-line,.nl.v-photo2,.nl.v-white{border-radius:0;box-shadow:none}
@@ -1385,14 +1419,15 @@ const storeBtn = SH.url
   ? `<a class="btn accent" href="${SH.url}" target="_blank" rel="noopener">${LF(SH,"urlLabel") || TT("オンラインストアへ","Online store")}</a>` : "";
 
 // 「ライブ会場でのみ販売」などの帯（saleNote が空なら出ない）
+// 「ライブ会場でのみ販売」は、商品の下に注意書きとして小さく
 const band = SH.saleNote
-  ? `<div class="saleband reveal">
-      ${SH.saleLabel ? `<div class="lb">${LF(SH,"saleLabel")}</div>` : ""}
-      <p>${LF(SH,"saleNote")}</p>
+  ? `<div class="snote reveal">
+      ${SH.saleLabel ? `<b>${LF(SH,"saleLabel")}</b>` : ""}
+      <p>${LANG_EN ? "* " : "※ "}${LF(SH,"saleNote")}</p>
     </div>` : "";
 
 if(sItems.length){
-  $("#shopwrap").innerHTML = band +
+  $("#shopwrap").innerHTML =
     `<div class="sgrid">` + sItems.map(s =>
       `<div class="scard reveal">
         ${s.photo
@@ -1405,7 +1440,7 @@ if(sItems.length){
         ${s.price ? `<div class="pr">${s.price}</div>`   : ""}
         ${s.url   ? `<a class="btn accent" href="${s.url}" target="_blank" rel="noopener">${TT("購入する","Buy")}</a>` : ""}
       </div>`).join("") + `</div>` +
-    (storeBtn ? `<div class="storerow reveal">${storeBtn}</div>` : "");
+    band + (storeBtn ? `<div class="storerow reveal">${storeBtn}</div>` : "");
 }else{
   const xurl = (C.sns && C.sns.x) || "";
   $("#shopwrap").innerHTML =
@@ -1845,17 +1880,36 @@ document.body.appendChild(tb);
 
 /* ---------- 右上（言語・ベル） ---------- */
 const hdr=$("#hdr"), tr=document.createElement("div"); tr.id="topr";
-tr.innerHTML=`<div class="lang"><button type="button" data-l="ja" class="${EN?"":"on"}">JA</button><button type="button" data-l="en" class="${EN?"on":""}">EN</button></div>`+
+tr.innerHTML=`<button type="button" class="lsw${EN?" en":""}" role="switch" aria-checked="${EN}" aria-label="Language / 言語"><span class="kn"></span><span class="l j">JA</span><span class="l e">EN</span></button>`+
   `<button type="button" id="bell" aria-label="${T("お知らせ","News")}">${IC.bell}<i hidden></i></button>`;
 hdr.appendChild(tr);
-$$(".lang button").forEach(b=>b.addEventListener("click",()=>{
-  if(b.classList.contains("on")) return;
-  try{localStorage.setItem("rockets.lang",b.dataset.l);}catch(e){}
-  try{sessionStorage.setItem("rockets.noload","1");}catch(e){}   // 切り替え直後は黒いロゴ画面を出さない
-  // ?lang= が付いているとそちらが優先されるので外して開き直す。付いていなければそのまま読み直す
-  if(location.search) location.replace(location.pathname+location.hash);
-  else location.reload();
-}));
+/* 言語スイッチ：電源スイッチみたいに、左右にすべらせても、押しても切り替わる。
+   切り替わるときは一瞬だけ暗くなって（フェードアウト）、また明るくなる（フェードイン） */
+(function(){
+  const sw=$(".lsw"), kn=sw.querySelector(".kn");
+  const MAX=()=>sw.clientWidth-kn.offsetWidth-6;
+  let pid=null, x0=0, base=0, moved=false, cur=0, busy=false;
+  function go(toEN){
+    if(busy) return;
+    sw.classList.toggle("en",toEN); kn.style.transform="";
+    if(toEN===EN) return;
+    busy=true;
+    try{ localStorage.setItem("rockets.lang", toEN?"en":"ja");
+         sessionStorage.setItem("rockets.noload","1"); sessionStorage.setItem("rockets.lsw.y", String(scrollY)); }catch(e){}
+    const f=document.createElement("div"); f.id="lfade"; document.body.appendChild(f);
+    setTimeout(()=>f.classList.add("on"), 170);
+    setTimeout(()=>{ if(location.search) location.replace(location.pathname+location.hash); else location.reload(); }, 340);
+  }
+  sw.addEventListener("pointerdown",e=>{ if(busy) return; pid=e.pointerId; x0=e.clientX; base=sw.classList.contains("en")?MAX():0; cur=base; moved=false;
+    try{ sw.setPointerCapture(pid); }catch(_){} });
+  sw.addEventListener("pointermove",e=>{ if(e.pointerId!==pid) return; const dx=e.clientX-x0;
+    if(!moved && Math.abs(dx)<4) return; moved=true; sw.classList.add("drag");
+    cur=Math.max(0,Math.min(MAX(),base+dx)); kn.style.transform=`translateX(${cur}px)`; });
+  const up=e=>{ if(e.pointerId!==pid) return; pid=null; sw.classList.remove("drag");
+    if(moved){ go(cur>MAX()/2); } };
+  sw.addEventListener("pointerup",up); sw.addEventListener("pointercancel",up);
+  sw.addEventListener("click",e=>{ if(moved){ moved=false; return; } go(!sw.classList.contains("en")); });
+})();
 
 /* ---------- 画面の切り替え ---------- */
 const VIEWS={live:["live"],member:["member"],photo:["photo"],sound:["music","video"],shop:["shop"]};
@@ -1884,22 +1938,20 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
   const inf=[tm,pr,LF(N,"note")].filter(Boolean).map(esc).join("\n");
   const d=pd(N), md=(d.getMonth()+1)+"."+String(d.getDate()).padStart(2,"0");
   const ven=LF(N,"venue"), ttl=LF(N,"title");
-  const card=document.createElement("div"); card.id="nextcard";
-  // デザイン：content.js の nextLiveStyle（ticket / flyer / tape / photo）。?nl= で試せる
-  let NLV=""; try{ NLV=new URLSearchParams(location.search).get("nl")||C.nextLiveStyle||""; }catch(e){}
-  card.className="nl reveal"+(NLV?" v-"+NLV:"");
-  card.innerHTML=`<div class="phbg" style="background-image:url(assets/photos/p013.webp)"></div><i class="dc dc1"></i><i class="dc dc2"></i>
-    <div class="top"><span>NEXT LIVE</span><b>${esc(calC)}</b></div>
-    <div class="yr">${d.getFullYear()}</div>
-    <div class="bigd">${md}<small>${DOW[d.getDay()]}</small></div>
-    <div class="ven">${esc(ven)}</div>${ttl?`<div class="ttl">${esc(ttl)}</div>`:""}
+  const card=document.createElement("div"); card.id="nextcard"; card.className="nl nl8 reveal";
+  // ポスター見出し：日付（赤）→ 地名 → 会場名。会場名は「地名 会場」の形で書いてあれば自動で2行に分ける
+  const sp=ven.indexOf(" "), area=sp>0?ven.slice(0,sp):"", place=sp>0?ven.slice(sp+1):ven;
+  const isJa=t=>/[^\x00-\x7f]/.test(t);
+  card.innerHTML=`<div class="top"><span>NEXT LIVE</span><b>${esc(calC)}</b></div>
+    <div class="pst"><div class="d">${md} ${DOW[d.getDay()]}</div>
+      ${area?`<div class="${isJa(area)?"jp":"en"}">${esc(isJa(area)?area:area.toUpperCase())}</div>`:""}
+      <div class="${isJa(place)?"jp":"en"}">${esc(isJa(place)?place:place.toUpperCase())}</div></div>
+    ${ttl?`<div class="ttl">${esc(ttl)}</div>`:""}
     ${inf?`<div class="inf">${inf}</div>`:""}
-    <div class="perf"></div>
     <div class="acts">
       ${N.ticket?`<a class="y" href="${esc(TK.url(N))}" target="_blank" rel="noopener">${N.ticket==="x-dm"?SNSI.x:""}${esc(TK.label(N))}</a>`:""}
       <button type="button" data-a="share">${T("友だちに送る","Send to a friend")}</button>
-    </div>
-    <div class="hint">${T("「一緒に行かない？」の文つきで、LINE・インスタ・XのDMから送れます","Sends a “wanna come?” message via LINE, Instagram or X DM")}</div>`;
+    </div>`;
   const head=sec.querySelector(".head"); if(head) head.after(card); else sec.prepend(card);
   // 下の一覧からは同じライブを外し、残りがあれば「その後のライブ」として見せる
   const first=$("#upcoming .liverow"); if(first) first.remove();
@@ -1919,6 +1971,15 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
 })();
 
 show(H[location.hash]||"live", true);
+// 言語を切り替えた直後：元の位置に戻して、ふわっと表示
+(function(){
+  const de=document.documentElement; if(!de.classList.contains("lsw-in")) return;
+  let y=0; try{ y=+sessionStorage.getItem("rockets.lsw.y")||0; sessionStorage.removeItem("rockets.lsw.y"); }catch(e){}
+  const done=()=>{ if(y){ de.style.scrollBehavior="auto"; window.scrollTo(0,y); de.style.scrollBehavior=""; }
+    requestAnimationFrame(()=>{ de.classList.add("lsw-go"); setTimeout(()=>de.classList.remove("lsw-in","lsw-go"),400); }); };
+  if(document.readyState==="complete") done(); else addEventListener("load",done,{once:true});
+  setTimeout(done,900);
+})();
 // #photo などで開いたとき、ブラウザが勝手にその場所までスクロールするのを止める
 try{ history.scrollRestoration="manual"; }catch(e){}
 addEventListener("load",()=>setTimeout(()=>window.scrollTo(0,0),0),{once:true});

@@ -37,6 +37,7 @@ window.CONTENT = {
      ・料金は price に自由に書ける（書かない場合は adv / door が使われる）
      ・ticket にURLを入れるとボタンが出る。ボタンの文字は ticketLabel で変えられる
      ・ticket を "" にするとボタンが消える
+     ・address / access / lat / lng を書くと、地図と「いまいる場所からの距離」が出せる
      ・ticket を "x-dm" にすると「XのDMでチケット取り置き」ボタンになり、
        押すとROCKETsのXのDM（日付・会場・お名前・枚数の文面入り）が開く      */
   lives: [
@@ -87,6 +88,10 @@ window.CONTENT = {
       day:    "WED",
       title:  "THE RIOT GARDEN",
       venue:  "高円寺 Club ROOTS!",  venueEn: "Koenji Club ROOTS!",
+      // 地図用（住所・最寄り駅・緯度経度）
+      address: "東京都杉並区高円寺北3-22-3 群星館B1F", addressEn: "B1F, 3-22-3 Koenji-kita, Suginami-ku, Tokyo",
+      access:  "JR高円寺駅 北口から徒歩すぐ",          accessEn:  "A short walk from JR Koenji Sta. (North Exit)",
+      lat: 35.70571, lng: 139.64906,
       open:   "18:30",
       start:  "19:00",
       price:  "ADV ¥2,500 / DOOR ¥3,000（＋1D ¥500）",
@@ -101,6 +106,9 @@ window.CONTENT = {
       title:  "newest（Flight × COSMIC HALL pre. ／ Flight 35th Anniversary）",
       titleEn: "newest (Flight × COSMIC HALL pre. / Flight 35th Anniversary)",
       venue:  "府中 Flight",         venueEn: "Fuchu Flight",
+      address: "東京都府中市緑町1-17-18 シャトーアルフィーB1F", addressEn: "B1F, 1-17-18 Midori-cho, Fuchu, Tokyo",
+      access:  "京王線 府中駅から徒歩8分",               accessEn:  "8 min walk from Fuchu Sta. (Keio Line)",
+      lat: 35.67208, lng: 139.48721,
       open:   "17:30",
       start:  "18:00",
       price:  "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000（＋1D ¥600）",
