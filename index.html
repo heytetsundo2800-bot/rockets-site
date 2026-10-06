@@ -776,6 +776,34 @@ html.lsw-in.lsw-go body{opacity:1;transition:opacity .32s cubic-bezier(.2,.6,.3,
 #ntf .ok{background:#ff2e93;color:#0b0b0c}
 .news .pushon{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;padding:15px;border:0;border-radius:99px;background:#ff2e93;color:#0b0b0c;font-weight:900;font-size:15px;font-family:var(--jp);cursor:pointer}
 .news .pushon .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+/* ===== その後のライブ：タップで地図・友だちに送るが開く ===== */
+.liverow.lx{cursor:pointer;-webkit-tap-highlight-color:transparent}
+@media (hover:none){.liverow:hover{background:none;padding-left:0}}
+.liverow .lxh{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--dim)}
+.liverow .lxh i{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .3s}
+.liverow.open .lxh i{transform:translateY(1px) rotate(225deg)}
+.liverow .lxp{grid-column:1/-1;display:grid;grid-template-rows:0fr;opacity:0;margin-top:-12px;transition:grid-template-rows .34s cubic-bezier(.2,.7,.3,1),opacity .26s ease,margin-top .34s}
+.liverow.open .lxp{grid-template-rows:1fr;opacity:1;margin-top:0}
+.liverow .lxp .in{overflow:hidden;min-height:0;display:grid;gap:10px}
+.liverow .lxp a,.liverow .lxp button{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;font-weight:700;font-size:14px;font-family:var(--jp);cursor:pointer;text-decoration:none}
+.liverow .lxp .mapb{background:#24242a;color:var(--fg);border:0}
+.liverow .lxp button{background:none;border:1px solid #444;color:var(--fg)}
+.liverow .lxp svg{width:15px;height:15px;fill:currentColor;flex:0 0 auto}
+/* ===== 右上の設定（歯車） ===== */
+#gear{width:38px;height:38px;border:0;background:none;color:var(--fg);cursor:pointer;display:grid;place-items:center;margin-left:-6px}
+#gear svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.set h3{font-family:var(--dp);font-weight:400;font-size:30px;letter-spacing:.04em}
+.set .srow{display:flex;align-items:center;gap:14px;margin-top:18px;padding:16px;background:#1b1b1f;border-radius:16px}
+.set .srow>div{flex:1;min-width:0}
+.set .srow b{display:block;font-size:16px;font-weight:900}
+.set .srow small{display:block;font-size:13px;font-weight:700;color:var(--dim);margin-top:4px;line-height:1.5}
+.set .srow small.on{color:#ff2e93}
+.set .tg{width:58px;height:34px;border-radius:99px;background:#4a4a50;border:0;position:relative;cursor:pointer;flex:0 0 auto;transition:background .2s}
+.set .tg .tk{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.3,.7,.3,1)}
+.set .tg[aria-checked="true"]{background:#ff2e93}
+.set .tg[aria-checked="true"] .tk{transform:translateX(24px)}
+.set .tg:disabled{opacity:.45;cursor:default}
+.set .help{font-size:13px;line-height:1.75;color:#cfcbc5;margin:12px 4px 4px}
 /* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
 .snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
 .snote b{font-family:var(--dp);font-weight:400;font-size:11px;letter-spacing:.26em;color:var(--dim)}
@@ -1900,7 +1928,8 @@ document.body.appendChild(tb);
 /* ---------- 右上（言語・ベル） ---------- */
 const hdr=$("#hdr"), tr=document.createElement("div"); tr.id="topr";
 tr.innerHTML=`<button type="button" class="lsw${EN?" en":""}" role="switch" aria-checked="${EN}" aria-label="Language / 言語"><span class="kn"></span><span class="l j">JA</span><span class="l e">EN</span></button>`+
-  `<button type="button" id="bell" aria-label="${T("お知らせ","News")}">${IC.bell}<i hidden></i></button>`;
+  `<button type="button" id="bell" aria-label="${T("お知らせ","News")}">${IC.bell}<i hidden></i></button>`+
+  `<button type="button" id="gear" aria-label="${T("設定","Settings")}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>`;
 hdr.appendChild(tr);
 /* 言語スイッチ：電源スイッチみたいに、左右にすべらせても、押しても切り替わる。
    切り替わるときは一瞬だけ暗くなって（フェードアウト）、また明るくなる（フェードイン） */
@@ -1950,6 +1979,24 @@ $("#tcal").addEventListener("click",()=>show("live"));      // 真ん中＝次�
 const brand=$("#brand"); if(brand) brand.addEventListener("click",e=>{e.preventDefault(); show("live");});
 const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#music":"sound","#sound":"sound","#shop":"shop","#video":"sound"};
 
+/* ---------- 地図・友だちに送る（次のライブ／その後のライブで共通） ---------- */
+const PINI='<svg viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.6" fill="#000"/></svg>';
+function mapOf(l){
+  if(!l || !l.address) return "";
+  const v=LF(l,"venue"), sp=v.indexOf(" "), place=sp>0?v.slice(sp+1):v;
+  return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(l.mapQuery||(place+" "+String(l.address).split(" ")[0]));
+}
+// 友だちに送る：iPhoneの共有画面が開く → LINE・インスタ・Xの相手を選ぶと、誘いの文が入った状態になる
+async function shareLive(l){
+  const d=pd(l), ven=LF(l,"venue"); if(!d) return;
+  const DJ=["日","月","火","水","木","金","土"], ME=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DE=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const msg=EN ? `ROCKETs are playing ${ven} on ${DE[d.getDay()]}, ${ME[d.getMonth()]} ${d.getDate()}. Wanna come with me?`
+               : `${d.getMonth()+1}月${d.getDate()}日(${DJ[d.getDay()]})に${ven}でROCKETsのライブがあるんだけど、一緒に行かない？`;
+  const full=msg+"\nhttps://rockets-band.vercel.app/";
+  try{ if(navigator.share){ await navigator.share({text:full}); return; } }catch(e){ return; }
+  try{ await navigator.clipboard.writeText(full); alert(T("誘いの文をコピーしました。LINEやDMに貼り付けて送ってね","Message copied. Paste it into LINE or a DM.")); }catch(e){}
+}
+
 /* ---------- 次のライブ（ライブ画面のいちばん上に大きく） ---------- */
 (function(){
   const sec=$("#live"); if(!sec || !N) return;
@@ -1963,8 +2010,7 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
   const sp=ven.indexOf(" "), area=sp>0?ven.slice(0,sp):"", place=sp>0?ven.slice(sp+1):ven;
   const isJa=t=>/[^\x00-\x7f]/.test(t);
   // 地図：Googleマップで会場をひらく（content.js の address があるときだけ）
-  const mapUrl=N.address ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent((N.mapQuery||(place+" "+String(N.address).split(" ")[0]))) : "";
-  const PINI='<svg viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.6" fill="#000"/></svg>';
+  const mapUrl=mapOf(N);
   card.innerHTML=`<div class="top"><span>NEXT LIVE</span><b>${esc(calC)}</b></div>
     <div class="pst"><div class="d">${md} ${DOW[d.getDay()]}</div>
       ${area?`<div class="${isJa(area)?"jp":"en"}">${esc(isJa(area)?area:area.toUpperCase())}</div>`:""}
@@ -1983,15 +2029,26 @@ const H={"#live":"live","#hero":"photo","#member":"member","#photo":"photo","#mu
     const sub=document.createElement("div"); sub.className="nl-sub"; sub.textContent=T("その後のライブ","MORE SHOWS");
     $("#upcoming").before(sub);
   }
-  // 友だちに送る：iPhoneの共有画面が開く → LINE・インスタ・Xの相手を選ぶと、誘いの文が入った状態になる
-  card.querySelector('[data-a="share"]').addEventListener("click",async()=>{
-    const DJ=["日","月","火","水","木","金","土"], ME=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DE=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    const msg=EN ? `ROCKETs are playing ${ven} on ${DE[d.getDay()]}, ${ME[d.getMonth()]} ${d.getDate()}. Wanna come with me?`
-                 : `${d.getMonth()+1}月${d.getDate()}日(${DJ[d.getDay()]})に${ven}でROCKETsのライブがあるんだけど、一緒に行かない？`;
-    const full=msg+"\nhttps://rockets-band.vercel.app/";
-    try{ if(navigator.share){ await navigator.share({text:full}); return; } }catch(e){ return; }
-    try{ await navigator.clipboard.writeText(full); alert(T("誘いの文をコピーしました。LINEやDMに貼り付けて送ってね","Message copied. Paste it into LINE or a DM.")); }catch(e){}
+  // その後のライブ：タップすると「地図を見る」「友だちに送る」がシュッと出る。もう一回タップで閉じる
+  const rest=up.filter(l=>l!==N);
+  $$("#upcoming .liverow").forEach((row,i)=>{
+    const l=rest[i]; if(!l) return;
+    const mu=mapOf(l);
+    row.classList.add("lx");
+    const cell=row.children[2];
+    if(cell){ const h=document.createElement("div"); h.className="lxh"; h.innerHTML=`<span>${T("地図・友だちに送る","Map / Send to a friend")}</span><i></i>`; cell.appendChild(h); }
+    const ex=document.createElement("div"); ex.className="lxp";
+    ex.innerHTML=`<div class="in">${mu?`<a class="mapb" href="${esc(mu)}" target="_blank" rel="noopener">${PINI}${T("地図を見る","View map")}</a>`:""}<button type="button" data-a="share">${T("友だちに送る","Send to a friend")}</button></div>`;
+    row.appendChild(ex);
+    ex.querySelector('[data-a="share"]').addEventListener("click",e=>{ e.stopPropagation(); shareLive(l); });
+    row.addEventListener("click",e=>{
+      if(e.target.closest("a,button")) return;
+      if(!row.classList.toggle("open")) return;
+      // 開いたボタンが下のタブに隠れないように、少しだけスクロール
+      setTimeout(()=>{ const r=ex.getBoundingClientRect(), over=r.bottom-(innerHeight-140); if(over>0) window.scrollBy({top:over,behavior:"smooth"}); },360);
+    });
   });
+  card.querySelector('[data-a="share"]').addEventListener("click",()=>shareLive(N));
 })();
 
 show(H[location.hash]||"live", true);
@@ -2042,6 +2099,7 @@ function sheet(html){
         notifyButton:{enable:false}, promptOptions:{slidedown:{prompts:[]}} });
     }catch(e){ return; }
     try{ OS.User.setLanguage(EN?"en":"ja"); }catch(e){}
+    window.__rkOS=OS; document.dispatchEvent(new Event("rkos"));
     if(!OS.Notifications.isPushSupported() || OS.Notifications.permission || Notification.permission==="denied") return;
     window.__rkPush=async()=>{ try{ await OS.Notifications.requestPermission(); }catch(e){} };
     const NK="rockets.ntf.dismissed"; let last=0; try{ last=+localStorage.getItem(NK)||0; }catch(e){}
@@ -2085,6 +2143,48 @@ $("#bell").addEventListener("click",()=>{
   const pb=s.el.querySelector(".pushon"); if(pb) pb.addEventListener("click",async()=>{ s.close(); await window.__rkPush(); });
   READ=NEWS.map(nid); try{localStorage.setItem("rockets.news.read",JSON.stringify(READ));}catch(e){}
   badge();
+});
+
+/* ---------- 設定（右上の歯車）：通知のON/OFF ---------- */
+$("#gear").addEventListener("click",()=>{
+  const s=sheet(`<div class="set"><h3>SETTINGS</h3>
+    <div class="srow"><div><b>${T("ライブ通知","Show notifications")}</b><small class="st">${T("確認中…","Checking…")}</small></div>
+      <button type="button" class="tg" role="switch" aria-checked="false" disabled aria-label="${T("ライブ通知","Show notifications")}"><span class="tk"></span></button></div>
+    <p class="help"></p></div>`);
+  const tg=s.el.querySelector(".tg"), st=s.el.querySelector(".st"), hp=s.el.querySelector(".help");
+  const UA=navigator.userAgent||"";
+  const ios=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  const set=(on,dis,txt,help)=>{ tg.setAttribute("aria-checked",on?"true":"false"); tg.disabled=!!dis;
+    st.textContent=txt; st.classList.toggle("on",!!on); hp.textContent=help||""; };
+  let tries=0;
+  function render(){
+    if(!(C.push&&C.push.oneSignalAppId)) return set(false,true,T("準備中です","Coming soon"));
+    if(ios && !standalone) return set(false,true,T("OFF","Off"),T("iPhoneは、このサイトをホーム画面に追加したアプリから開くと通知をONにできます。（共有ボタン →「ホーム画面に追加」）","On iPhone, add this site to your Home Screen (Share → Add to Home Screen) and open it from there to turn on notifications."));
+    if(!("Notification" in window) || !("serviceWorker" in navigator)) return set(false,true,T("このブラウザは通知に対応していません","This browser doesn't support notifications"));
+    const OS=window.__rkOS;
+    if(!OS){ if(tries++<16) setTimeout(render,500); return set(false,true,T("読み込み中…","Loading…")); }
+    if(Notification.permission==="denied") return set(false,true,T("OFF（ブロック中）","Off (blocked)"),
+      ios?T("iPhoneの「設定」アプリ →「通知」→「ROCKETs」で「通知を許可」をONにすると、ここでONにできます。","Open the iPhone Settings app → Notifications → ROCKETs and allow notifications, then turn it on here.")
+         :T("ブラウザのサイト設定で、このサイトの通知を「許可」にすると、ここでONにできます。","Allow notifications for this site in your browser settings, then turn it on here."));
+    let on=false; try{ on=Notification.permission==="granted" && !!OS.User.PushSubscription.optedIn; }catch(e){}
+    set(on,false, on?T("ON：新しいライブが決まったら届きます","On: we'll notify you about new shows"):T("OFF：通知は届きません","Off: you won't get notifications"),
+      T("いつでもここでON／OFFを切りかえられます。","You can switch this on or off here anytime."));
+  }
+  tg.addEventListener("click",async()=>{
+    const OS=window.__rkOS; if(!OS) return;
+    const on=tg.getAttribute("aria-checked")==="true";
+    tg.disabled=true;
+    try{
+      if(on){ await OS.User.PushSubscription.optOut(); }
+      else{
+        if(Notification.permission!=="granted") await OS.Notifications.requestPermission();
+        if(Notification.permission==="granted") await OS.User.PushSubscription.optIn();
+      }
+    }catch(e){}
+    setTimeout(render,300);
+  });
+  render();
 });
 
 /* ---------- メンバー（1人ずつ大きく横スワイプ。端の人もまん中で止まる） ---------- */
