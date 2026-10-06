@@ -758,6 +758,16 @@ body.en .head .ja{display:none}
 html.lsw-in{background:#0b0b0c}
 html.lsw-in body{opacity:0}
 html.lsw-in.lsw-go body{opacity:1;transition:opacity .32s cubic-bezier(.2,.6,.3,1)}
+/* ===== プッシュ通知のおさそい ===== */
+#ntf{position:fixed;left:12px;right:12px;z-index:70;max-width:520px;margin:0 auto;background:#141417;border:1px solid #3a3a3e;padding:16px 16px 14px;
+  opacity:0;transform:translateY(16px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
+#ntf.in{opacity:1;transform:none;pointer-events:auto}
+#ntf .t{font-weight:900;font-size:15px}
+#ntf p{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.6}
+#ntf .b{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:12px}
+#ntf button{border:1px solid #444;background:none;color:var(--fg);padding:12px;font-weight:700;font-size:13px;font-family:var(--jp);cursor:pointer}
+#ntf .ok{background:var(--fg);color:#000;border-color:var(--fg)}
+.news .pushon{display:block;width:100%;margin-top:12px;padding:13px;border:1px solid var(--fg);background:none;color:var(--fg);font-weight:700;font-size:13.5px;font-family:var(--jp);cursor:pointer}
 /* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
 .snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
 .snote b{font-family:var(--dp);font-weight:400;font-size:11px;letter-spacing:.26em;color:var(--dim)}
@@ -2003,6 +2013,43 @@ function sheet(html){
   return {el:s,close};
 }
 
+/* ---------- プッシュ通知（OneSignal） ----------
+   ・content.js の push.oneSignalAppId があるときだけ動く
+   ・iPhone はホーム画面に追加したアプリから開いたときだけ受け取れる
+   ・「通知を受け取る」は本人が押す（勝手に許可を聞かない）。断った人には2週間出さない */
+(function(){
+  const PU=C.push||{}, APP=String(PU.oneSignalAppId||"").trim(); if(!APP) return;
+  if(!("Notification" in window) || !("serviceWorker" in navigator)) return;
+  const UA=navigator.userAgent||"";
+  const ios=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  if(ios && !standalone) return;
+  const sdk=document.createElement("script"); sdk.src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"; sdk.defer=true;
+  document.head.appendChild(sdk);
+  window.OneSignalDeferred=window.OneSignalDeferred||[];
+  window.OneSignalDeferred.push(async function(OS){
+    try{
+      await OS.init({ appId:APP, safari_web_id:PU.safariWebId||undefined,
+        serviceWorkerPath:"sw.js", serviceWorkerParam:{scope:"/"},
+        notifyButton:{enable:false}, promptOptions:{slidedown:{prompts:[]}} });
+    }catch(e){ return; }
+    try{ OS.User.setLanguage(EN?"en":"ja"); }catch(e){}
+    if(!OS.Notifications.isPushSupported() || OS.Notifications.permission || Notification.permission==="denied") return;
+    window.__rkPush=async()=>{ try{ await OS.Notifications.requestPermission(); }catch(e){} };
+    const NK="rockets.ntf.dismissed"; let last=0; try{ last=+localStorage.getItem(NK)||0; }catch(e){}
+    if(last && Date.now()-last<14*864e5) return;
+    const card=document.createElement("div"); card.id="ntf";
+    card.innerHTML=`<div class="t">${T("ライブの予定、通知で受け取る？","Get notified about shows?")}</div>
+      <p>${T("新しいライブが決まったときと、ライブの前にだけ送ります。","Only when a new show is announced, and right before each one.")}</p>
+      <div class="b"><button type="button" class="no">${T("あとで","Later")}</button><button type="button" class="ok">${T("通知を受け取る","Turn on")}</button></div>`;
+    document.body.appendChild(card);
+    const close=rem=>{ card.classList.remove("in"); setTimeout(()=>card.remove(),400); if(rem){ try{ localStorage.setItem(NK,String(Date.now())); }catch(e){} } };
+    card.querySelector(".no").onclick=()=>close(true);
+    card.querySelector(".ok").onclick=async()=>{ close(false); await window.__rkPush(); };
+    setTimeout(()=>requestAnimationFrame(()=>card.classList.add("in")), 4500);
+  });
+})();
+
 /* ---------- お知らせ（ベル） ---------- */
 const NEWS=(C.news||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
 const nid=n=>n.date+"|"+n.title;
@@ -2019,11 +2066,13 @@ $("#bell").addEventListener("click",()=>{
     return `<a class="it${isNew?" new":""}" href="${esc(x.link||"#")}" data-link="${esc(x.link||"")}">
       <div class="tx"><div class="tg">${esc(LF(x,"tag"))}</div><div class="t">${esc(t)}</div>${b?`<div class="b">${esc(b)}</div>`:""}</div>
       <div class="dt">${esc(String(x.date).slice(5).replace("-","."))}</div>${isNew?'<i class="dot"></i>':""}</a>`;}).join("");
-  const s=sheet(`<div class="news"><h3>NEWS</h3>${items||`<p style="color:var(--dim);margin-top:14px">${T("お知らせはまだありません","No news yet")}</p>`}</div>`);
+  const pushBtn=window.__rkPush?`<button type="button" class="pushon">${T("🔔 ライブの通知を受け取る","🔔 Get show notifications")}</button>`:"";
+  const s=sheet(`<div class="news"><h3>NEWS</h3>${pushBtn}${items||`<p style="color:var(--dim);margin-top:14px">${T("お知らせはまだありません","No news yet")}</p>`}</div>`);
   s.el.querySelectorAll(".it").forEach(a=>a.addEventListener("click",e=>{
     const l=a.dataset.link; if(!l || l.startsWith("http")) return;
     e.preventDefault(); s.close(); show(H[l]||"live");
   }));
+  const pb=s.el.querySelector(".pushon"); if(pb) pb.addEventListener("click",async()=>{ s.close(); await window.__rkPush(); });
   READ=NEWS.map(nid); try{localStorage.setItem("rockets.news.read",JSON.stringify(READ));}catch(e){}
   badge();
 });

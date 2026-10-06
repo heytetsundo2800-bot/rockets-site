@@ -12,6 +12,9 @@
      ページ遷移だけをそのままネットに流し、それ以外は素通しする。
    ============================================================ */
 
+/* プッシュ通知（OneSignal）の受け取り役。これが無いと通知が届かない */
+importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+
 self.addEventListener('install', function () {
   self.skipWaiting();
 });

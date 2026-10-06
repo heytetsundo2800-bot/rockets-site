@@ -228,6 +228,13 @@ Oi! Oi! Oi!
     ]
   },
 
+  /* ---------- プッシュ通知（OneSignal） ----------
+     App ID は公開してよい番号。※ REST API Key（秘密の鍵）はここに絶対に書かない */
+  push: {
+    oneSignalAppId: "12cb658d-002b-4891-bedf-f70bfa2dda49",
+    safariWebId:    "web.onesignal.auto.4d68c5e3-f56f-4052-bfb7-4c135295bfe6"
+  },
+
   /* ---------- お知らせ（右上のベル） ----------
      ・上に足していけばOK。まだ見ていない人にはベルに赤い数字が出る
      ・link は "#live"（ライブ一覧）"#photo" "#member" "#music" "#shop" か、http から始まるURL
