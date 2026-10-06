@@ -760,22 +760,22 @@ html.lsw-in{background:#0b0b0c}
 html.lsw-in body{opacity:0}
 html.lsw-in.lsw-go body{opacity:1;transition:opacity .32s cubic-bezier(.2,.6,.3,1)}
 /* ===== プッシュ通知のおさそい ===== */
-#ntf{position:fixed;left:12px;right:12px;z-index:70;max-width:520px;margin:0 auto;background:#e3261f;color:#0b0b0c;border-radius:26px;padding:18px 18px 16px;
+#ntf{position:fixed;left:12px;right:12px;z-index:70;max-width:520px;margin:0 auto;background:#ffe11a;color:#0b0b0c;border-radius:26px;padding:18px 18px 16px;
   box-shadow:0 14px 40px rgba(0,0,0,.45);font-family:var(--jp);
   opacity:0;transform:translateY(16px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
 #ntf.in{opacity:1;transform:none;pointer-events:auto}
-#ntf .hh{font-family:var(--dp);font-size:46px;line-height:.95;letter-spacing:.01em;color:#0b0b0c}
+#ntf .hh{font-family:var(--dp);font-size:46px;line-height:.95;letter-spacing:.01em;color:#ff2e93}
 #ntf .pl{margin-top:12px;background:#fff;color:#0b0b0c;border-radius:16px;padding:12px 14px}
 #ntf .lb{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:900;line-height:1.35}
 #ntf .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
 #ntf ul{margin:8px 0 0;padding:0 0 0 2px;list-style:none}
 #ntf li{font-size:14.5px;font-weight:800;line-height:1.7}
-#ntf li:before{content:"✓";display:inline-block;width:20px;font-weight:900;color:#e3261f}
+#ntf li:before{content:"✓";display:inline-block;width:20px;font-weight:900;color:#ff2e93}
 #ntf .b{display:grid;grid-template-columns:1fr 1.8fr;gap:8px;margin-top:12px}
 #ntf button{border:0;padding:15px 8px;border-radius:99px;font-weight:900;font-size:15.5px;font-family:var(--jp);cursor:pointer}
-#ntf .no{background:rgba(0,0,0,.16);color:#0b0b0c}
-#ntf .ok{background:#0b0b0c;color:#fff}
-.news .pushon{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;padding:15px;border:0;border-radius:99px;background:#e3261f;color:#fff;font-weight:900;font-size:15px;font-family:var(--jp);cursor:pointer}
+#ntf .no{background:rgba(0,0,0,.12);color:#0b0b0c}
+#ntf .ok{background:#ff2e93;color:#0b0b0c}
+.news .pushon{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;padding:15px;border:0;border-radius:99px;background:#ff2e93;color:#0b0b0c;font-weight:900;font-size:15px;font-family:var(--jp);cursor:pointer}
 .news .pushon .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
 /* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
 .snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
@@ -2141,14 +2141,14 @@ if(mg){
 #ntf.th9{background:#f4f1ea}#ntf.th9 .hh{color:#e3261f}#ntf.th9 .pl{background:#0b0b0c;color:#ffffff}#ntf.th9 li:before{color:#e3261f}#ntf.th9 .ok{background:#e3261f;color:#ffffff}#ntf.th9 .no{background:rgba(0,0,0,.08);color:#0b0b0c}
 #ntf.th10{background:#ff6a1a}#ntf.th10 .hh{color:#0b0b0c}#ntf.th10 .pl{background:#ffffff;color:#0b0b0c}#ntf.th10 li:before{color:#1f4bff}#ntf.th10 .ok{background:#1f4bff;color:#ffffff}#ntf.th10 .no{background:rgba(0,0,0,.14);color:#0b0b0c}
 #ntf.th11{background:#d7ff1f}#ntf.th11 .hh{color:#0b0b0c}#ntf.th11 .pl{background:#0b0b0c;color:#d7ff1f}#ntf.th11 li:before{color:#d7ff1f}#ntf.th11 .ok{background:#0b0b0c;color:#d7ff1f}#ntf.th11 .no{background:rgba(0,0,0,.12);color:#0b0b0c}</style>
-<div id="dmbar"><div class="lb">DEMO ・ 本番には出ないページ</div><div class="r"><button type="button" class="again">もう一回出す</button><button type="button" data-t="0"><i style="background:linear-gradient(135deg,#e3261f 50%,#0b0b0c 50%)"></i>赤（いまの）</button><button type="button" data-t="1"><i style="background:linear-gradient(135deg,#ffe11a 50%,#ff2e93 50%)"></i>黄×ピンク</button><button type="button" data-t="2"><i style="background:linear-gradient(135deg,#ff2e93 50%,#ffe11a 50%)"></i>ピンク×黄</button><button type="button" data-t="3"><i style="background:linear-gradient(135deg,#ffe11a 50%,#0b0b0c 50%)"></i>黄×黒・ピンクの帯</button><button type="button" data-t="4"><i style="background:linear-gradient(135deg,#0e0e10 50%,#ffe11a 50%)"></i>黒×黄×ピンク</button><button type="button" data-t="5"><i style="background:linear-gradient(135deg,#2f55ff 50%,#ffe11a 50%)"></i>青×黄×ピンク</button><button type="button" data-t="6"><i style="background:linear-gradient(135deg,#ff2e93 50%,#0b0b0c 50%)"></i>ピンク×黒</button><button type="button" data-t="7"><i style="background:linear-gradient(135deg,#ff4fa3 50%,#0b0b0c 50%)"></i>ピンク×緑</button><button type="button" data-t="8"><i style="background:linear-gradient(135deg,#0e0e10 50%,#e3261f 50%)"></i>黒×赤</button><button type="button" data-t="9"><i style="background:linear-gradient(135deg,#f4f1ea 50%,#e3261f 50%)"></i>白×赤</button><button type="button" data-t="10"><i style="background:linear-gradient(135deg,#ff6a1a 50%,#0b0b0c 50%)"></i>オレンジ×青</button><button type="button" data-t="11"><i style="background:linear-gradient(135deg,#d7ff1f 50%,#0b0b0c 50%)"></i>蛍光イエロー×黒</button></div></div>
+<div id="dmbar"><div class="lb">DEMO ・ 本番には出ないページ</div><div class="r"><button type="button" class="again">もう一回出す</button><button type="button" data-t="0"><i style="background:linear-gradient(135deg,#e3261f 50%,#0b0b0c 50%)"></i>赤（前の）</button><button type="button" data-t="1"><i style="background:linear-gradient(135deg,#ffe11a 50%,#ff2e93 50%)"></i>黄×ピンク（いまの）</button><button type="button" data-t="2"><i style="background:linear-gradient(135deg,#ff2e93 50%,#ffe11a 50%)"></i>ピンク×黄</button><button type="button" data-t="3"><i style="background:linear-gradient(135deg,#ffe11a 50%,#0b0b0c 50%)"></i>黄×黒・ピンクの帯</button><button type="button" data-t="4"><i style="background:linear-gradient(135deg,#0e0e10 50%,#ffe11a 50%)"></i>黒×黄×ピンク</button><button type="button" data-t="5"><i style="background:linear-gradient(135deg,#2f55ff 50%,#ffe11a 50%)"></i>青×黄×ピンク</button><button type="button" data-t="6"><i style="background:linear-gradient(135deg,#ff2e93 50%,#0b0b0c 50%)"></i>ピンク×黒</button><button type="button" data-t="7"><i style="background:linear-gradient(135deg,#ff4fa3 50%,#0b0b0c 50%)"></i>ピンク×緑</button><button type="button" data-t="8"><i style="background:linear-gradient(135deg,#0e0e10 50%,#e3261f 50%)"></i>黒×赤</button><button type="button" data-t="9"><i style="background:linear-gradient(135deg,#f4f1ea 50%,#e3261f 50%)"></i>白×赤</button><button type="button" data-t="10"><i style="background:linear-gradient(135deg,#ff6a1a 50%,#0b0b0c 50%)"></i>オレンジ×青</button><button type="button" data-t="11"><i style="background:linear-gradient(135deg,#d7ff1f 50%,#0b0b0c 50%)"></i>蛍光イエロー×黒</button></div></div>
 <script>
 (function(){
   const EN=(()=>{try{return localStorage.getItem("rockets.lang")==="en"}catch(e){return false}})();
   const T=(j,e)=>EN?e:j;
   const BELL='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.6 2.2H4.4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>';
   window.__rkPush=async()=>{ alert(T("デモなので、ここでは通知はONになりません","Demo only — nothing is turned on")); };
-  let th=0; try{ th=+(new URLSearchParams(location.search).get("c")||0) }catch(e){}
+  let th=0; try{ th=+(new URLSearchParams(location.search).get("c")||1) }catch(e){}
   const bar=document.getElementById("dmbar");
   const mark=()=>bar.querySelectorAll("[data-t]").forEach(b=>b.classList.toggle("on",+b.dataset.t===th));
   function open(delay){
