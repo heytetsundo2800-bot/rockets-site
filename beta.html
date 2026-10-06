@@ -760,15 +760,23 @@ html.lsw-in{background:#0b0b0c}
 html.lsw-in body{opacity:0}
 html.lsw-in.lsw-go body{opacity:1;transition:opacity .32s cubic-bezier(.2,.6,.3,1)}
 /* ===== プッシュ通知のおさそい ===== */
-#ntf{position:fixed;left:12px;right:12px;z-index:70;max-width:520px;margin:0 auto;background:#141417;border:1px solid #3a3a3e;padding:16px 16px 14px;
+#ntf{position:fixed;left:12px;right:12px;z-index:70;max-width:520px;margin:0 auto;background:#e3261f;color:#0b0b0c;border-radius:26px;padding:18px 18px 16px;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);font-family:var(--jp);
   opacity:0;transform:translateY(16px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
 #ntf.in{opacity:1;transform:none;pointer-events:auto}
-#ntf .t{font-weight:900;font-size:15px}
-#ntf p{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.6}
-#ntf .b{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:12px}
-#ntf button{border:1px solid #444;background:none;color:var(--fg);padding:12px;font-weight:700;font-size:13px;font-family:var(--jp);cursor:pointer}
-#ntf .ok{background:var(--fg);color:#000;border-color:var(--fg)}
-.news .pushon{display:block;width:100%;margin-top:12px;padding:13px;border:1px solid var(--fg);background:none;color:var(--fg);font-weight:700;font-size:13.5px;font-family:var(--jp);cursor:pointer}
+#ntf .hh{font-family:var(--dp);font-size:46px;line-height:.95;letter-spacing:.01em;color:#0b0b0c}
+#ntf .pl{margin-top:12px;background:#fff;color:#0b0b0c;border-radius:16px;padding:12px 14px}
+#ntf .lb{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:900;line-height:1.35}
+#ntf .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+#ntf ul{margin:8px 0 0;padding:0 0 0 2px;list-style:none}
+#ntf li{font-size:14.5px;font-weight:800;line-height:1.7}
+#ntf li:before{content:"✓";display:inline-block;width:20px;font-weight:900;color:#e3261f}
+#ntf .b{display:grid;grid-template-columns:1fr 1.8fr;gap:8px;margin-top:12px}
+#ntf button{border:0;padding:15px 8px;border-radius:99px;font-weight:900;font-size:15.5px;font-family:var(--jp);cursor:pointer}
+#ntf .no{background:rgba(0,0,0,.16);color:#0b0b0c}
+#ntf .ok{background:#0b0b0c;color:#fff}
+.news .pushon{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;padding:15px;border:0;border-radius:99px;background:#e3261f;color:#fff;font-weight:900;font-size:15px;font-family:var(--jp);cursor:pointer}
+.news .pushon .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
 /* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
 .snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
 .snote b{font-family:var(--dp);font-weight:400;font-size:11px;letter-spacing:.26em;color:var(--dim)}
@@ -2040,9 +2048,10 @@ function sheet(html){
     const NK="rockets.ntf.dismissed"; let last=0; try{ last=+localStorage.getItem(NK)||0; }catch(e){}
     if(last && Date.now()-last<14*864e5) return;
     const card=document.createElement("div"); card.id="ntf";
-    card.innerHTML=`<div class="t">${T("ライブの予定、通知で受け取る？","Get notified about shows?")}</div>
-      <p>${T("新しいライブが決まったときと、ライブの前にだけ送ります。","Only when a new show is announced, and right before each one.")}</p>
-      <div class="b"><button type="button" class="no">${T("あとで","Later")}</button><button type="button" class="ok">${T("通知を受け取る","Turn on")}</button></div>`;
+    card.innerHTML=`<div class="hh">LET'S GO!!<br>PUNK ROCK!!</div>
+      <div class="pl"><b class="lb">${BELLI}${T("通知をONにすると届くもの","Turn on notifications to get")}</b>
+      <ul><li>${T("新しいライブの告知","New show announcements")}</li><li>${T("チケット取り置きの開始","When ticket reservations open")}</li></ul></div>
+      <div class="b"><button type="button" class="no">${T("あとで","Later")}</button><button type="button" class="ok">${T("ONにする","Turn on")}</button></div>`;
     document.body.appendChild(card);
     const close=rem=>{ card.classList.remove("in"); setTimeout(()=>card.remove(),400); if(rem){ try{ localStorage.setItem(NK,String(Date.now())); }catch(e){} } };
     card.querySelector(".no").onclick=()=>close(true);
@@ -2052,6 +2061,7 @@ function sheet(html){
 })();
 
 /* ---------- お知らせ（ベル） ---------- */
+const BELLI='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.6 2.2H4.4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>';
 const NEWS=(C.news||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
 const nid=n=>n.date+"|"+n.title;
 let READ=[]; try{READ=JSON.parse(localStorage.getItem("rockets.news.read")||"[]");}catch(e){}
@@ -2067,7 +2077,7 @@ $("#bell").addEventListener("click",()=>{
     return `<a class="it${isNew?" new":""}" href="${esc(x.link||"#")}" data-link="${esc(x.link||"")}">
       <div class="tx"><div class="tg">${esc(LF(x,"tag"))}</div><div class="t">${esc(t)}</div>${b?`<div class="b">${esc(b)}</div>`:""}</div>
       <div class="dt">${esc(String(x.date).slice(5).replace("-","."))}</div>${isNew?'<i class="dot"></i>':""}</a>`;}).join("");
-  const pushBtn=window.__rkPush?`<button type="button" class="pushon">${T("🔔 ライブの通知を受け取る","🔔 Get show notifications")}</button>`:"";
+  const pushBtn=window.__rkPush?`<button type="button" class="pushon">${BELLI}${T("ライブ通知をONにする","Turn on show notifications")}</button>`:"";
   const s=sheet(`<div class="news"><h3>NEWS</h3>${pushBtn}${items||`<p style="color:var(--dim);margin-top:14px">${T("お知らせはまだありません","No news yet")}</p>`}</div>`);
   s.el.querySelectorAll(".it").forEach(a=>a.addEventListener("click",e=>{
     const l=a.dataset.link; if(!l || l.startsWith("http")) return;
