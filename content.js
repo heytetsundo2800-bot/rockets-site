@@ -109,6 +109,7 @@ window.CONTENT = {
       address: "東京都府中市緑町1-17-18 シャトーアルフィーB1F", addressEn: "B1F, 1-17-18 Midori-cho, Fuchu, Tokyo",
       access:  "京王線 府中駅から徒歩8分",               accessEn:  "8 min walk from Fuchu Sta. (Keio Line)",
       lat: 35.67208, lng: 139.48721,
+      mapQuery: "府中 Flight ライブハウス",   // ← 地図で探す言葉（住所だと「ルート検索」になってしまうため）
       open:   "17:30",
       start:  "18:00",
       price:  "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000（＋1D ¥600）",
