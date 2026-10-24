@@ -2218,7 +2218,8 @@ function ticketForm(l){
   const ven=LF(l,"venue"), sp=ven.indexOf(" "), area=sp>0?ven.slice(0,sp):"", place=sp>0?ven.slice(sp+1):ven;
   const isJa=t=>/[^\x00-\x7f]/.test(t);
   const tm=(l.open||l.start)?`OPEN ${l.open||"—"} / START ${l.start||"—"}`:"";
-  const pr=LF(l,"price")||[l.adv&&("ADV "+l.adv),l.door&&("DOOR "+l.door)].filter(Boolean).join(" / ");
+  // フォーム・送ったあとの画面・確認メールの料金は、当日券(DOOR)を出さない（content.js の ticketPrice があればそれ）
+  const pr=LF(l,"ticketPrice")||(l.adv?"ADV "+l.adv:"")||LF(l,"price");
   let mem={}; try{ mem=JSON.parse(localStorage.getItem("rockets.tk.me")||"{}"); }catch(e){}
   const s=sheet(`<div class="tkf"><div class="tk-ps"><div class="d">${md} ${DW}</div>
       <div class="v">${area?`<span>${esc(area)}</span> `:""}${esc(isJa(place)?place:place.toUpperCase())}</div>${tm?`<div class="s">${esc(tm)}</div>`:""}</div>

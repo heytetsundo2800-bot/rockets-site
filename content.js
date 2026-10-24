@@ -114,6 +114,8 @@ window.CONTENT = {
       start:  "18:00",
       price:  "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000（＋1D ¥600）",
       priceEn: "ADV ¥1,400 / DOOR ¥1,900 / PENTA USER ¥1,000 (+1 drink ¥600)",
+      ticketPrice:   "ADV ¥1,400 ／ PENTA USER ¥1,000（各＋1D ¥600）",   // ← チケットフォーム・確認メール用（当日券は出さない）
+      ticketPriceEn: "ADV ¥1,400 / PENTA USER ¥1,000 (+1 drink ¥600 each)",
       note:   "共演：pulse / BamBook(Yanh!!!) / はまたけ(ponkozz) / and more...　FOOD：Handies　※チケットは各アーティスト取り置き",
       noteEn: "With pulse / BamBook (Yanh!!!) / Hamatake (ponkozz) / and more...  Food: Handies. Tickets are reserved through each artist.",
       ticket: "x-dm"     // ← ROCKETsのXのDM（取り置き）に飛ぶ
