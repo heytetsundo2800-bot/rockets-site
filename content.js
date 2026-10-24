@@ -233,7 +233,7 @@ Oi! Oi! Oi!
      ライブの「XのDMでチケット取り置き」ボタンが「チケットをとる」フォームに変わる。
      空 "" のままなら、今までどおりXのDMに飛ぶ */
   reserve: {
-    url: ""
+    url: "https://script.google.com/macros/s/AKfycbxaCodGzjF1Rm31dT_31ZGxHF1Rci9sN93sWmXY6DrXdYaG5xmN6NZoSUH8ejfQYyct/exec"
   },
 
   /* ---------- プッシュ通知（OneSignal） ----------
