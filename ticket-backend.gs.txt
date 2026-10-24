@@ -1,0 +1,132 @@
+/**
+ * ROCKETs チケット予約（Google Apps Script）
+ * ・アプリのフォームから届いた予約を、スプレッドシート「ROCKETs チケット予約」にためる
+ * ・予約した人に確認メール、バンド（このGoogleアカウント）にお知らせメールを送る
+ * ・メンバー用画面（PINが必要）に一覧を返す／来場チェックを付ける
+ *
+ * 最初に1回だけ：上のメニューで「setup」を選んで ▶実行 → 許可 → 下のログにPINが出る
+ */
+const SHEET = '予約';
+const HEAD = ['受付日時','ID','ライブ日','ライブ','お名前','枚数','メール','ひとこと','来場','キャンセル','言語'];
+
+function setup() {
+  const p = PropertiesService.getScriptProperties();
+  let ss;
+  if (p.getProperty('SHEET_ID')) {
+    ss = SpreadsheetApp.openById(p.getProperty('SHEET_ID'));
+  } else {
+    ss = SpreadsheetApp.create('ROCKETs チケット予約');
+    const sh = ss.getActiveSheet();
+    sh.setName(SHEET);
+    sh.appendRow(HEAD);
+    sh.setFrozenRows(1);
+    sh.getRange(1, 1, 1, HEAD.length).setFontWeight('bold');
+    p.setProperty('SHEET_ID', ss.getId());
+  }
+  if (!p.getProperty('PIN')) p.setProperty('PIN', String(Math.floor(100000 + Math.random() * 900000)));
+  Logger.log('スプレッドシート：' + ss.getUrl());
+  Logger.log('メンバー用PIN：' + p.getProperty('PIN'));
+}
+
+function sheet_() {
+  const id = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
+  return SpreadsheetApp.openById(id).getSheetByName(SHEET);
+}
+function out_(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+function clean_(s, n) {
+  return String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, n);
+}
+
+function doGet() { return out_({ ok: true, app: 'rockets-ticket' }); }
+
+function doPost(e) {
+  let b = {};
+  try { b = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (x) { return out_({ ok: false, err: 'bad' }); }
+  const lock = LockService.getScriptLock();
+  try { lock.waitLock(15000); } catch (x) { return out_({ ok: false, err: 'busy' }); }
+  try {
+    if (b.a === 'reserve') return out_(reserve_(b));
+    if (b.a === 'list') return out_(list_(b));
+    if (b.a === 'check') return out_(check_(b));
+    return out_({ ok: false, err: 'unknown' });
+  } catch (x) {
+    return out_({ ok: false, err: 'server' });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* ---------- 予約 ---------- */
+function reserve_(b) {
+  if (b.hp) return { ok: true, id: 'ok' };                       // ロボットよけ（見えない欄に入力があったら保存しない）
+  const en = b.lang === 'en';
+  const name = clean_(b.name, 40), email = clean_(b.email, 120), msg = clean_(b.msg, 200);
+  const live = clean_(b.liveDate, 10), label = clean_(b.liveLabel, 80);
+  const qty = Math.max(1, Math.min(4, parseInt(b.qty, 10) || 1));
+  if (!name) return { ok: false, err: 'name' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, err: 'email' };
+  if (!/^\d{4}\.\d{2}\.\d{2}$/.test(live)) return { ok: false, err: 'live' };
+  const m = live.split('.'), day = new Date(+m[0], +m[1] - 1, +m[2]); day.setHours(23, 59, 59);
+  if (day < new Date()) return { ok: false, err: 'closed' };
+
+  const sh = sheet_(), v = sh.getDataRange().getDisplayValues();
+  for (let i = 1; i < v.length; i++) {
+    if (v[i][2] === live && v[i][6].toLowerCase() === email.toLowerCase() && !v[i][9]) return { ok: false, err: 'dup' };
+  }
+  const id = Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+  const q_ = t => "'" + t;                                         // 先頭に ' を付けて、数式や日付に化けないようにする
+  sh.appendRow([new Date(), q_(id), q_(live), q_(label), q_(name), qty, q_(email), q_(msg), false, '', en ? 'en' : 'ja']);
+  sh.getRange(sh.getLastRow(), 9).insertCheckboxes();
+
+  const time = clean_(b.time, 60), price = clean_(b.price, 160), addr = clean_(b.address, 120), map = clean_(b.map, 300);
+  const site = 'https://rockets-band.vercel.app/';
+  try {
+    const body = en
+      ? `Hi ${name},\n\nYour ROCKETs show booking is confirmed!\n\n■ Show　${label}\n■ Name　${name}\n■ Tickets　${qty}\n` +
+        (time ? `■ Time　${time}\n` : '') + (price ? `■ Price　${price} (pay at the door)\n` : '') +
+        (addr ? `■ Venue　${addr}\n` : '') + (map ? `■ Map　${map}\n` : '') +
+        `\nAt the door, just say "ROCKETs" and your name "${name}".\nTo cancel or change, simply reply to this email.\n\nSee you there!!\nROCKETs\n${site}`
+      : `${name} さん\n\nROCKETs のライブ、受け付けました！\n\n■ライブ　${label}\n■お名前　${name}\n■枚数　${qty}枚\n` +
+        (time ? `■時間　${time}\n` : '') + (price ? `■料金　${price}（当日、受付で支払い）\n` : '') +
+        (addr ? `■会場　${addr}\n` : '') + (map ? `■地図　${map}\n` : '') +
+        `\n当日、受付で「ROCKETs」と「${name}」を伝えるだけでOK。\nキャンセル・変更は、このメールに返信してください。\n\n会場で待ってます！！\nROCKETs\n${site}`;
+    MailApp.sendEmail({ to: email, name: 'ROCKETs', subject: en ? `ROCKETs | Booking confirmed: ${label}` : `【ROCKETs】${label} 受け付けました`, body: body });
+  } catch (x) {}
+  try {
+    MailApp.sendEmail({
+      to: Session.getEffectiveUser().getEmail(), name: 'ROCKETs アプリ',
+      subject: `【予約】${live} ${name} ${qty}枚`,
+      body: `ライブ：${label}\nお名前：${name}\n枚数：${qty}枚\nメール：${email}\nひとこと：${msg || '—'}\n\n一覧：${SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID')).getUrl()}`
+    });
+  } catch (x) {}
+  return { ok: true, id: id };
+}
+
+/* ---------- メンバー用 ---------- */
+function pinOk_(pin) {
+  const c = CacheService.getScriptCache(), n = +(c.get('bad') || 0);
+  if (n >= 10) return false;                                      // 10回まちがえたら10分止める
+  const ok = String(pin || '') === PropertiesService.getScriptProperties().getProperty('PIN');
+  if (!ok) c.put('bad', String(n + 1), 600);
+  return ok;
+}
+function list_(b) {
+  if (!pinOk_(b.pin)) return { ok: false, err: 'pin' };
+  const v = sheet_().getDataRange().getDisplayValues(), rows = [];
+  for (let i = 1; i < v.length; i++) {
+    const r = v[i];
+    if (!r[1]) continue;
+    rows.push({ id: r[1], live: r[2], label: r[3], name: r[4], qty: +r[5] || 0, msg: r[7], came: r[8] === 'TRUE', cancel: !!r[9], at: r[0] });
+  }
+  return { ok: true, rows: rows };
+}
+function check_(b) {
+  if (!pinOk_(b.pin)) return { ok: false, err: 'pin' };
+  const sh = sheet_(), v = sh.getRange(1, 2, sh.getLastRow(), 1).getDisplayValues();
+  for (let i = 1; i < v.length; i++) {
+    if (v[i][0] === String(b.id)) { sh.getRange(i + 1, 9).setValue(!!b.v); return { ok: true }; }
+  }
+  return { ok: false, err: 'notfound' };
+}
