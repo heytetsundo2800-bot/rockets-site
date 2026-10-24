@@ -805,6 +805,41 @@ html.lsw-in.lsw-go body{opacity:1;transition:opacity .32s cubic-bezier(.2,.6,.3,
 .set .tg[aria-checked="true"] .tk{transform:translateX(24px)}
 .set .tg:disabled{opacity:.45;cursor:default}
 .set .help{font-size:13px;line-height:1.75;color:#cfcbc5;margin:12px 4px 4px}
+/* ===== チケットフォーム（黒×赤・ポスター見出し） ===== */
+.tkf{--tr:#e3261f;font-family:var(--jp);padding-bottom:10px}
+.tk-ps .d{font-family:var(--dp);font-size:46px;line-height:1;color:var(--tr)}
+.tk-ps .v{font-family:var(--dp);font-size:28px;line-height:1.05;margin-top:2px}.tk-ps .v span{font-family:var(--jp);font-weight:900}
+.tk-ps .s{font-size:12px;font-weight:700;color:var(--dim);margin-top:5px}
+.tk-f{display:block;margin-top:14px}.tk-f>span{display:flex;align-items:baseline;gap:8px;font-size:14px;font-weight:900}.tk-f em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--dim)}
+.tk-f input,.tk-f textarea{display:block;width:100%;margin-top:6px;border-radius:12px;background:#1f1f24;border:1.5px solid #34343a;color:var(--fg);padding:12px 14px;font:700 16px var(--jp);outline:none;-webkit-appearance:none;box-sizing:border-box}
+.tk-f textarea{resize:none;min-height:60px}
+.tk-f input:focus,.tk-f textarea:focus{border-color:var(--tr)}
+.tk-row{display:flex;align-items:center;justify-content:space-between}
+.tk-qty{display:flex;align-items:center;gap:6px}.tk-qty button{width:44px;height:44px;border-radius:50%;border:1.5px solid #34343a;background:#1f1f24;color:var(--fg);font-size:22px;cursor:pointer;display:grid;place-items:center}
+.tk-qty button.p{background:var(--tr);border-color:var(--tr);color:#fff}.tk-qty i{font-style:normal;font-family:var(--dp);font-size:28px;width:40px;text-align:center}
+.tk-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.tk-pr{display:flex;justify-content:space-between;gap:12px;margin-top:16px;padding-top:12px;border-top:1px dashed #34343a;font-size:12px;font-weight:700;color:var(--dim)}.tk-pr span{white-space:nowrap}.tk-pr b{color:var(--fg);font-size:12.5px;text-align:right;line-height:1.55}
+.tk-er{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(227,38,31,.15);color:#ff8a84;font-size:13px;font-weight:800;line-height:1.5}
+.tk-go{display:block;width:100%;margin-top:14px;height:56px;border:0;border-radius:99px;background:#e3261f;color:#fff;font:900 17px var(--jp);cursor:pointer}
+.tk-go:disabled{opacity:.6}
+.tk-nt{text-align:center;font-size:12px;font-weight:700;color:var(--dim);margin-top:10px;line-height:1.6}
+.tk-ok{font-family:var(--dp);font-size:64px;line-height:.92;color:#e3261f;margin-top:4px}
+.tk-sum{margin-top:16px;border-radius:16px;background:#1f1f24;padding:4px 14px}.tk-sum div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #34343a;font-size:13px}.tk-sum div:last-child{border:0}
+.tk-sum span{color:var(--dim);font-weight:700;white-space:nowrap}.tk-sum b{font-weight:900;text-align:right}
+.tk-big{font-size:17px;font-weight:900;line-height:1.65;margin-top:16px}.tk-big b{color:#e3261f}
+.tk-sub{font-size:12.5px;font-weight:700;color:var(--dim);margin-top:8px;word-break:break-all}
+.tk-cl{display:block;width:100%;margin-top:8px;padding:12px;border:0;background:none;color:var(--dim);font:700 14px var(--jp);cursor:pointer}
+.nl .acts button.y{background:var(--fg);color:#000;border:0;font-size:15px}
+.liverow .tk-rb{border:0;cursor:pointer;font-family:var(--jp)}
+/* ===== メンバー用：お客さんリスト ===== */
+.set .set-mem{display:block;width:100%;margin-top:16px;padding:14px;border:1px solid #3a3a40;border-radius:14px;background:none;color:var(--dim);font:800 13.5px var(--jp);cursor:pointer}
+.gl{font-family:var(--jp)}.gl-h span{font-family:var(--dp);font-size:12px;letter-spacing:.24em;color:#e3261f}.gl-h b{display:block;font-size:24px;font-weight:900;margin-top:2px}
+.gl-m{margin-top:16px;font-size:14px;font-weight:700;color:var(--dim)}
+.gl-pin{display:flex;gap:8px;margin-top:10px}.gl-pin input{flex:1;min-width:0;border-radius:12px;background:#1f1f24;border:1.5px solid #34343a;color:var(--fg);padding:0 14px;font:700 22px var(--dp);letter-spacing:.3em;height:56px;outline:none}.gl-pin .tk-go{width:110px;margin:0}
+.gl-t{display:flex;gap:8px;margin-top:12px;overflow-x:auto}.gl-t button{flex:0 0 auto;padding:9px 13px;border-radius:99px;border:0;background:#1f1f24;color:var(--dim);font:800 13px var(--jp);cursor:pointer}.gl-t button.on{background:#e3261f;color:#fff}
+.gl-s{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.gl-s div{background:#1f1f24;border-radius:14px;padding:10px 12px}.gl-s small{display:block;font-size:11.5px;font-weight:700;color:var(--dim)}.gl-s b{font-family:var(--dp);font-size:26px}
+.gl-r{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid #2c2c31}.gl-r .gn{flex:1;min-width:0}.gl-r .gn b{display:block;font-size:16px;font-weight:900}.gl-r .gn small{display:block;font-size:12px;color:var(--dim);font-weight:700;margin-top:2px}
+.gl-r .gq{font-family:var(--dp);font-size:22px}.gl-r .ck{width:28px;height:28px;border-radius:8px;border:2px solid #4a4a50;background:none;cursor:pointer;flex:0 0 auto}.gl-r .ck.on{background:#e3261f;border-color:#e3261f}
 /* ===== SHOP：会場のみ販売は、商品の下に注意書きとして ===== */
 .snote{margin-top:26px;padding-top:14px;border-top:1px solid #2c2c30;max-width:720px}
 .snote b{font-family:var(--dp);font-weight:400;font-size:11px;letter-spacing:.26em;color:var(--dim)}
@@ -1998,6 +2033,68 @@ async function shareLive(l){
   try{ await navigator.clipboard.writeText(full); alert(T("誘いの文をコピーしました。LINEやDMに貼り付けて送ってね","Message copied. Paste it into LINE or a DM.")); }catch(e){}
 }
 
+/* ---------- チケットフォーム（content.js の reserve.url があるときだけ。ないときは今までどおりXのDM） ---------- */
+const RES=String((C.reserve&&C.reserve.url)||"").trim();
+const useForm=l=>!!(RES && l && l.ticket);
+const tkBtnLabel=()=>T("チケットをとる","Get tickets");
+function ticketForm(l){
+  const d=pd(l); if(!d) return;
+  const md=(d.getMonth()+1)+"."+String(d.getDate()).padStart(2,"0"), DW=["SUN","MON","TUE","WED","THU","FRI","SAT"][d.getDay()];
+  const ven=LF(l,"venue"), sp=ven.indexOf(" "), area=sp>0?ven.slice(0,sp):"", place=sp>0?ven.slice(sp+1):ven;
+  const isJa=t=>/[^\x00-\x7f]/.test(t);
+  const tm=(l.open||l.start)?`OPEN ${l.open||"—"} / START ${l.start||"—"}`:"";
+  const pr=LF(l,"price")||[l.adv&&("ADV "+l.adv),l.door&&("DOOR "+l.door)].filter(Boolean).join(" / ");
+  let mem={}; try{ mem=JSON.parse(localStorage.getItem("rockets.tk.me")||"{}"); }catch(e){}
+  const s=sheet(`<div class="tkf"><div class="tk-ps"><div class="d">${md} ${DW}</div>
+      <div class="v">${area?`<span>${esc(area)}</span> `:""}${esc(isJa(place)?place:place.toUpperCase())}</div>${tm?`<div class="s">${esc(tm)}</div>`:""}</div>
+    <form novalidate>
+      <label class="tk-f"><span>${T("お名前","Name")}<em>${T("受付で伝える名前","the name you'll give at the door")}</em></span>
+        <input name="name" maxlength="40" autocomplete="name" placeholder="${T("例：アダチ","e.g. Adachi")}" value="${esc(mem.name||"")}"></label>
+      <div class="tk-f tk-row"><span>${T("枚数","Tickets")}</span><div class="tk-qty"><button type="button" data-d="-1" aria-label="-">−</button><i>1</i><button type="button" class="p" data-d="1" aria-label="+">＋</button></div></div>
+      <label class="tk-f"><span>${T("メールアドレス","Email")}<em>${T("確認メールが届きます","we'll send a confirmation")}</em></span>
+        <input name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" placeholder="rockets@example.com" value="${esc(mem.email||"")}"></label>
+      <label class="tk-f"><span>${T("ひとこと","Message")}<em>${T("なくてもOK","optional")}</em></span>
+        <textarea name="msg" maxlength="200" rows="2" placeholder="${T("初めて行きます！ など","e.g. First time coming!")}"></textarea></label>
+      <input name="hp" class="tk-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      ${pr?`<div class="tk-pr"><span>${T("当日、受付で支払い","Pay at the door")}</span><b>${esc(pr)}</b></div>`:""}
+      <p class="tk-er" hidden></p>
+      <button type="submit" class="tk-go">${T("チケットをとる！","Get tickets!")}</button>
+      <p class="tk-nt">${T("キャンセルは確認メールに返信するだけでOK","To cancel, just reply to the confirmation email")}</p>
+    </form></div>`);
+  const pn=s.el.querySelector(".pn"), f=s.el.querySelector("form"), qi=s.el.querySelector(".tk-qty i"), er=s.el.querySelector(".tk-er"), go=s.el.querySelector(".tk-go");
+  let qty=1;
+  s.el.querySelectorAll(".tk-qty button").forEach(b=>b.addEventListener("click",()=>{ qty=Math.max(1,Math.min(4,qty+(+b.dataset.d))); qi.textContent=qty; }));
+  const err=t=>{ er.textContent=t; er.hidden=false; };
+  f.addEventListener("submit",async e=>{
+    e.preventDefault(); er.hidden=true;
+    const fn=f.querySelector('[name="name"]'), name=fn.value.trim(), email=f.email.value.trim(), msg=f.msg.value.trim();
+    if(!name){ err(T("お名前を入れてね","Please enter your name")); fn.focus(); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err(T("メールアドレスを確認してね","Please check your email address")); f.email.focus(); return; }
+    go.disabled=true; go.textContent=T("送信中…","Sending…");
+    const body={a:"reserve",liveDate:String(l.date||""),liveLabel:`${md} ${DW} ${ven}${l.title?" "+LF(l,"title").split(/[（(]/)[0].trim():""}`,
+      name,qty,email,msg,hp:f.hp.value,lang:EN?"en":"ja",time:tm,price:pr,address:LF(l,"address")||"",map:mapOf(l)};
+    let r=null; try{ r=await (await fetch(RES,{method:"POST",body:JSON.stringify(body)})).json(); }catch(x){}
+    if(!r || !r.ok){
+      go.disabled=false; go.textContent=T("チケットをとる！","Get tickets!");
+      const E={dup:T("このメールアドレスでは、もう受け付けています。確認メールを見てね","You've already booked with this email. Check your inbox."),
+               closed:T("このライブの受付は終わりました","Booking for this show has closed."),
+               email:T("メールアドレスを確認してね","Please check your email address"), name:T("お名前を入れてね","Please enter your name")};
+      err((r&&E[r.err])||T("うまく送れませんでした。電波のいいところで、もう一度押してね","Couldn't send. Please try again with a better connection."));
+      return;
+    }
+    try{ localStorage.setItem("rockets.tk.me",JSON.stringify({name,email})); }catch(x){}
+    pn.querySelector(".tkf").innerHTML=`<div class="tk-ok">OK!!<br>SEE YOU!!</div>
+      <div class="tk-sum"><div><span>${T("ライブ","Show")}</span><b>${md} ${DW}　${esc(ven)}</b></div><div><span>${T("お名前","Name")}</span><b>${esc(name)}</b></div>
+        <div><span>${T("枚数","Tickets")}</span><b>${qty}${T("枚","")}</b></div>${pr?`<div><span>${T("料金","Price")}</span><b>${esc(pr)}</b></div>`:""}</div>
+      <p class="tk-big">${EN?`At the door, just say<br>"<b>ROCKETs</b>" and "<b>${esc(name)}</b>"`:`当日、受付で<br>「<b>ROCKETs</b>」と「<b>${esc(name)}</b>」<br>を伝えるだけ！`}</p>
+      <p class="tk-sub">${T(`確認メールを ${esc(email)} に送りました`,`Confirmation sent to ${esc(email)}`)}</p>
+      <button type="button" class="tk-go" data-a="sh">${T("友だちを誘う","Invite a friend")}</button><button type="button" class="tk-cl">${T("閉じる","Close")}</button>`;
+    pn.scrollTop=0;
+    pn.querySelector('[data-a="sh"]').addEventListener("click",()=>shareLive(l));
+    pn.querySelector(".tk-cl").addEventListener("click",s.close);
+  });
+}
+
 /* ---------- 次のライブ（ライブ画面のいちばん上に大きく） ---------- */
 (function(){
   const sec=$("#live"); if(!sec || !N) return;
@@ -2019,7 +2116,7 @@ async function shareLive(l){
     ${ttl?`<div class="ttl">${esc(ttl)}</div>`:""}
     ${inf?`<div class="inf">${inf}</div>`:""}
     <div class="acts">
-      ${N.ticket?`<a class="y" href="${esc(TK.url(N))}" target="_blank" rel="noopener">${N.ticket==="x-dm"?SNSI.x:""}${esc(TK.label(N))}</a>`:""}
+      ${useForm(N)?`<button type="button" class="y" data-a="tk">${tkBtnLabel()}</button>`:N.ticket?`<a class="y" href="${esc(TK.url(N))}" target="_blank" rel="noopener">${N.ticket==="x-dm"?SNSI.x:""}${esc(TK.label(N))}</a>`:""}
       ${mapUrl?`<a class="mapb" href="${esc(mapUrl)}" target="_blank" rel="noopener">${PINI}${T("地図を見る","View map")}</a>`:""}
       <button type="button" data-a="share">${T("友だちに送る","Send to a friend")}</button>
     </div>`;
@@ -2037,6 +2134,7 @@ async function shareLive(l){
     const mu=mapOf(l);
     row.classList.add("lx");
     const cell=row.children[2];
+    if(cell && useForm(l)){ const a=cell.querySelector("a.btn"); if(a){ const b=document.createElement("button"); b.type="button"; b.className="btn accent tk-rb"; b.textContent=tkBtnLabel(); b.addEventListener("click",e=>{ e.stopPropagation(); ticketForm(l); }); a.replaceWith(b); } }
     if(cell){ const h=document.createElement("div"); h.className="lxh"; h.innerHTML=`<span>${T("地図・友だちに送る","Map / Send to a friend")}</span><i></i>`; cell.appendChild(h); }
     const ex=document.createElement("div"); ex.className="lxp";
     ex.innerHTML=`<div class="in">${mu?`<a class="mapb" href="${esc(mu)}" target="_blank" rel="noopener">${PINI}${T("地図を見る","View map")}</a>`:""}<button type="button" data-a="share">${T("友だちに送る","Send to a friend")}</button></div>`;
@@ -2050,6 +2148,7 @@ async function shareLive(l){
     });
   });
   card.querySelector('[data-a="share"]').addEventListener("click",()=>shareLive(N));
+  const tkb=card.querySelector('[data-a="tk"]'); if(tkb) tkb.addEventListener("click",()=>ticketForm(N));
 })();
 
 show(H[location.hash]||"live", true);
@@ -2151,7 +2250,8 @@ $("#gear").addEventListener("click",()=>{
   const s=sheet(`<div class="set"><h3>SETTINGS</h3>
     <div class="srow"><div><b>${T("ライブ通知","Show notifications")}</b><small class="st">${T("確認中…","Checking…")}</small></div>
       <button type="button" class="tg" role="switch" aria-checked="false" disabled aria-label="${T("ライブ通知","Show notifications")}"><span class="tk"></span></button></div>
-    <p class="help"></p></div>`);
+    <p class="help"></p>${RES?`<button type="button" class="set-mem">${T("メンバー用：お客さんリスト","Members: guest list")}</button>`:""}</div>`);
+  const mb=s.el.querySelector(".set-mem"); if(mb) mb.addEventListener("click",()=>{ s.close(); guestList(); });
   const tg=s.el.querySelector(".tg"), st=s.el.querySelector(".st"), hp=s.el.querySelector(".help");
   const UA=navigator.userAgent||"";
   const ios=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -2187,6 +2287,57 @@ $("#gear").addEventListener("click",()=>{
   });
   render();
 });
+
+/* ---------- メンバー用：お客さんリスト（PINが必要） ---------- */
+function guestList(){
+  const s=sheet(`<div class="gl"><div class="gl-h"><span>MEMBERS ONLY</span><b>${T("お客さんリスト","Guest list")}</b></div><div class="gl-b"></div></div>`);
+  const box=s.el.querySelector(".gl-b");
+  let pin=""; try{ pin=localStorage.getItem("rockets.pin")||""; }catch(e){}
+  let rows=[], cur="";
+  const post=b=>fetch(RES,{method:"POST",body:JSON.stringify(b)}).then(r=>r.json()).catch(()=>null);
+  function ask(msg){
+    box.innerHTML=`<p class="gl-m">${msg||T("メンバー用のPIN（6けた）を入れてね","Enter the 6-digit member PIN")}</p>
+      <form class="gl-pin"><input inputmode="numeric" autocomplete="off" maxlength="6" placeholder="••••••"><button class="tk-go">${T("ひらく","Open")}</button></form>`;
+    const fm=box.querySelector("form"); fm.addEventListener("submit",e=>{ e.preventDefault(); pin=fm.querySelector("input").value.trim(); load(); });
+    setTimeout(()=>fm.querySelector("input").focus(),200);
+  }
+  async function load(){
+    if(!pin) return ask();
+    box.innerHTML=`<p class="gl-m">${T("読み込み中…","Loading…")}</p>`;
+    const r=await post({a:"list",pin});
+    if(!r) return ask(T("つながりませんでした。もう一度ためしてね","Couldn't connect. Try again."));
+    if(!r.ok){ try{ localStorage.removeItem("rockets.pin"); }catch(e){} pin=""; return ask(T("PINがちがうみたい","Wrong PIN")); }
+    try{ localStorage.setItem("rockets.pin",pin); }catch(e){}
+    rows=(r.rows||[]).filter(x=>!x.cancel);
+    const lives=[...new Set(rows.map(x=>x.live))].sort();
+    const today=new Date(); today.setHours(0,0,0,0);
+    const toD=s=>{ const m=String(s).split("."); return new Date(+m[0],+m[1]-1,+m[2]); };
+    if(!cur || !lives.includes(cur)) cur=lives.find(x=>toD(x)>=today)||lives[lives.length-1]||"";
+    draw(lives);
+  }
+  function draw(lives){
+    if(!lives.length){ box.innerHTML=`<p class="gl-m">${T("まだ予約はありません","No bookings yet")}</p>`; return; }
+    const list=rows.filter(x=>x.live===cur), tot=list.reduce((a,x)=>a+x.qty,0), came=list.filter(x=>x.came).length;
+    const lab=v=>{ const x=rows.find(r=>r.live===v); return (x&&x.label||v).split(" ").slice(0,3).join(" "); };
+    box.innerHTML=`<div class="gl-t">${lives.map(v=>`<button type="button" data-l="${esc(v)}" class="${v===cur?"on":""}">${esc(lab(v))}</button>`).join("")}</div>
+      <div class="gl-s"><div><small>${T("予約","Bookings")}</small><b>${list.length}${T("件","")}</b></div><div><small>${T("合計","Total")}</small><b>${tot}${T("枚","")}</b></div><div><small>${T("来場","Arrived")}</small><b>${came}/${list.length}</b></div></div>
+      ${list.map(x=>`<div class="gl-r" data-id="${esc(x.id)}"><button type="button" class="ck${x.came?" on":""}" aria-label="${T("来場","Arrived")}"></button>
+        <div class="gn"><b>${esc(x.name)}</b>${x.msg?`<small>${esc(x.msg)}</small>`:""}</div><b class="gq">${x.qty}${T("枚","")}</b></div>`).join("")}
+      <button type="button" class="tk-go gl-cp">${T("受付用リストをコピー","Copy list for the door")}</button>
+      <p class="tk-nt">${T("来たらチェック ✓　／　キャンセルはスプレッドシートの「キャンセル」欄に何か書く","Tick when they arrive. To cancel, write anything in the sheet's キャンセル column.")}</p>`;
+    box.querySelectorAll(".gl-t button").forEach(b=>b.addEventListener("click",()=>{ cur=b.dataset.l; draw(lives); }));
+    box.querySelectorAll(".gl-r .ck").forEach(c=>c.addEventListener("click",async()=>{
+      const id=c.closest(".gl-r").dataset.id, x=rows.find(r=>r.id===id); if(!x) return;
+      x.came=!x.came; c.classList.toggle("on",x.came); draw(lives);
+      const r=await post({a:"check",pin,id,v:x.came}); if(!r||!r.ok){ x.came=!x.came; draw(lives); }
+    }));
+    box.querySelector(".gl-cp").addEventListener("click",async()=>{
+      const txt=`ROCKETs ${lab(cur)}\n`+list.map(x=>`${x.name}　${x.qty}枚`).join("\n")+`\n計 ${tot}枚（${list.length}件）`;
+      try{ await navigator.clipboard.writeText(txt); alert(T("コピーしました","Copied")); }catch(e){ alert(txt); }
+    });
+  }
+  load();
+}
 
 /* ---------- メンバー（1人ずつ大きく横スワイプ。端の人もまん中で止まる） ---------- */
 const FONT={cb:"f-cb",rg:"f-rg",se:"f-se",zk:"f-zk"};
