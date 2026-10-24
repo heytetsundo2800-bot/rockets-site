@@ -123,17 +123,14 @@ function check_(b) {
 function sendConfirm_(o) {
   const site = 'https://rockets-band.vercel.app/';
   const body = o.en
-    ? `Hi ${o.name},\n\nYour ROCKETs show booking is confirmed!\nAt the door, just say "ROCKETs" and your name "${o.name}".\n\n■ Show　${o.label}\n■ Name　${o.name}\n■ Tickets　${o.qty}\n` +
-      (o.time ? `■ Time　${o.time}\n` : '') + (o.price ? `■ Price　${o.price} (pay at the door)\n` : '') +
+    ? `Hi ${o.name},\n\nYour ROCKETs show booking is confirmed!\n\n■ Show　${o.label}\n■ Name　${o.name}\n■ Tickets　${o.qty}\n` +
+      (o.time ? `■ Time　${o.time}\n` : '') + (o.price ? `■ Price　${o.price}\n` : '') +
       (o.address ? `■ Venue　${o.address}\n` : '') + (o.map ? `■ Map　${o.map}\n` : '') +
-      `\nTo cancel or change, simply reply to this email.\n\nSee you there!!\nROCKETs\n${site}`
-    : `${o.name} さん\n\nROCKETs のライブ、受け付けました！\n` +
-      `当日は受付で「ROCKETs」と「${o.name}」を伝えるだけでOKです。\n\n` +
-      `■ライブ　${o.label}\n■お名前　${o.name}\n■枚数　${o.qty}枚\n` +
-      `■受付で　「ROCKETs」と「${o.name}」と伝えるだけ\n` +
-      (o.time ? `■時間　${o.time}\n` : '') + (o.price ? `■料金　${o.price}（当日、受付で支払い）\n` : '') +
+      `\nAt the door, just say "ROCKETs" and your name "${o.name}".\nTo cancel or change, simply reply to this email.\n\nSee you there!!\nROCKETs\n${site}`
+    : `${o.name} さん\n\nROCKETs のライブ、受け付けました！\n\n■ライブ　${o.label}\n■お名前　${o.name}\n■枚数　${o.qty}枚\n` +
+      (o.time ? `■時間　${o.time}\n` : '') + (o.price ? `■料金　${o.price}\n` : '') +
       (o.address ? `■会場　${o.address}\n` : '') + (o.map ? `■地図　${o.map}\n` : '') +
-      `\nキャンセル・変更は、このメールに返信してください。\n\n会場で待ってます！！\nROCKETs\n${site}`;
+      `\n当日、受付で「ROCKETs」と「${o.name}」を伝えるだけでOK。\nキャンセル・変更は、このメールに返信してください。\n\n会場で待ってます！！\nROCKETs\n${site}`;
   MailApp.sendEmail({ to: o.email, name: 'ROCKETs', subject: o.en ? `ROCKETs | Booking confirmed: ${o.label}` : `【ROCKETs】${o.label} 受け付けました`, body: body });
 }
 
